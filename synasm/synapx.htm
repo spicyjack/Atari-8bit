@@ -1,0 +1,186 @@
+<html>
+<head>
+<title>SynAssembler Appendix</title>
+</head>
+<body BGCOLOR="#ffffff" LINK=#0000FF VLINK=#FF0000 ALINK=#FF0000>
+<A HREF="syndx.htm">Back to Index</A><br>
+<a name="apx"><center><h3>APPENDIX</h3></center></a>
+<table width="75%">
+<tr><td width="60%"><a href="#ap1">Monitor tricks</a></td>
+<td>Appendix I</td></tr>
+<tr><td><a href="#ap2">Memory Map</a></td><td>Appendix II</td></tr>
+<tr><td><a href="#ap3">Converting Atari Assembler/Editor Source</a></td>
+<td>Appendix III</td></tr>
+<tr><td><a href="#ap4">Bibliography</td><td>Appendix IV</a></td></tr>
+<tr><td><a href="#ap5">Instruction Code Table</a></td><td>Appendix V</td>
+</tr></table><br><br>
+<center><a name="ap1"><h4>APPENDIX I</h4></a></center>
+<A HREF="#apx">Back to Appendix</A><br><br>
+<b>MONITOR TRICKS</b>
+<br><br>
+There are few tricks that you can use in the ZYNAPSE monitor.  These will
+ generally make your life easier and programming less of a chore.
+
+All monitor commands may be put on a single line if you separate the commands
+ with a space.
+<br><pre>
+EXAMPLE:  D01F D01F D01F
+</pre>
+This will display memory location D01F 3 times.
+<br><br>
+
+Some commands are only one letter long, so you needn't separate them with a
+ space.
+<br><pre>
+EXAMPLE: 2000LLLL
+</pre>
+This will disassemble 80 instructions
+<br>
+Sometimes you may need to utilize certain commands repeatedly.  You can do
+ this by typing the command many times, or type it once and tell the monitor
+ to repeat it for you.
+<br><pre>
+EXAMPLE:	N 2FC AD;0N
+            This will display location 2FC until
+            [BREAK] or [SYSTEM RESET) is pressed.
+</pre>
+<br><br><center><a name="ap2"><h4>APPENDIX II</h4></a></center>
+<A HREF="#apx">Back to Appendix</A><br><br>
+<center><b>SYNASSEMBLER Memory Map</b></center>
+<center>(assumes 48K memory)</center><br>
+<table cellspacing="5"><tr><td width="16%">
+0000-00EF</td><td> : O.S. and Assembler zero page usage.</td></tr>
+
+<tr><td>00F0-00FF</td><td> : Free space</td></tr>
+
+<tr><td>0100-01FF</td><td> : 6502 hardware stack</td></tr>
+
+<tr><td>0200-02FF</td><td> : Operating System vector table</td></tr>
+
+<tr><td>0300-03FF</td><td> : IOCB vector table</td></tr>
+
+<tr><td>0400-047F</td><td> : DOS usage area</td></tr>
+
+<tr><td>0480-04FF</td><td> : Assembler usage</td></tr>
+
+<tr><td>0500-05FF</td><td> : Assembler input buffer</td></tr>
+
+<tr><td>0600-06FF</td><td> : Free space (if REPlace not used)</td></tr>
+
+<tr><td>0700-1D00</td><td> : DOS II</td></tr>
+<tr><td>
+1D00-9BFF</td><td> : Free space for source, symbol table, and object code
+</td></tr>
+<tr><td>9C00-BC1F</td><td> : SYNASSEMBLER</td></tr>
+<tr><td>
+BC20-BFFF</td><td> : Screen display list and data</td></tr></table>
+<br><br>
+<center><a name="ap3"><h4>APPENDIX III</h4></a></center>
+<A HREF="#apx">Back to Appendix</A><br><br>
+<center><b>CONVERTING ATARI ASSEMBLER FILES</b></center><br>
+
+In order, to convert your ATARI Assembler/Editor files to SynAssembler
+ format follow these simple instructions:
+<br><br>
+.Read the ATARI editor/assembler files into the SynAssembler using the
+ ENTer command.
+<br><br>
+.Save the file back to the disk using the SAVE command.  This will store
+ your file in compacted format.
+<br><br>
+.Make the following changes to your source code:
+<br><br>
+1. Remove all references to "A".  For example, in the instruction LSR A,
+ the "A" should be removed, since SynAssembler assumes the "A" reference.
+<br><br>
+2. SynAssembler has no multiply or divide so these must be put in by
+ long hand.
+<br><br>
+3. To get the Hi and Lo bytes, make the following changes:
+<br><pre>
+Atari Assembler
+	LDA #PLACE/256    high byte
+	LDA #PLACE&255	  lo byte
+
+SynAssembler
+	LDA /PLACE	high byte
+	LDA #PLACE	lo byte
+</pre>
+4. All of the Atari directives must be changed to the SynAssembler
+ equivalents.
+<br><br>
+Now that you have your file in SynAssembler format, you may use the local
+ labels and long 32 character labels.
+<br><br><br>
+<center><a name="ap4"><h4>APPENDIX IV</h4></a></center>
+<A HREF="#apx">Back to Appendix</A><br><br>
+<center><b>BIBLIOGRAPHY</b></center><br>
+Publishers have begun to release some good technical resource books for
+ learning to program the 6502 microprocessor.
+<br><br><br>
+The ATARI Assembler, Don Inman & Kurt Inman. RESTON Publishing Company, 1981.
+ Designed for the beginner to intermediated this book has 270 pages including
+ many illustrations, diagrams and examples. $12.95
+<br><br>
+6502 Software Design, Leo J. Scanlon. One of the Blacksburg Continuing
+ Education Series, published by Howard W. Sams & Co.,1980. 270 pages, paper,
+ $10.50.
+<br><br>
+6502 Assembly Language Programming, Lance A. Leventhal. Osborne/McGraw
+ Hill, Inc., 1979, over 80 programming examples. $16.99
+<br><br>
+Programming and Interfacing the 6502, with Experiments, Marvin L. DeJong.
+ One of the Blacksburg Continuing Education Series, published by Howard W.
+ Sams & Co., 198O. 414 pagest paperback.
+<br><br>
+6502 Software Gourmet Guide and Cookbook, Robert Findley. Scelbi
+ Publications, 1979. 204 pages, paperback.  Includes listings of conversion
+ routines, search and sort routines, and floating point routines.
+<br><br>
+6502 Games, Rodney Zaks, SYBEX. The third in the SYBEX series on
+ programming the 6502.  Includes listings of games in assembly language.
+<br><br>
+Practical Microcomputer, Programming: the 6502, W.J. Weller, Northern
+ Technology Books, 1980. 459 pages, includes a listing of a 6502 assembler
+ and a debugging package.
+<br><br><br><center><A name="ap5"><h4>APPENDIX V</h4></a></center>
+<A HREF="#apx">Back to Appendix</A>
+<center><b>Instruction Code Table</b></center>
+==================================================================<br>
+<pre>
+      ACCUM-  IMMED-           DIRECT                 INDIRECT  
+      ULATOR  IATE                  INDEXED                 INDEXED
+      -------------------------------------------------------------------
+      blank   #expr     expr   expr,X   expr,Y  (expr) (expr,X) (expr),Y
+              /expr    ZP/ABS  ZP/ABS   ZP/ABS 
+ ========================================================================
+ ADC    --      69     65/6D   75/7D    --/79     --      61      71
+ AND    --      29     25/2D   35/3D    --/39     --      21      31
+ ASL    0A      --     06/0E   16/1E    --/--     --      --      --
+ BIT    --      --     24/2C   --/--    --/--     --      --      --
+ CMP    --      C9     C5/CD   D5/DD    --/D9     --      C1      D1
+ CPX    --      E0     E4/EC   --/--    --/--     --      --      --
+ CPY    --      C0     C4/CC   --/--    --/--     --      --      --
+ DEC    --      --     C6/CE   D6/DE    --/--     --      --      --
+ EOR    --      49     45/4D   55/5D    --/59     --      41      51
+ INC    --      --     E6/EE   F6/FE    --/--     --      --      --
+ LDA    --      A9     A5/AD   B5/BD    --/B9     --      Al      B1
+ LDX    --      A2     A6/AE   --/--    B6/BE     --      --      --
+ LDY    --	A0     A4/AC   B4/BC    --/--     --      --      --
+ LSR    4A      --     46/4E   56/5E    --/--     --      --      --
+ ORA	--	09     05/0D   15/1D    --/19     --      01      11
+ ROL    2A      --     26/2E   36/3E    --/--     --      --      --
+ ROR    6A      --     66/6E   76/7E    --/--     --      --      --
+ SBC    --      E9     E5/ED   F5/FD    --/F9     --      E1      F1
+ STA    --      --     85/8D   95/9D    --/99     --      01      91
+ STX    --      --     86/8E   --/--    96/--     --      --      --
+ STY    --      --     84/8C   94/--    --/--     --      --      --
+ ========================================================================
+ JMP    --      --     --/4C   --/--    --/--     6C      --      --
+ JSR    --      --     --/20   --/--    --/--     --      --      --
+</pre><br>
+<A HREF="syndx.htm">Back to Index</A>
+ or <A HREF="#apx">Back to Appendix</A>
+<br>
+</body></html>
+

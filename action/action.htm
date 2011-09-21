@@ -1,0 +1,475 @@
+<html><head>
+<title> ACTION! Quick Reference </title>
+<meta name="meta-generator" content="ATARI">
+<meta name="audience" content="developers">
+<meta name="author" content="SysOp Fox-1">
+<meta name="copyright" content="(none)">
+<meta name="page-topic" content="software">
+<meta name="page-type" content="help">
+<meta name="robots" content="index, follow">
+<meta name="description" content="ACTION! is an ATARI 8-Bit only programming language, and is a mixture of the structures from PASCAL, C, and BASIC.  It produces very fast code, and can be compiled with inline runtime.  The final executable is a binary file which can be loaded with DOS, just like real assembler-coded programs...">
+<meta name="keywords" content="action!, atari, atari 8-bit, atari xe, action, atari xl, atari 8bit, programming, help, assembly, coding, 6502, freaks, runtime, assembler, editor, code, error, reference, quick">
+<meta name="keywords" content="file, index, table, contents, computer, source, compiling, description, disk, cartridge, compiler, ascii, device, xe, xl, xegs, block, record, string, basic, pascal, c, c+, cc65, bbs">
+<meta name="revisit-after" content="25 days">
+</head>
+
+<body background="decor/bg_mac.gif" bgcolor="#c0f8c0">
+<a name="tableofcontents"></a>
+
+<table width="96%" align="center" border="1" bgcolor="#540206"><tr align="center"><td>
+<table width="100%" bgcolor="#540206">
+<tr align="center"><td><a style="font-size: x-large; font-family: Arial Black; color: #eaea32;">ACTION!&nbsp;</a></td>
+<td rowspan="2" align="center"><img src="decor/a8bit_ani.gif" width=104 height=26 alt="Atari 6502" border=0></td>
+<td align="center"><a style="font-size: xx-small; font-family: arial; color: #a6ffa6;">
+(typed up by Rene Gambke rega@uriela.in-berlin.de)</a>
+</td></tr><tr><td align="center" valign="top">
+<a style="font-size: small; font-family: cursive; color: #a6ffa6;">
+Quick Reference File</a></td>
+<td align="center" valign="top">
+<a style="font-size: xx-small; font-family: Comic Sans MS; color: #a6ffa6;">
+(HTML conversion by SysOp Fox-1, February 2000)</a>
+</td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; ont-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/a8men.htm"><img src="decor/u_arrow.gif" alt="To Main-Index" border=0 height=13 width=13>
+To Main-Index</a></td></tr></table>
+<hr width="100%" size="2" style="color: #a0a020;"><br><br>
+
+<table width="99%" align="right" bgcolor="#c0f8c0"><tr align="center"><td>
+<table width="42%" cellspacing="9" cellpadding="2" align="center">
+<tr align="left"><td><a style="color: #400490; font-size: medium; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="action.htm#editor"><img src="decor/r_arrow.gif" alt="Editor Commands" border=0 height=26 width=26>
+Editor Commands Summary</a></td></tr>
+<tr align="left"><td nowrap><a style="color: #400490; font-size: medium; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="action.htm#cursor"><img src="decor/r_arrow.gif" alt="Cursor Movement" border=0 height=26 width=26>
+Cursor Movement Within Window</a></td></tr>
+<tr align="left"><td nowrap><a style="color: #400490; font-size: medium; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="action.htm#monitor"><img src="decor/r_arrow.gif" alt="Monitor Commands" border=0 height=26 width=26>
+Monitor Commands Summary</a></td></tr>
+<tr align="left"><td><a style="color: #400490; font-size: medium; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="action.htm#error"><img src="decor/r_arrow.gif" alt="Error Codes" border=0 height=26 width=26>
+Error Codes</a></td></tr>
+</table><br><br><br>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; ont-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/a8men.htm"><img src="decor/u_arrow.gif" alt="To Main-Index" border=0 height=13 width=13>
+To Main-Index</a></td></tr></table>
+
+<hr width="100%" size="2" style="color: #a0a020;"><br><br><br>
+
+<table cellspacing="6" >
+<tr><td colspan="3" align="center">
+<a name="editor" style="font-size: large; font-family: Arial; font-weight: bold; font-style: normal; color: #801212;">
+*** Editor Commands Summary ***</a>
+</td></tr>
+
+<tr><td colspan="2" align="center"><a style="font-size: x-small; font-family: Arial; font-style: normal; color: #003000;">
+Note: &lt;C/S&gt;--denotes pressing CONTROL & SHIFT at the same time.</a></td></tr>
+<tr style="font-size: small; font-family: monospace; color: #121282; font-weight: bold;">
+<td colspan="2">I/O COMMANDS:</td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+1. Read a file --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+position the cursor, &lt;C/S&gt;R, enter filespec.</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+2. Disk Directory --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt;R, ?n:*.* (n=device number).</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+3. Write a file --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt;W, enter filespec</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+4. List to printer --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt;W, enter P:</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+5. Start of Line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; &lt;</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+6. End of Line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; &gt;</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+7. Next Line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;Return&gt;</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+8. Tab--&gt;</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;Tab&gt;</a></td></tr>
+</table>
+
+<br><br><table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-style: normal; text-decoration: none; text-align: center;" href="action.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+
+<br><br><hr width="100%" size="2" style="color: #a0a020;"><br><br>
+
+<table cellspacing="6">
+<tr><td colspan="2" align="center">
+<a name="cursor" style="font-size: large; font-family: Arial; font-weight: bold; font-style: normal; color: #801212;">
+*** Cursor Movement Within Window ***</a></td></tr>
+
+<tr><td nowrap><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+1. Up, Down, Left, Right--&gt;</a></td>
+<td><a style="font-size: small; font-family: serif; color: #121212; font-weight: bold;">
+&lt;Cntrl&gt;&lt;appropriate arrow&gt;.</a></td></tr>
+
+<tr><td colspan="2" align="center"><a style="font-size: x-small; font-family: Arial; font-style: normal; color: #003000;">
+Note: Up and Down arrows are dynamic in window 2 when Directory is present.</a></td></tr>
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+2. Tab Handling:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Set tab --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;Shift&gt;&lt;Set tab&gt;</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; b. Clear tab --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;Ctrl&gt;&lt;Clear tab&gt;.</a></td></tr>
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+3. Window movement:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Start of file --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; H</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; b. Up one screen --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; &lt;up arrow&gt;.</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; c. Down one screen --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; ]</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; d. Left one character --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; [</a></td></tr>
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+4. Text entry:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Enter program --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+enter text</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; b. Next Line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;Return&gt;</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; c. Control characters --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+precede each character with &lt;Esc&gt;</a></td></tr>
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+5. Delete Text:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Back 1 character --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;Back S&gt;</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; b. Cursor --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;Cntrl&gt;&lt;Delete&gt;</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; c. Delete line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+position cursor on line, &lt;Shift&gt;&lt;Delete&gt;</a></td></tr>
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+6. Insert/Replace text:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Toggle modes --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; I</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; b. Insert line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;Shift&gt;&lt;Insert&gt;</a></td></tr>
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+7. Restore Altered Line:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Restore line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+don't move cursor, &lt;C/S&gt; U</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; b. Recall line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+don't move cursor, &lt;C/S&gt; P</a></td></tr>
+
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+8. Text blocks:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Load Block --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+position cursor, &lt;Shift&gt;&lt;Delete&gt; until done</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; b. Paste block --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+position cursor, &lt;C/S&gt; P</a></td></tr>
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+9. Searches/Substitutions:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Find String --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; F, enter string</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; b. Substitute --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; S, enter new string</a></td></tr>
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+10. Breaking & Combining Lines:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Break line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+position cursor, &lt;C/S&gt;&lt;RETURN&gt;</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; b. Combine line --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+put cursor at front of second line, &lt;C/S&gt;&lt;BACK S&gt;</a></td></tr>
+
+<tr><td colspan="2"><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+11. Editor to Monitor:</a></td></tr>
+<tr><td><a style="font-size: small; font-family: Times New Roman; color: #124262; font-weight: bold;">
+&nbsp; a. Leave editor --</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+&lt;C/S&gt; M</a></td></tr>
+</table>
+
+<br><br><table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-style: normal; text-decoration: none; text-align: center;" href="action.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+
+<br><br><hr width="100%" size="2" style="color: #a0a020;"><br><br>
+
+<table cellspacing="6">
+<tr><td colspan="2" align="center">
+<a name="monitor" style="font-size: large; font-family: Arial; font-weight: bold; font-style: normal; color: #801212;">
+**** MONITOR COMMANDS SUMMARY ****</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+B</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+restart Action! system</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+C (&quot;&lt;file spec&gt;&quot;)</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+compile an Action! program</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+D</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+call DOS</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+E</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+go to the Editor</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+O</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+go to the Options Menu</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+P</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+procede from program halt</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+R (&quot;&lt;file spec&gt;&quot;)</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+run an Action! program</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+SET &lt;address&gt;=&lt;value&gt;</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+sets a value in a specified memory location</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+W (&quot;&lt;file spec&gt;&quot;)</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+save a compiled program to disk</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+X &lt;statement&gt;:,&lt;statement>:</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+execute Action! language statement(s) &lt;address&gt; display<br>
+value of an address (or compiler constant)</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+* &lt;address&gt;</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+display values of all addresses, starting at an address<br>
+(or compiler constant)</a></td></tr>
+</table>
+
+<br><br><table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-style: normal; text-decoration: none; text-align: center;" href="action.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+
+<br><br><hr width="100%" size="2" style="color: #a0a020;"><br><br>
+
+<table cellspacing="6">
+<tr><td colspan="2" align="center">
+<a name="error" style="font-size: large; font-family: Arial; font-weight: bold; font-style: normal; color: #801212;">
+**** ERROR CODES ****</a></td></tr>
+
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+0</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Out of system memory.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+1</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Missing &quot; (double quote) &quot; in a string.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+2</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Nested Defines.  You cannot nest the Define directive.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+3</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Global variable symbol table full.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+4</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Local variable symbol table full.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+5</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Set directive syntax error.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+6</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Wrong declaration format.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+7</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Invalid argument list.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+8</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Variable not declared.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+9</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+A variable was used where a constant of some kind was required.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+10</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Illegal assignment.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+11</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Unknown error. System error routines have been impaired
+<br>so an error can't be defined.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+12</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Missing THEN</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+13</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Missing FI.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+14</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Out of code space.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+15</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Missing DO.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+16</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Missing TO.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+17</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Bad expression. Illegal expression format.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+18</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Unmatched parenthesis.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+19</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Missing OD.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+20</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Can't allocate memory.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+21</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Illegal array reference.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+22</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Input file too large. Break it up.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+23</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Illegal conditional statement.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+24</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Illegal FOR statement syntax.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+25</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Illegal EXIT. No DO - OD loop for the EXIT to EXIT out of.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+26</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Nesting too deep (16 levels maximum).</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+27</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Illegal TYPE syntax.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+28</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Illegal RETURN.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+61</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+Out of Symbol Table space.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: Courier; color: #621242; font-weight: bold;">
+128</a></td>
+<td><a style="font-size: small; font-family: serif; color: #421262; font-weight: bold;">
+BREAK key was used to stop program execution.</a></td></tr>
+<tr><td><a style="font-size: medium; font-family: serif; color: #220632; font-weight: bold;">
+*Go</a></td></tr></table>
+<br><br><hr width="100%" size="2" style="color: #a0a020;"><br>
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-style: normal; text-decoration: none; text-align: center;" href="action.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+</td></tr></table>
+</body></html>

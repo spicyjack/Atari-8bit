@@ -1,0 +1,162 @@
+<html>
+<head>
+<title>SynAssembler Manual</title>
+</head>
+<body BGCOLOR="#ffffff" LINK=#0000FF  VLINK=#FF0000  ALINK=#FF0000>
+<A HREF="index.htm">Back to Main Page</A><br>
+<h2><b><center>SYNASSEMBLER</center></b></h2>
+<br><center><img src=synapse.gif></center><br><br>
+<b><center>SynAssembler by SYNAPSE SOFTWARE</center>
+<br><center>An Adaptation by Steve Hales</center>
+<center>of the S.C. Assembler II - Version 4.0</center><br>
+<br><center>SynAssembler (c) 1982</center>
+<center>SYNAPSE SOFTWARE</center></b><br><br>
+<center><A NAME="ndx">INDEX</A></center><center>=======</center><br>
+<BLOCKQUOTE><A HREF="#intro">Introduction</A><br>
+<BLOCKQUOTE><A HREF="#edt">Editing Features</A><br>
+<a href="#mus">Memory Usage</a></BLOCKQUOTE>
+<A HREF="syncom.htm">Commands</A>
+<BLOCKQUOTE>Editing commands Overview<br>
+Editing commands-Detail<br>
+DOS commands<br>
+Monitor commands</BLOCKQUOTE>
+<A HREF="synfmt.htm">Source Program Format</A>
+<BLOCKQUOTE>General Syntax<br>
+Labels<br>
+Local Labels<br>
+Operand Expressions<br>
+Decimal and Hexidecimal Numbers<br>
+Asterisk<br></BLOCKQUOTE>
+<A HREF="syndir.htm">Directives</A><br>
+<A HREF="synadr.htm">Addressing Modes</A><br>
+<A HREF="synbug.htm">Debugging Programs</A>
+<BLOCKQUOTE>Step<br>
+Trace<br>
+Examine and Change Registers<br></BLOCKQUOTE>
+<br>
+<A HREF="synapx.htm">APPENDIX</A><br>
+<br>
+<table width="75%">
+<tr><td width="60%">Monitor tricks</td><td>Appendix I</td></tr>
+<tr><td>Memory Map</td><td>Appendix II</td></tr>
+<tr><td>Converting Atari Assembler/Editor Source</td>
+<td>Appendix III</td></tr>
+<tr><td>Bibliography</td><td>Appendix IV</td></tr>
+<tr><td>Instruction Code Table</td><td>Appendix V</td></tr></table>
+</BLOCKQUOTE><br>
+<A NAME="intro"><H3>INTRODUCTION</H3></A>
+<A HREF="#ndx">Back to Index</A><br>
+SYNASSEMBLER is a convenient and powerful tool for software development on
+ the <b>Atari</b> computer system.  The assembler uses standard 6502
+ mnemonics and syntax, and includes many useful features for creating,
+ editing, assembling and testing your assembly language programs.  Now
+ assembly language programming is almost as easy as programming in BASIC.
+<br><br>
+Here is a summary of the most exciting features:<br><br>
+<UL type="square">
+<li> Full use of the standard Atari Screen Editor<br>
+<li> Tab stops for opcode, operand, and comment fields<br>
+<li> Fast parameterized renumber and delete command<br>
+<li> Uses BASIC like commands for files (eg. LOAD, SAVE, BLOAD etc.)<br>
+<li> Labels up to 32 characters long (lowercase letters and . accepted)<br>
+<li> English ERROR messages<br>
+<li> Ability to append source programs from tape or disk<br>
+<li> Display of memory usage<br>
+<li> Multiple source files, using .IN directive<br>
+<li> Store object code directly to disk file, using the .TF directive<br>
+<li> Listing to screen option using .LI ON and .LI OFF<br>
+<li> Assembles 6500 lines/minute<br>
+<li> Local labels<br>
+<li> Offending line is listed after an ERROR occurs<br>
+<li> Value of .EQ and address of .BS are printed on listing<br>
+<li> ASSEMBLER, DOS, HARDWARE, and OS locations protected during assembly<br>
+<li> ATASCII literals in address expressions<br>
+<li> Symbol table printed in alphabetical order<br>
+</UL><br>
+
+Synassembler requires 48K of RAM and one disk drive to operate.  Very large
+ programs can now be developed, using the "INCLUDE" and "TARGET FILE"
+ capabilities.  These allow the assembly of multiple source files, and
+ direct storage of object code on binary files.
+<br><br><br>
+We have included several sample programs to illustrate the use of the
+ SYNASSEMBLER as well as being useful routines. These include:
+<br><br><table width="90%"><tr><td width="28%">
+1. <b>HARSH SCROLL</b></td>
+<td>:A Utility to coarse scroll the Atari screen display</td></tr>
+<tr><td>2. <b>FINE SCROLL</b></td><td>
+:A utility to fine scroll the Atari screen display</td></tr>
+<tr><td>3. <b>PM MOVER</b></td>
+<td>:A utility to move players and missiles on the screen</td></tr>
+<tr><td>4. <b>BELL</b></td><td>:Ring the bell using Atari sound generators.
+</td></tr></table>
+<br>
+Blanks are compressed in source files to conserve memory and save space on
+ disks.  The compression algorithm replaces any string of consecutive blanks
+ with a single code byte.  Also, Atari assembler files are compatible and
+ only require minor modification to assemble correctly. (See APPENDIX for
+ further detail).  Synassembler uses a memory-efficient method of storing
+ the symbol table, with variable length entries.  The symbol table is
+ maintained in alphabetical order, using a high speed hashing scheme.  The
+ symbol table is maintained in memory until a new assembly is started or the
+ NEW command is typed.  This allows the RUN and VAL commands to be more
+ useful and effective.
+<br><br>
+Assembler error messages are printed on the Screen and accompanied by a
+ pleasant bell like tone on the speaker. (At least as pleasant as an ERROR
+ message can be).  After an assembly error is detected the offending line is
+ listed to the screen automatically, in a position for easy editing.
+<br><br><br>
+<A NAME="edt"><H3>EDITING FEATURES</H3></A>
+<A HREF="#ndx">Back to Index</A><br>
+Any time the cursor is at the beginning of a line, typing [TAB] will cause
+ the next line number to be generated.  Immediately after loading, the "next
+ line number" will be 10.  The number will be displayed as five digits and a
+ trailing blank.  The cursor will be in a position for the first character
+ of a label, or the asterisk for a comment line, or a semi-colon.
+<br><br>
+The "next line number" is always the value of the previously entered line
+ number plus the current "increment".  The increment is normally 10, but you
+ can set it to any reasonable value with the INCREMENT command.
+<br><br>
+If you type the [TAB] in any other position than the beginning of a line,
+ it will cause a "tab" to the next tab stop.
+<br><br>
+<b>TAB STOPS</b><br>
+<br>
+The standard tab stops have been changed to allow for a nine character label
+ before the opcode.  Of course, you may use any length label from 1 to 32
+ characters followed by a blank and an opcode; but the use of the tab stops
+ make for nicer looking programs. (Longer labels look nicer, if left on a
+ line by themselves.)
+<br><br>
+<b>CURSOR CONTROL</b><br>
+<br>
+SYNASSMBLER allows continued use of the ATARI cursor controls by pressing the
+ [CTRL] key plus one of the four arrow keys on the right side of the
+ keyboard. In addition, SynAssembler makes full use of the ATARI screen
+ editor.
+<br><br>
+<a name="mus"><h3>MEMORY USAGE</h3></a>
+<A HREF="#ndx">Back to Index</A><br>
+The SYNASSEMBLER program is about 8000 bytes long, and occupies $9C00 through
+ $BC1F in memory.  The screen begins at $BC1F and goes through $BFFF, while
+ the source program begins at the top of DOS and goes to $9C00.
+<br><br>
+During source program entry or editing, memory usage is monitored so that the
+ source program does not grow so large as to overlap the symbol table.
+ Overlapping will cause the "MEMORY FULL" error. message to print.  During
+ assembly, memory required by the symbol table is monitored to prevent the
+ symbol table from overlapping the source program.  Overlapping will generate
+ the "MEMORY FULL" error message and abort the assembly.
+<br><br>
+In addition, memory usage by the object program is monitored, so that it will
+ not destroy the source program, DOS, the Operating System, and hardware.
+ Therefore, if the object program bytes are directed at any memory protected
+ addresses the "MEMORY PROTECT" error message will be printed and assembly.
+<br><br>
+<A HREF="index.htm">Back to Main Page</A> or 
+<A HREF="#ndx">Back to Index</A> or 
+<A HREF="syncom.htm">Next Section</A><br>
+</body>
+</html>

@@ -1,0 +1,20 @@
+remote.com
+        a simple utility to send commands to sio2pc and get the
+        status of its drives.  Works just like the remote utility
+        that game with sio2pc but it gets its commands from the
+        command line for convenice of SpartaDos users. It even has a
+        way to perform a cold start afterwards so you can load a disk
+        as D1: and reboot. (to run it)
+remote.txt
+	documentation for remote.com
+remote.asm
+	The source code to the above
+remote.bas
+remote.lst
+	Atari BASIC USR routines to communcate with SIO2PC.  The DOC's
+	are within the comments of the program.
+b_send.asm
+b_sats.asm
+b_lnth.asm
+	The source code to the USR routines above.
+

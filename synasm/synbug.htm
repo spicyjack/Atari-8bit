@@ -1,0 +1,114 @@
+<html>
+<head>
+<title>Debugging Programs</title>
+</head>
+<body BGCOLOR="#ffffff" LINK=#0000FF  VLINK=#FF0000  ALINK=#FF0000>
+<A HREF="syndx.htm">Back to Index</A><br>
+<center><a name="bug"><h3>DEBUGGING PROGRAMS</h3></center>
+<blockquote><a href="#stp">Step</a><br>
+<a href="#trc">Trace</a><br>
+<a href="#xmn">Examine and Change Registers</a><br></blockquote><br>
+Each step ("S") command decodes, display,s and executes one instruction
+ at a time, and the trace ("T") command quickly steps through a program,
+ stopping when a BRK instruction is executed.
+<br><br><br>
+Each step command causes the monitor to execute the instruction in
+ memory pointed to by the program pointer. The instruction is
+ displayed in its disassembled form, then executed. The contents of
+ the 6502's internal registers are displayed after the instruction
+ is executed. Then the program counter is bumped up to point to the
+ next instruction in the program.
+<br><br><br>
+Here's what happens when you list and then step through a sample program:
+<br><pre>
+Ok.
+MON
+Zynapse monitor
+[*] Ok.
+4000L
+4000:  A9 05        LDA #$05
+4002:  0A           ASL
+4003:  0A           ASL
+4004:  8D 00 20     STA $2000
+4007:  00           BRK
+4008:  00           BRK
+  *
+  *
+  *
+4015:  00           BRK
+4016:  00           BRK
+[*] Ok.
+</pre><br><br>
+<a name="stp"><h4>STEP EXAMPLE:</h4></a>
+<A HREF="#bug">Back to Debugging</A>
+<pre>
+[*] Ok.
+4000S
+4000:  A9 05       LDA #$05
+A=05  X=00 Y=00 P=30 S=FD
+[*] Ok.
+S
+4002:  0A          ASL
+A=0A  X=00 Y=00 P=30 S=FD
+[*] Ok.
+200
+0200:  90
+[*] Ok.
+S
+4003:  0A          ASL
+A=14  X=00 Y=00 P=30 S=FD
+[*] Ok.
+S
+4004:  8D 00 20    STA $2000
+A=14  X=00 Y=00 P=30 S=FD 
+[*] Ok.
+2000
+2000:  14
+[*] Ok.
+S
+4007:  00          BRK
+A=14  X=00 Y=00 P=30 S=FD
+[*] OK.
+</pre>
+<br><br>
+<a name="trc"><h4>TRACE EXAMPLE:</h4></a>
+<A HREF="#bug">Back to Debugging</A>
+<pre>
+Ok.
+MON
+Zynapse monitor
+[*] Ok.
+4000T
+4000:  A9 05       LDA #$05
+A=05  X=00 Y=00 P=30 S=FD
+4002:  0A          ASL
+A=0A  X=00 Y=00 P=30 S=FD
+4003:  0A          ASL
+A=14  X=00 Y=00 P=30 S=FD
+4004:  8D 00 20    STA $2000
+A=14  X=00 Y=00 P=30 S-FD
+4007:  00          BRK
+A=14  X=00 Y=00 P=30 S=FD
+[*] Ok.
+</pre>
+<br><br>
+<a name="xmn"><h4>EXAMINING AND CHANGING REGISTERS</h4></a>
+<A HREF="#bug">Back to Debugging</A>
+<br><br>
+The EXAMINE command is invoked by pressing "R" which tells the
+ monitor to display the contents of the five 6502 registers on
+ the screen. To change these values, type the semi-colon and the
+ new values:
+<pre>
+[*] Ok.
+R
+A=0A X=FF Y=D8 P=B0 S=F8
+*;B0 02
+R
+A=B0 X=02 Y=D8 P=B0 S=F8
+</pre><br>
+<A HREF="syndx.htm">Back to Index</A> or 
+<A HREF="#bug">Back to Debugging</A> or 
+<A HREF="synapx.htm">Next Section</A><br>
+</body>
+</html>

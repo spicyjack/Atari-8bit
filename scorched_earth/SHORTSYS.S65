@@ -1,0 +1,527 @@
+;-------------------------------------
+;           SHORTSYS.S65
+;      last update 19.12.2000
+;A library of macros and system
+;variables created specifically
+;for ATARI XL/XE 8-bit computers
+;compatible with MAC65 assembler
+;-------------------------------------
+
+
+;-------------------------------------
+;6502 specific macros (typing accelerators)
+;-------------------------------------
+         .MACRO STOP
+;	STOP
+;	Hangs processor
+@S       JMP @S
+         .ENDM
+;-------------------------------------
+         .MACRO PHX
+;	PHX
+;	pushes X to stack. A is changed!
+         TXA
+         PHA
+         .ENDM
+;-------------------------------------
+         .MACRO PLX
+;	PLX
+;	gets X from stack. A is changed!
+         PLA
+         TAX
+         .ENDM
+;-------------------------------------
+         .MACRO PHY
+;	PHY
+;	pushes Y to stack. A is changed!
+         TYA
+         PHA
+         .ENDM
+;-------------------------------------
+         .MACRO PLY
+;	PLY
+;	gets Y from stack. A is changed!
+         PLA
+         TAY
+         .ENDM
+;-------------------------------------
+         .MACRO ICL
+;	ICL absolute_addr
+;	Increments byte of the given 'absolute_addr'
+;	and loads it to the A
+         INC %1
+         LDA %1
+         .ENDM
+;-------------------------------------
+         .MACRO DCL
+;	DCL absolute_addr
+;	Decrements byte of the given 'absolute_addr'
+;	and loads it to the A
+         DEC %1
+         LDA %1
+         .ENDM
+;-------------------------------------
+         .MACRO LBEQ
+;	Long BEQ
+         BNE ?MO7
+         JMP %1
+?MO7
+         .ENDM
+;-------------------------------------
+         .MACRO LBNE
+         BEQ ?MO8
+;	Long BNE
+         JMP %1
+?MO8
+         .ENDM
+;-------------------------------------
+         .MACRO LBCS
+;	Long BCS
+         BCC ?MO9
+         JMP %1
+?MO9
+         .ENDM
+;-------------------------------------
+         .MACRO LBCC
+;	Long BCC
+         BCS ?MO10
+         JMP %1
+?MO10
+         .ENDM
+;-------------------------------------
+         .MACRO LBPL
+;	Long BPL
+         BMI ?MO11
+         JMP %1
+?MO11
+         .ENDM
+;-------------------------------------
+         .MACRO LBMI
+;	Long BMI
+         BPL ?MO12
+         JMP %1
+?MO12
+         .ENDM
+;-------------------------------------
+         .MACRO MOVE.L
+;	MOVE.L	source_addr,dest_addr,length
+;	Moves 'length' bytes long block of bytes
+;	beginning from 'source_addr' to 'dest_addr'
+;	The macro tries to create the optimal code for given data
+;	CAUTION! Blocks shouldn't overlap! Macro is self-modyfying!
+         .IF %3<$0100
+           LDX #%3-1
+@MC        LDA %1,X
+           STA %2,X
+           DEX
+           .IF %3>$7F
+             CPX #$FF
+             BNE @MC
+             .ELSE
+             BPL @MC
+             .ENDIF
+           .ENDIF
+         .IF %3&$FF<>$00
+           .IF %3>$0100
+             LDA #$00
+             STA ?LI
+             STA ?LI+1
+?MO          LDA %1
+?MO1         STA %2
+             INC ?MO+1
+             BNE ?MO2
+             INC ?MO+2
+?MO2         INC ?MO1+1
+             BNE ?MO3
+             INC ?MO1+2
+?MO3         INC ?LI
+             BNE ?MO4
+             INC ?LI+1
+?MO4         LDA ?LI+1
+             CMP # >%3
+             BNE ?MO
+             LDA ?LI
+             CMP # <%3
+             BNE ?MO
+             ;lda #0
+             ;sta ?LI
+             ;sta ?LI+1
+             BEQ ?MO5
+?LI           .WORD 0
+?MO5
+             .ENDIF
+           .ELSE
+           LDX # >%3
+           LDY #$00
+?MO        LDA %1,Y
+?MO1       STA %2,Y
+           INY
+           BNE ?MO
+           INC ?MO+2
+           INC ?MO1+2
+           DEX
+           BNE ?MO
+           .ENDIF
+         .ENDM
+;-------------------------------------
+         .MACRO FILL
+;	FILL	begin,end,#value
+;	Fills memory with a given value (byte)
+;	Caution! Full memory pages only
+;	Caution! Macro is self-modyfying!
+          moveq.w  %1,?FL+1
+         LDY #$00
+         LDX # >[%2-%1]-$0100
+         LDA #%3
+?FL      STA %1,Y
+         INY
+         BNE ?FL
+         INC ?FL+2
+         DEX
+         BPL ?FL
+         .ENDM
+;-------------------------------------
+         .macro DCMP
+         ;compares two double byte variables
+         ;works like a regular cmp
+         ;(all branches after DCMP work as after CMP)
+         lda %1+1
+         cmp %2+1
+         bne ?dcmp
+         lda %1
+         cmp %2
+?dcmp
+	.endm
+         .macro DCMP.Q
+         ; DCMP.Q varWORD,constWORD
+         ;compares double byte variable and constant
+         ;works like a regular cmp
+         ;(all branches after DCMP work as after CMP)
+         lda %1+1
+         cmp #>%2
+         bne ?dcmp.q
+         lda %1
+         cmp #<%2
+?dcmp.q
+	.endm
+;-------------------------------------
+         .MACRO MOVE.B
+         LDA %1
+         STA %2
+         .ENDM
+;-------------------------------------
+         .MACRO MOVE.W
+         LDA %1
+         STA %2
+         LDA %1+1
+         STA %2+1
+         .ENDM
+;-------------------------------------
+         .MACRO MOVEQ.W
+         LDA # <%1
+         STA %2
+         LDA # >%1
+         STA %2+1
+         .ENDM
+;-------------------------------------
+         .MACRO MOVEQ.B
+         LDA #%1
+         STA %2
+         .ENDM
+;-------------------------------------
+; adds %1 to %2 and saves result in %3
+; if there is no %3, result goes to %2
+         .MACRO ADD.W
+         CLC
+         LDA %2
+         ADC %1
+         .IF %0=3
+           STA %3
+           .ELSE
+           STA %2
+           .ENDIF
+         LDA %2+1
+         ADC %1+1
+         .IF %0=3
+           STA %3+1
+           .ELSE
+           STA %2+1
+           .ENDIF
+         .ENDM
+;-------------------------------------
+; %2 minus %1 result to %3
+; if %3 not present then result goes to %2
+         .MACRO SUB.W
+	 SEC
+         LDA %2
+         sbc %1
+         .IF %0=3
+           STA %3
+           .ELSE
+           STA %2
+           .ENDIF
+         LDA %2+1
+         sbc %1+1
+         .IF %0=3
+           STA %3+1
+           .ELSE
+           STA %2+1
+           .ENDIF
+         .ENDM
+;-------------------------------------
+         .MACRO ADD.Q
+	   .if %0=2
+	     .if %1=1
+               INC %2
+               BNE ?add.q
+               INC %2+1
+?add.q
+	     .else
+	       CLC
+	       LDA %2
+	       ADC #<%1
+	       STA %2
+	       .if %1<256
+	         bcc ?add.q2
+	         INC %2+1
+?add.q2
+	       .else
+	         LDA %2+1
+	         ADC #>%1
+	         STA %2+1
+	       .endif
+	     .endif
+	   .else
+	     CLC
+	     LDA %2
+	     ADC #<%1
+	     STA %3
+	     LDA %2+1
+	     ADC #>%1
+	     STA %3+1
+	   .endif
+         .ENDM
+;-------------------------------------
+         .MACRO SUB.Q
+	   .if %0=2
+	     .if %1=1
+               DEC %2
+               LDA %2
+               CMP #$ff
+               BNE ?sub.q
+               DEC %2+1
+?sub.q
+	     .else
+	       SEC
+	       LDA %2
+	       SBC #<%1
+	       STA %2
+	       .if %1<$100
+	         bcs ?sub.q2
+	         DEC %2+1
+?sub.q2
+	       .else
+	         LDA %2+1
+	         SBC #>%1
+	         STA %2+1
+	       .endif
+	     .endif
+	   .else
+	     SEC
+	     LDA %2
+	     SBC #<%1
+	     STA %3
+	     LDA %2+1
+	     SBC #>%1
+	     STA %3+1
+	   .endif
+         .ENDM
+;-------------------------------------
+	.MACRO ROL.W
+	  ROL %1
+	  ROL %1+1
+	.ENDM
+;-------------------------------------
+	.MACRO ASL.W
+	  ASL %1
+	  ROL %1+1
+	.ENDM
+;-------------------------------------
+	.MACRO ROR.W
+	  ROR %1+1
+	  ROR %1
+	.ENDM
+;-------------------------------------
+	.MACRO LSR.W
+	  LSR %1+1
+	  ROR %1
+	.ENDM
+
+;-------------------------------------
+;ATARI XL/XE OS Specific macros
+;-------------------------------------
+         .MACRO VDLI
+;	VDLI #WORD
+;	Initialises Display List Interrupts
+         LDY # <%1
+         LDX # >%1
+         LDA #$C0
+         STY $0200
+         STX $0201
+         STA NMIEN
+         .ENDM
+;-------------------------------------
+         .MACRO VDL
+;	VDL #WORD
+;	Changes Display List addres
+;       (works only with system interrupts ON)
+         LDA # <%1
+         STA DLVECS
+         LDA # >%1
+         STA DLVECS+1
+         .ENDM
+;-------------------------------------
+         .MACRO VMAIN
+;	VMAIN #WORD
+;	Initialises Vertical Blank Interrupts
+;       (works only with system interrupts ON)
+         LDY # <%1
+         LDX # >%1
+         LDA #%2
+         JSR SETVBV
+         .ENDM
+;-------------------------------------
+         .MACRO RAMON
+;	RAMON
+;	Turns on RAM under system ROM
+         SEI
+         LDA #$00
+         STA NMIEN
+         LDA #$FE
+         STA PORTB
+         .ENDM
+;-------------------------------------
+         .MACRO RAMOFF
+;	RAMOFF
+;	Turns off "RAM under ROM"
+         LDA #$FF
+         STA PORTB
+         LDA #$C0
+         STA NMIEN
+         CLI
+         .ENDM
+;-------------------------------------
+         .MACRO KEY
+;	KEY
+;	waits for releasing and pressing "any key"
+         PHA
+?CK1      LDA SKSTAT
+         AND #$04
+         BEQ ?CK1
+?CK       LDA SKSTAT
+         AND #$04
+         BNE ?CK
+         PLA
+         .ENDM
+;-------------------------------------
+         .MACRO WAIT
+;	WAIT
+;	waits one frame (1/50 s(PAL) or 1/60s(NTSC))
+         LDA VCOUNT
+         STA WSYNC
+         STA WSYNC
+         STA WSYNC
+?WA      CMP VCOUNT
+         BNE ?WA
+         .ENDM
+;-------------------------------------
+	.MACRO PAUSE
+;	waits %1 number (byte) of frames
+	ldx #%1
+?PAUSELOOP
+	wait
+	dex
+	bne ?PAUSELOOP
+	.ENDM
+
+;-------------------------------------
+         .MACRO POKEY
+;	POKEY
+;	Initialises Pokey chip (required before playing sounds)
+          moveq.b 0,$D208
+          moveq.b 3,SKSTAT
+         .ENDM
+
+;-------------------------------------
+;ATARI XL/XE System and Hardvare Registers
+;-------------------------------------
+SETVBV   =   $E45C
+XITVBV   =   $E462
+SYSVBV   =   $E45F
+WSYNC    =   $D40A
+HSCROL   =   $D404
+VSCROL   =   $D405
+NMIEN    =   $D40E
+IRQEN    =   $D20E
+KBGET    =   $F2FD
+CHBASE   =   $D409
+CHBAS    =   $02f4
+DMACTL   =   $D400
+DMACTLS  =   $022f
+RANDOM   =   $D20A
+AUDF1    =   $D200
+VCOUNT   =   $D40B
+CONSOL   =   $D01F
+PORTA    =   $D300
+PORTB    =   $D301
+KBCODE   =   $D209
+KBCODES  =   $02fc
+TRIG0    =   $D010
+TRIG1    =   $D011
+SKSTAT   =   $D20F
+PMBASE   =   $D407
+HPOSP0   =   $D000
+PMCTL    =   $D01D
+GTIACTL  =   $D01B
+GTIACTLS =   $026F
+SIZEP0   =   $D008
+SIZEM    =   $D00C
+COLPF0   =   $D016
+COLPF1   =   $D017
+COLPF2   =   $D018
+COLPF3   =   $D019
+COLBAK   =   $D01A
+COLPF0S  =   $02c4
+COLPF1S  =   $02c5
+COLPF2S  =   $02c6
+COLPF3S  =   $02c7
+COLBAKS  =   $02c8
+DLVECS   =   $0230
+;-------------------------------------------------
+; KBCODE keeps code of the last pressed key
+; SKSTAT 	$ff - nothing pressed
+;		$FB - any key
+;		$f7 - shift
+;		$f3 - shift+key
+
+
+;-------------------------------------
+;List of macros in alphabetical order
+;-------------------------------------
+;	DCL 	absolute_addr
+;	FILL	begin,end,#value
+;	ICL 	absolute_addr
+;	KEY
+;	MOVE.L	source_addr,dest_addr,length
+;	PHX
+;	PHY
+;	PLX
+;	PLY
+;	POKEY
+;	RAMON
+;	RAMOFF
+;	STOP
+;	WAIT
+;	VDL #WORD
+;	VDLI #WORD
+;	VMAIN #WORD

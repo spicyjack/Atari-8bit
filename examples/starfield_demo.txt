@@ -1,0 +1,178 @@
+From twh1@gmx.de Wed Jul 24 21:22:07 2002
+Path: sn-us!sn-xit-01!supernews.com!iad-peer.news.verio.net!news.verio.net!fu-berlin.de!uni-berlin.de!p5088695c.dip.t-dialin.NET!not-for-mail
+From: Thomas Havemeister <twh1@gmx.de>
+Newsgroups: comp.sys.atari.8bit
+Subject: 3D Starfield (was Text effects)
+Date: Thu, 07 Mar 2002 20:03:04 +0100
+Lines: 160
+Message-ID: <u2ef8u8kh6p3icb6n5ul8r0gehnrlse22k@4ax.com>
+NNTP-Posting-Host: p5088695c.dip.t-dialin.net (80.136.105.92)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Trace: fu-berlin.de 1015527724 12394378 80.136.105.92 (16 [112582])
+X-Newsreader: Forte Agent 1.9/32.560
+Xref: sn-us comp.sys.atari.8bit:89361
+
+Howdy *.*!
+
+I found some old demonstration sources to bibo-assembler by compy
+shop. While Shawn Jefferson was asking for it I did understand the
+sources and rewrote it completly for better readability. It can be
+compiled with the wonderfull ATasm Atari Compiler and should be
+compatible to MAC/65. If you are interested in a text-file or
+binary-executable just e-mail me.
+
+Have fun!
+
+--- cut here ---
+
+; ----------------------------------------------------
+; constants
+; ----------------------------------------------------
+
+VDSLST	= $0200		; vector display list
+SDLSTL  = $0230		; shadow register that points to dl
+VVBLKI	= $0222		; VBI vector
+COLOR2  = $02c6		; shadow register color2
+COLOR4  = $02c8		; shadow register color4
+HPOSM3	= $d007		; horizontal position of missile3
+GRAFM	= $d011		; register for missiles
+COLPM3	= $d015		; color register for for missile3
+COLPF2	= $d018		; color register playfield2
+COLBK	= $d01a		; background color
+NMIEN	= $d40e		; VBI switch
+RANDOM	= $d20a		; (r) gets a random number
+WSYNC	= $d40a		; (w) stops cpu for a vertical synchronisation
+SYSVBV	= $e45f		; jump to OS VBI
+
+; ----------------------------------------------------
+; variables
+; ----------------------------------------------------
+
+starfield  = $5000	; array of random stars 
+speed	   = $5100      ; array of speed for each star
+colors	   = $5200	; array of color for each star
+
+; ----------------------------------------------------
+; segment: main program
+; ----------------------------------------------------
+	
+	*= $4000
+
+Start	lda #0			
+	sta NMIEN		; disable VBI's/DLI's
+	sta COLPF2		; set colors to black
+	sta COLBK
+	sta COLOR2
+	sta COLOR4
+
+;----------------------
+	lda #<DLI		; register new DLI subroutine
+	sta VDSLST
+	lda #>DLI
+	sta VDSLST+1
+
+	lda #<VBI		; register new VBI subroutine
+	sta VVBLKI
+	lda #>VBI
+	sta VVBLKI+1
+
+;----------------------
+	ldx #10			; prepare a loop for each line
+Setup	lda RANDOM		; load a random byte
+	sta starfield,x		; and save it as a new star position
+	
+	lda RANDOM              ; load another random byte
+	and #$3                 ; generate some speed informations
+	sta speed,x		; and save them
+	inc speed,x
+	
+	lda RANDOM		; at last save color information
+	sta colors,x		; and make it looking atari
+
+	inx			; repeat it, until all lines are done
+	bne Setup		
+
+; ---------------------
+	lda SDLSTL		; save the dl-program adress
+	sta $0			; into page zero
+	lda SDLSTL+1
+	sta $1
+
+	ldy #2			; and adjust the existing progamm
+	lda #$f0		; with command "$f0"
+	sta ($0),y		
+
+; ---------------------
+	lda #$c0		; enable VBI's/DLI's
+	sta NMIEN
+
+Loop	nop			; do what you like
+	jmp Loop		; endless loop
+
+; ----------------------------------------------------
+; DLI subroutine
+;
+; this is the tricky part of the starfield
+; normaly, a long blocky missile should be drawn
+; but DLI changes in each line the position and behaviour
+; ----------------------------------------------------
+
+DLI	pha                     ; save the registers to stack
+	tya
+	pha
+
+	lda #$80                ; draw a star in missile register
+	sta GRAFM		; (writes bit 7 in missile 3)
+
+	ldy #$d0		; prepare a loop
+Setstar lda starfield-1,y	
+	sta WSYNC		; wait for synchronize
+	sta HPOSM3		; 'paint the new' star
+	lda colors-1,y		
+	sta COLPM3		; and change the color
+	dey
+	bne Setstar		; repeat it for every single line
+	pla
+	tay
+	pla
+	rti
+
+; ----------------------------------------------------
+; VBI subroutine
+; 
+; here we calculate the 3d type fx and the new star 
+; positons. this is just changing the arrays on 
+; every vertical blank interrupt
+; ----------------------------------------------------
+
+VBI	ldy #0
+Move	lda starfield,y
+	clc
+	adc speed,y
+	sta starfield,y
+	dey
+	bne Move
+	jmp SYSVBV
+
+; ---------------------------------
+; segment: dos loader
+; ---------------------------------
+
+	*=  $02E0
+	.word Start
+
+--- cut here ---
+
+
+
+bye sez
+\thomsen
+
+-- 
+Sturz des Zaren & Take those Atarian care!
+Thomas Havemeister, Student of Commercial Information Technology
+Technical University of Ilmenau
+
+

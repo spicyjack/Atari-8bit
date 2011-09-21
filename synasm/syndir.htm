@@ -1,0 +1,292 @@
+<html>
+<head>
+<title>SynAssembler Manual</title>
+</head>
+<body BGCOLOR="#ffffff" LINK=#0000FF  VLINK=#FF0000  ALINK=#FF0000>
+<A HREF="syndx.htm">Back to Index</A><br>
+<center><A NAME="dir"><h3>DIRECTIVES</h3></a></center>
+<br>
+Twelve assembler directives are available through SYNASSEMBLER.
+<br><blockquote>
+<A HREF="#as"><b>.AS</b></a> (stores ASCII literals.)
+<br><br>
+<A HREF="#at"><b>.AT</b></a> (stores ATASCII literals)
+<br><br>
+<A HREF="#bs"><b>.BS</b></a> [expression]. (RESERVE [expression]
+ bytes at the current location.
+<br><br>
+<A HREF="#da"><b>.DA</b></a> [expression] enter data
+<br><br>
+<A HREF="#en"><b>.EN</b></a> ENd of sources optional
+<br><br>
+<A HREF="#eq"><b>.EQ</b></a> [expression] (EQuate labels)
+<br><br>
+<A HREF="#hs"><b>.HS</b></a> (define Hex data)
+<br><br>
+<A HREF="#li"><b>.LI</b></a> OFF (Turn off the assembly listing.)
+<br><br>
+<A HREF="#li"><b>.LI</b></a> ON (Turn on the assembly listing.)
+<br><br>
+<A HREF="#in"><b>.IN</b></a> [filename] .(Include a source program
+ the specified file.)
+<br><br>
+<A HREF="#or"><b>.OR</b></a> [expression] Indicates the originating
+ address of your assembled code.
+<br><br>
+<A HREF="#ta"><b>.TA</b></a> [expression] (Target Address)
+<br><br>
+<A HREF="#tf"><b>.TF</b></a> [filename] --Put the object program on
+ the specified file.
+</blockquote><br>
+<br>
+<A NAME="as"><h3>ASCII STRING: .AS daaa...ad</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+The .AS directive stores the binary form of the ascii characters
+ "aaa...a" in sequential locations beginning at the current location.
+ If a label is present, it is defined as the address where the first
+ character is stored.  The string "aaa ... a" may contain any number
+ of printing ASCII characters.  You indicate the beginning and end of
+ the string, by using any delimiter ("d" in the example), that you choose.
+<br><br>
+ASCII character codes are seven bit values.  The .AS directive normally
+ sets the high order bit (8th), to zero.  Some people like to use ascii
+ codes with the high order byte set to one, so SYNASSEMBLER includes an
+ option for this.
+<br><br>
+<b>.AS daaa....d</b> sets the high order bits=0<br>
+<b>.AS -daaa...d</b> sets the high order bits=1
+<br><br>
+This syntax restricts the choice of the delimiter slightly, in that
+ the delimiter can be any printing character other than a space or
+ a minus sign.  Since the Atari inverse characters are set with the
+ high order bits to zero, you merely put the minus sign before the
+ string and you will get the characters in inverse mode.
+<br>
+<A NAME="at"><h3>ATASCII STRING: .AT daaa...ad</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+This is the same as .AS except that output is in ATARI ASCII.
+<br>
+<A NAME="bs"><h3>BLOCK STORAGE: .BS exp</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+Reserves a block of <exp> bytes at the current location in the
+ program.  The expression specifies the number of bytes to advance
+ the location counter.  If there is a label, it assigned the value
+ at the beginning of the block.
+<br><br>
+The address of the beginning of the block will be printed in the
+ address column of the assembly listing.  If the object code is
+ being stored directly into memory, no bytes are stored for the
+ .BS directive.  However, if the object code is being written on
+ a file using the .TF directive, the .BS directive will write <exp>
+ bytes on the file. All the bytes written will have the value of $00.
+<br><br>
+<br>
+<h3><A NAME="da">DATA: label .DA expression (two bytes, LSB first)</a><br>
+     .DA #expression (one byte, LSB of expression)<br>
+     .DA /expression (one byte, MSB of expression)</h3>
+<A HREF="#dir">Back to Directives</A><br>
+
+Creates a constant or variable in your program.  The value of the
+ expression as one or two bytes, is stored at the current location.
+ If a label is present, it is defined as the address where the first
+ byte of data is stored.
+<br><pre>
+
+   4000: 0A 00 64
+   4003: 00 E8 03
+   4006: 10 27     00020 DEC.NUM       .DA 10,100,1000,10000
+   4008: 64        00030 VALUE         .DA #100
+   4009: FB        00040 VAL2          .DA #-5
+   400A: FF        00050 VAL3          .DA #$FF
+
+           --- Symbol table ----
+   4000: DEC.NLM
+   4009: VAL2
+   400A: VAL3
+   4008: VALUE
+</pre><br>
+
+<A NAME="en"><h3>END OF PROGRAM: .EN</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+This defines the end of the source program.  You would normally make
+ this the last line, but you may place it earlier in order to assemble
+ only a portion of the source program.  If no .EN is present anywhere
+ in your program, the assembler will assume you meant to put this the
+ last line.
+<br>
+<A NAME="eq"><h3>EQUATE: label .EQ [expression]</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+Defines the label to have the value of the expression.  If the expression
+ is not defined, an error message is printed (UNDEFINED LABEL), and the
+ offending line is listed out.  If you neglect to use a label with an
+ equate directive an error message (UNDEFINED LABEL), is printed.  In
+ either case,  the assembly is aborted so that you can correct the
+ error.  All page zero references must be made before they are used
+ or all labels defined after that reference will be off by 1.
+<br><pre>
+EXAMPLE
+
+          00020              .OR $80
+0080:     00030 NUM1         .BS 1
+0081:     00040 NUM2         .BS 1
+0082:     00050 TABLE1       .BS 1
+00E6:     00060 ADR          .BS 100
+          00070              .OR $4000
+          00080 * main program *
+
+    --- Symbol table ---
+
+00E6: ADR
+0080: NUM1
+0081: NUM2
+0082: TABLE1
+</pre><br>
+<A NAME="hs"><h3>HEX STRING: label .HS hhh...h</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+Converts a string of hex digits (hhh...h) to binary, two digits per
+ byte, and stores them starting at the current location.  If a label
+ is present, it is defined as the address where the first byte is
+ stored.  If you do not have an even number of hexadecimal digits,
+ the assembler aborts with an error message, (BAD ADDRESS), and
+ lists the offending line.  NOTE: Unlike hexadecimal numbers used
+ in the operand expressions you must NOT use a dollar sign with the
+ .HS directive.
+<br>
+<A NAME="li"><h3>LISTING CONTROL: .LI OFF and .LI ON</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+This pair of directives turns the assembly listing on and off.  If .LI
+ OFF is put at the beginning of the source program, and no LI ON is
+ used, no listing at all will be produced.  The program will assemble
+ much faster without a listing, as most of the time is consumed putting
+ the characters on the screen, and scrolling the screen up.
+<br><br>
+If you put .LI OFF at the beginning of your source program and .LI ON
+ at the end, only the alphabetized symbol table will print.
+<br><br>
+You may also use this pair of directives to bracket any portion of the
+ listing you may wish to see or not see.
+<br>
+
+<A NAME="in"><h3>INCLUDE: .IN [file name]</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+Causes the contents of the specified source file to be included in the
+ assembly.
+<br><br>
+The program which is in the memory at the time the ASM command is typed
+ is called the "root" program.  Only the root program may have .IN
+ directives in it.  If you attempt to put .IN directives in an included
+ program, the "NESTED INCLUDE FILE" error will print.
+<br><br>
+When the .IN directive is processed the root program is temporarily
+ "hidden" and the included program is loaded.  Assembly then continues
+ through the included program.  When the end of the included program
+ is reached, it is deleted from memory and the root program is restored.
+ Assembly then continues with the next line of the root program.
+<br><br>
+The .IN directive is useful in assembling extremely large programs which
+ cannot fit in memory all at once.  It is also useful for connecting a
+ library of subroutines with a main program.
+<br><br>
+The [filename] portion of the directive is in standard FILESPEC format.
+<pre>
+00020 * START OF PROGRAM
+00030                 .OR $5000
+00040                 .IN "D:PART1"
+00050                 .IN "D:PAPT2"
+00060                 .IN "D:PART3"
+00070                 .EN
+</pre><br>
+<A NAME="or"><h3>ORIGIN: .OR <expression></h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+This sets the program origin and the target address to the value of the
+ expression. Program orign, is the address at which the object program
+ will be executed. Target address is the address is the memory address
+ at which the object program will be stored during the assembly. The
+ .OR directive sets both of these addresses to the same value, which is
+ the normal way of operating. If you do not use the .OR directive the
+ assembler will set both the program origin and the target address to $4000.  If the <expressions> is not defined during SYNASSEMBLERS pass 1 prior to it's use in the .OR directive, an error message is printed and assembly is aborted.  The error message that appears is "UNDEFINED LABEL" and the offending line is listed for easy editing.
+<br>
+<A NAME="ta"><h3>TARGET ADDRESS: .TA [expression]</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+Sets the target address at which the object code will be stored
+ during assembly. The target address is distinct from the
+ program origin (which is either set by the .OR directive or
+ default at $4000). The .OR directive directive as we have seen,
+ sets both the origin and target address. The .TA directive
+ allows the added control of setting only the target address.
+ Object code is produced and ready to run at the program origin,
+ but is stored starting at the target address.
+<br>
+<A NAME="tf"><h3>TARGET FILE: .TF [filename]</h3></a>
+<A HREF="#dir">Back to Directives</A><br>
+Causes the object code generated to be stored an a binary file rather than
+ in memory.  Only the code which follows the .TF directive will be stored
+ on the file.  Code will be stored on the file until another .TF directive
+ is encountered, or until a .TA or .OR directive is encountered.  The
+ [filename] format is the standard ATARI filespec format.
+<br><br>
+When you wish to assemble a program which will execute at an address
+ normally occuppied by the assembler ($9C00 through $C000) or an already
+ resident source program, you need to use the .TA and the .OR directives.
+ Set the origin first, using the .OR directive and then set the target
+ address to a safe value using the .TA directive.  It is always safe to
+ start the target area at $4000.
+<pre>
+                   00010 *      SAMPLE PROGRAM TO ILLUSTRATE
+                   00020 *    THE .TA DIRECTIVE
+                   00030              .OR $1000
+                   00040              .TA $4000
+   1000: AD 0C 10  00050 MAIN         LDA TEMP.A
+   1003: AE 0D 10  00060              LDX TEMP.X
+   1006: AC 0E 10  00070              LDY TBIP.Y
+   1009: 4C 00 10  00080              JMP MAIN
+   100C: 32        00090 TEMP.A       .DA #50
+   100D: 64        00100 TEMP.X	      .DA #100
+   100E: 22        00110 TEMP.Y       .DA #34
+       --- Symbol table ---
+   1000: MAIN
+   100C: TEMP.A
+   100D: TEMP.X
+   100E: TEMP.Y
+</PRE><br>
+
+As you can see in the example, the assembly language listing looks as
+ though the program was stored at $1000.  However, the object code is
+ actually stored at $4000, which is the target address set in the .TA
+ directive. If we disassemble memory starting at $4000, we see:
+<br><PRE>
+
+Ok
+MON
+Zynapse monitor
+[*] Ok
+4000L
+
+4000:  AD 0C 10  LDA $100C
+4003:  AE 0D 10  LDX $100D
+4006:  AC 0E 10  LDY $100E
+4009:  4C 00 10  JMP $1000
+400C:  32        ???
+400D:  64        ???
+400E:  22        ???
+400F:  00        BRK
+4010:  00        BRK
+4011:  00        BRK
+4012:  00        BRK
+</PRE><br>
+
+After the assembly is complete, there are several ways to position the
+ code in memory where it really should be.  You can save the object
+ code on cassette or disk from its current location and reload it at
+ the correct location for execution.  Be sure not to reload it while
+ executing the assembler or you may clobber it.
+<br><br>
+Another method is to enter the monitor and use the monitor move command
+ (addr1 addr2.addr3M). This command will move the block of memory from
+ addr2 through addr3 to the area beginning at addr1.
+<br><br>
+<A HREF="syndx.htm">Back to Index</A> or 
+<A HREF="#dir">Back to Directives</A> or 
+<A HREF="synadr.htm">Next Section</A><br>
+</body>
+</html>

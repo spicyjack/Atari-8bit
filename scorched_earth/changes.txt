@@ -1,0 +1,75 @@
+Changes:
+
+Build 114
+2003-08-22
+- Results after each round are displayed in the right
+  sequence, i.e. the best one is on the top
+- during second and following rounds shooting sequence
+  is such that the worst tank shoots first
+The above changes does not look terrific, but there was
+a lot of thinking to do it correctly. What is the most
+important the overall game feeling improved a lot!
+
+program.s65
+	* added routine SortSequence
+textproc.s65
+	* changed routine DisplayResults to show
+	  round results in correct order
+
+Build 113
+2003-08-17
+- AI Opponents move barrels to the right position
+  before firing a bullet.
+- Purchase screen is not displayed for AI opponents.
+- There is 2 sec delay after displaying
+  "Deffensive" text i.e. text before death
+
+program.s65
+	* added routine MoveBarrelToNewPosition
+	  which rotates barrel of the tank until
+	  it sits at the right (newly randomized) angle
+textproc.s65
+	* added routine PurchaseAI
+	  it is a framework for all AI purchases
+SHORTSYS.S65
+	* new macro PAUSE (waits given number of frames)
+
+
+Bulid 112
+2003-08-15
+
+First attempts to create a framework for intelligent
+opponents (AI). Right now there is only one level
+of "intelligence" - Moron. Moron shoots at random angle
+with random force.
+
+program.s65
+	* routine Round checks the Skill level
+	  and if it is not human branches to
+	  ArtificialIntelligence routine.
+	* new routines:
+	  - ArtificialIntelligence
+	  - RandomizeForce
+	  - RandomizeAngle
+
+TO DO:
+	* nice rotating barrel of AI tank
+	* AI weapon purchase and usage
+	* AI better than Moronic... (but how...)
+	* tanks' shooting seqence shoud be from
+	  weakest to the strongest, not random
+
+Bulid 111
+2003-07-27
+
+program.s65:
+	* added sequentional shooting
+	  (not necesarily tank nr 1 shoots first)
+	* added routine "RandomizeSequence" that is called
+	  before each round
+	* initial angle of the tank's barrel is randomized
+	  (was always 45 degrees right)
+variables.s65
+	* added table "TankSequence"
+grafproc.s65
+	* shorter delay during Flight

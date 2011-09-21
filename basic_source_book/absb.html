@@ -1,0 +1,271 @@
+<html>
+<title>T.O.C. & Preface</title>
+<body bgcolor="white" background="strip.gif">
+<pre><UL><ul>
+
+
+
+
+
+
+
+<div align="right">
+<font size="6" face="arial"><b>The Atari BASIC </font>
+<font size="8" face="arial black"><i>SOURCE
+BOOK </i></b></font>
+
+
+
+
+
+<hr noshade size="15" width="100%" align="left" color="black">
+
+
+
+
+
+<font face="verdana">Compiled by Bill Wilkinson
+Optimized Systems Software,Inc.
+
+With the assistance of
+Kathleen O'Brien and Paul Laughton</font>
+
+</div>
+
+<font face="courier" size="3">
+<hr noshade size="15" width="100%" align="left" color="black">
+<a name="iii">
+<p align="right"><b><font face="sans-serif" size="7">Table of Contents</font></b></p>
+
+
+Publisher's Foreword..................................  <a href="index.html#v">v</a>
+Acknowledgments.......................................<a href="index.html#vii">vii</a>
+Preface............................................... <a href="index.html#ix">ix</a>
+
+<b>Part One: Inside Atari BASIC</b>
+
+ 1  Atari BASIC: A High-level Language Translator.....  <a href="p1.html#1">1</a>
+ 2  Internal Design Overview..........................  <a href="p1.html#7">7</a>
+ 3  Memory Usage...................................... <a href="p1.html#13">13</a>
+ 4  Program Editor.................................... <a href="p1.html#25">25</a>
+ 5  The Pre-compiter.................................. <a href="p1.html#33">33</a>
+ 6  Execution Overview................................ <a href="p1.html#49">49</a>
+ 7  Execute Expression................................ <a href="p1.html#55">55</a>
+ 8  Execution Boundary Conditions..................... <a href="p1.html#71">71</a>
+ 9  Program Flow Control Statements................... <a href="p1.html#75">75</a>
+10  Tokenized Program Save and Load................... <a href="p1.html#81">81</a>
+11  The LIST and ENTER Statements..................... <a href="p1.html#85">85</a>
+12  Atari Hardware Control Statements................. <a href="p1.html#91">91</a>
+13  External Data I/O Statements...................... <a href="p1.html#95">95</a>
+14  Internal I/O Statements...........................<a href="p1.html#103">103</a>
+15  Miscellaneous Statements..........................<a href="p1.html#105">105</a>
+16  Initialization....................................<a href="p1.html#109">109</a>
+
+<b>Part Two: Directly Accessing Atari BASIC</b>
+
+Introduction to Part Two..............................<a href="p2.html#113">113</a>
+ 1  Hexadecimal Numbers...............................<a href="p2.html#115">1l5</a>
+ 2  PEEKing and POKEing...............................<a href="p2.html#119">119</a>
+ 3  Listing Variables in Use..........................<a href="p2.html#123">123</a>
+ 4  Variable Values...................................<a href="p2.html#125">125</a>
+ 5  Examining the Statement Table.....................<a href="p2.html#129">129</a>
+ 6  Viewing the Runtime Stack.........................<a href="p2.html#133">133</a>
+ 7  Fixed Tokens......................................<a href="p2.html#135">135</a>
+ 8  What Takes Precedence?............................<a href="p2.html#137">137</a>
+ 9  Using What We Know................................<a href="p2.html#139">139</a>
+
+<b>Part Three: Atari BASIC Source Code</b>
+
+Source Code Listing...................................<a href="p3.html#141">143</a>
+
+
+	iii
+
+
+<hr noshade size="15" width="100%" align="left" color="black">
+<a name="iv">
+<b>Appendices
+
+A</b>  Macros in Source Code..............................<a href="app.html#273">273</a>
+<b>B</b>  The Bugs in Atari BASIC............................<a href="app.html#275">275</a>
+<b>C</b>  Labels and Hexadecimal Addresses...................<a href="app.html#281">281</a>
+
+Index.................................................<a href="ndx.html#285">285</a>
+
+
+	iv
+
+
+<hr noshade size="15" width="100%" align="left" color="black">
+<a name="v">
+
+<p align="right"><b><font face="sans-serif" size="7">Publisher's 
+Foreword </font></b></p>
+
+
+    It's easy to take a computer language like Atari BASIC for 
+granted. But every PEEK and POKE, every FOR-NEXT loop 
+and IF-THEN branch, is really a miniprogram in itseif. Taken 
+together, they become a powerful tool kit. And, as Atari 
+owners know, there are few home-computer languages as 
+powerful and versatile - from editing to execution - as Atari
+BASIC.
+    With this book, the Atari BASIC tool kit is unlocked. The 
+creators of Atari BASIC and COMPUTE! Publications now offer 
+you, for the first time, a detailed, inside look at exactly how a 
+major computer manufacturer's primary language works.
+    For intermediate programmers, the thorough and careful 
+explanations in <a href="p1.html#part one">Parts 1</a> and <a href="p2.html#part two">2</a> will help you understand exactly 
+what is happening in your Atari computer as you edit and run 
+your programs.
+    For advanced programmers, <a href="p3.html#part three">Part 3</a> provides a complete 
+listing of the source code for Atari BASIC, so that your machine 
+language programs can make use of the powerful routines built 
+into that 8K cartridge.
+    And for programmers at all levels, by the time you're 
+through studying this book you'll feel that you've seen a whole 
+computer language at work.
+    Special thanks are due to Bill Wilkinson, the creative force 
+behind Atari BASIC and many other excellent programs for 
+Atari and other computers, for his willingness to share 
+copyrighted materials with computer users, Readers of 
+COMPUTE! Magazine already know him as a regular 
+columnist, and in this book he continues his tradition of clear 
+explanations and understandable writing.
+
+
+	v
+
+
+<hr noshade size="15" width="100%" align="left" color="black">
+<a name="vii">
+
+<p align="right"><b><font face="sans-serif" size="7">Acknowledgments </font></b></p>
+
+
+As far as we know, this is the first time that the actual source 
+listing of a major manufacturer's primary computer language 
+has been made available to the general public.
+    As with our previous <i>COMPUTE!</i> Publications book <i>Inside 
+Atari DOS</i>, this book contains much more than simply a source 
+listing. All major routines are examined and explained. We 
+hope that when you finish reading this book you will have a 
+better understanding of and appreciation for the design and 
+work which go into as sophisticated a program as Atari BASIC.
+    This book is the result of the efforts of many people. The 
+initial credit must go to Richard Mansfield of <i>COMPUTE!</i> 
+Publications for serving as our goad and go-between. Without 
+his (and <i>COMPUTE!'s</i>) insistence, this book might never have 
+been written Without his patience and guidance, the contents 
+of this book might not have been nearly as interesting.
+    To Kathleen O'Brien and Paul Laughton must go the lion's 
+share of the authoring credits. Between them, they have done 
+what I believe is a very creditable job of explaining a very 
+difficult subject, the internal workings of Atari BASIC. In fact, 
+<a href="p1.html#part one">Part I</a> of this book is entirely their work. Of course, their ability 
+to explain the listing may not be so surprising. After all, 
+between them they wrote almost all of the original code for 
+Atari BASIC. So, even though Paul and Kathleen are not 
+associated with Optimized Systems Software, we were pleased 
+to have their invaluable help in writing this book and hope that 
+they receive some of the credit which has long been due them.
+    Mike Peters was responsible for taking our old, almost 
+unreadable copies of the source code diskettes for Atari BASIC 
+and converting them to another machine, using another 
+assembler, and formatting the whole thing into an acceptable 
+form for this book. This isn't surprising either, since Mike 
+keypunched the original (yes, on cards).
+    And I am Bill Wilkinson, the one responsible for the rest of 
+this book. In particular, I hope you will find that a good 
+amount of the material in <a href="p2.html#part two">Part II</a> will aid you in understanding 
+how to make the best use of this book.
+
+
+	vii
+
+
+<hr noshade size="15" width="100%" align="left" color="black">
+<a name="viii">
+
+    The listing of Atari BASiC is reproduced here courtesy 
+of OSS, Inc., which now owns its copyright and most other 
+associated rights.
+
+
+	viii
+
+
+<hr noshade size="15" width="100%" align="left" color="black">
+<a name="ix">
+
+<p align="right"><b><font face="sans-serif" size="7">Preface </font></b></p>
+
+
+In 1978, Atari, Inc., purchased a copy of Microsoft BASIC 
+for the 6502 microprocessor (similar to the version from which 
+Applesoft is derived). After laboring for quite some time, the 
+people of Atari still couldn't make it do everything they wanted 
+it to in the ROM space they had available. And there was a 
+deadline fast approaching: the January 1979 Las Vegas 
+Consumer Electronics Show (CES).
+    At that time, Kathleen, Paul, Mike and I all worked for 
+Shepardson Microsystems, Inc. (SMI). Though little known 
+by the public, SMI was reasonably successful in producing 
+some very popular microcomputer software, including the 
+original Apple DOS, Cromemco's 16K and 32K BASICs, and 
+more. So it wasn't too surprising that Atari had heard of us.
+    And they asked us: Did we want to try to fix Microsoft 
+BASIC for them? Well, not really. Did we think we could write 
+an all-new BASIC in a reasonable length of time? Yes. And 
+would we bet a thousand dollars a week on our ability to do so?
+    While Bob Shepardson negotiated with Atari and I wrote 
+the preliminary specifications for the language (yes, I'm the 
+culprit), time was passing all too rapidly. Finally, on 6 October 
+1978, Atari's Engineering Department gave us the okay to 
+proceed.
+    The schedule? Produce <i>both</i> a BASIC and a Disk File 
+Manager (which became Atari DOS) in only six months And, 
+to make sure the pressure was intense, they gave us a $1000-a-
+week incentive (if we were early) or penalty (if we were late).
+    But Paul Laughton and Kathleen O'Brien plunged into it. 
+And, although the two of them did by far the bulk of the work, 
+there was a little help from Paul Krasno (who implemented the 
+transcendental routines), Mike Peters (who did a lot of 
+keypunching and operating), and me (who designed the 
+floating point scheme and stood around in the way a lot). Even 
+Bob Shepardson got into the act, modifying his venerable 
+IMP-16 assembler to accept the special syntax table mnemonics 
+that Paul invented (and which we paraphrase in the current 
+listing via macros).
+
+
+	ix
+
+<hr noshade size="15" width="100%" align="left" color="black">
+<a name="x">
+
+    Atari delivered the final signed copy of the purchase order 
+on 28 December1978, two and a half months into the project. 
+But it didn't really matter: Paul and Kathy were on vacation, 
+having delivered the working product more than a week 
+before!
+    So Atari took Atari BASIC to CES, and Shepardson 
+Microsystems faded out of the picture. As for the bonus for 
+early delivery - there was a limit on how much the incentive 
+could be. Darn.
+    The only really unfortunate part of all this was that Atari 
+got the BASIC so early that they moved u p their ROM 
+production schedule and committed to a final product before 
+we had a chance to do a second round of bug fixing.
+    And now? Mike and I are running Optimized Systems 
+Software, Inc. And even though Paul and Kathleen went their 
+own way, we have kept in touch enough to make this book 
+possible.
+
+
+	x
+
+<a href=absb.html>TOC</a> <a href=p1.html>Part 1</a> <a href=p2.html>Part 2</a> <a href=p3.html>Part 3</a> <a href=app.html>Appendices</a> <a href=ndx.html>Index</a>
+</ul></UL></pre>
+</body>
+</html>

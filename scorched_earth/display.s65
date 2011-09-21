@@ -1,0 +1,226 @@
+ .opt NOLIST
+ .IF *>0	;this is a trick that prevents compiling this file alone
+
+
+;-----------------------------------------------
+;Screen displays go first to avoid crossing 4kb barrier
+;-----------------------------------------------
+OptionsScreen
+	.sbyte "Welcome to Scorch build 114 (o)2000-2003"
+	.sbyte " Please select option with cursor keys  "
+	.sbyte "     and press [Return] to proceed      "
+OptionsHere   ; 0123456789012345678901234567890123456789
+	.sbyte "Players :    2    3    4    5    6      "
+	.sbyte "Cash    :  none   2K   5K   8K  10K     "
+	.sbyte "Gravity :  0.2G 0.5G  1G   2G   4G      "
+	.sbyte "Wind    :   1B   3B   5B   7B   9B      "
+OptionsScreenEnd
+; -------------------------------------------------
+NameScreen
+	.sbyte "    Enter names of players      "
+	.sbyte "   Tank  01    Name:"
+NameAdr
+	.sbyte "            "
+	.sbyte " Human/Atari (difficulty level) "
+	.sbyte " "
+NamesOfLevels
+	.sbyte " HUMAN     Moron     Shooter   "
+	.sbyte "  Poolshark Toosser   Chooser   "
+	.sbyte "  Spoiler   Cyborg    Unknown   "
+	.sbyte "  "
+	.sbyte ['T+$80],['a+$80],['b+$80]
+	.sbyte " - Player/Difficulty level "
+	.sbyte "       "
+	.sbyte ['R+$80],['e+$80],['t+$80],['u+$80],['r+$80],['n+$80]
+	.sbyte " - Proceed         "
+;---------------------------------------------------
+MoreUp
+	.sbyte "             ",$1c,$1c,$1c,"  more  ",$1c,$1c,$1c,"             "
+MoreDown
+	.sbyte "             ",$1d,$1d,$1d,"  more  ",$1d,$1d,$1d,"             "
+ListOfWeapons
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+ListOfWeapons1End
+ListOfDefensiveWeapons
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+	.sbyte "                                        "
+ListOfDefensiveWeaponsEnd	;constant useful when clearing
+WeaponsDescription
+	.sbyte "  "
+	.sbyte ['T+$80],['a+$80],['b+$80]
+	.sbyte " - Defensive/Offensive weapon    "
+	.sbyte "   "
+	.sbyte ['S+$80],['p+$80],['a+$80],['c+$80],['e+$80]
+	.sbyte " - Purchase  "
+	.sbyte ['R+$80],['e+$80],['t+$80],['u+$80],['r+$80],['n+$80]
+	.sbyte " - Finish    "
+EmptyLine
+	.sbyte "                                        "
+;-----------------------------------------------
+textbuffer
+        .sbyte "Player:                                 "
+        .sbyte "                                        "
+textbuffer2
+	.sbyte "Player: ********       Cash: 00000      "
+	.sbyte "----------------------------------------"
+
+;-----------------------------------------------------
+;-------------display-lists---------------------------
+;-----------------------------------------------------
+PurchaseDL
+        .byte $70,$70,$20
+        .byte $42
+        .word textbuffer2
+        .byte $02,$10,$42
+MoreUpdl
+        .word EmptyLine
+        .byte 0,$42
+WeaponsListDL
+        .word ListOfWeapons
+	.byte 0,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,0,2,0
+	.byte $42
+MoreDownDL
+	.word EmptyLine
+	.byte $10,$42
+	.word WeaponsDescription
+	.byte 2
+        .byte $41
+        .word PurchaseDL
+;------------------------
+;Enter names of tanks DL
+NameDL
+        .byte $70,$70,$70,$70,$70
+        .byte $42
+        .word NameScreen
+        .byte $30
+        .byte $02,$30,$2
+        .byte $10,2,2,2,$30,2,2
+        .byte $41
+        .word NameDL
+;------------------------
+OptionsDL
+        .byte $70,$70,$70,$70,$70
+        .byte $42
+        .word OptionsScreen
+        .byte $02,$02,$70,$02,0,$02,0,$2,0,$2
+        .byte $41
+        .word OptionsDL
+; -------------------------------------------------
+dl
+        .byte $70,$00
+        .byte $42
+        .word textbuffer
+        .byte $02,$00
+        .byte $4f
+        .word WhiteLine
+        .byte $4f+$10 ;Hscroll
+PositionPointer
+        .word LineOdd+40
+        .byte $4f
+        .word WhiteLine
+        .byte $4f
+        .word display
+
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f
+        .byte $4f
+        .word display+$0ff0
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f,$0f
+        .byte $0f,$0f,$0f,$0f,$0f,$0f,$0f
+
+        .byte $41
+        .word dl
+; horizontal line
+WhiteLine
+	.byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff
+	.byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff
+	.byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff
+	.byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff
+	.byte 0,0,0,0 ; just to be sure
+LineEven
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $80
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+LineOdd
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $40
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+ .endif

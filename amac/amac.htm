@@ -1,0 +1,508 @@
+<html>
+<head><title>AMAC Info</title>
+<meta name="meta-generator" content="atari">
+<meta name="audience" content="developers">
+<meta name="author" content="SysOp Fox-1">
+<meta name="copyright" content="(none)">
+<meta name="page-topic" content="education">
+<meta name="page-type" content="help">
+<meta name="robots" content="index, follow">
+<meta name="description" content="AMAC information in HTML format. This Atari Macro Assembler document is written by Nick Kennedy.  It also describes how he writes and assembles Atari 8-bit code on a PC system.">
+<meta name="keywords" content="atari, xl, xe, xegs, 8bit, 6502, amac, assembler, programming, xformer, coding, assembling, disk, protection">
+<meta name="keywords" content="nick, kennedy, editor, cartridge, machine, source, compile, language, binary, label, macro, opcode">
+<meta name="revisit-after" content="38 days">
+</head>
+<body background="decor/bg_mac.gif" bgcolor="#f0e0e0">
+
+<a name="#topofpage"></a>
+<table width="96%" border="1" align="center" bgcolor="#50066A"><tr align="center"><td>
+
+<table width="100%" bgcolor="#50066A">
+<tr align="center"><td rowspan="2"><a style="font-size: xx-large; font-family: Arial Black; color: #f03250;">AMAC&nbsp;</a></td>
+<td rowspan="2" align="center"><img src="decor/6502_ani.gif" width=64 height=32 alt="Atari 6502"></td>
+<td align="right" valign="top">
+<a style="font-size: x-small; font-family: Comic Sans MS; color: #a6ffa6;">
+(by: Nick Kennedy)</a></td></tr>
+<tr><td align="right" valign="bottom">
+<a style="font-size: xx-small; font-family: Comic Sans MS; color: #a6ffa6;">
+(HTML conversion by SysOp Fox-1, June 2000)</a></td></tr></table></td></tr></table>
+
+<a name="tableofcontents"></a>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; ont-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/a8men.htm"><img src="decor/u_arrow.gif" alt="To Main-Index" border=0 height=13 width=13>
+To Main-Index</a></td></tr></table>
+<hr width="100%" size="2" style="color: #8668f5;">
+
+<table width="100%"><tr><td align="right">
+<table width="98%"><tr><td>
+
+<a style="font-size: large; font-family: Arial Black; color: #a02222; font-weight: bold;">
+TABLE OF CONTENTS<br></a><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="amac.htm#atarimacroassembler">
+The AMAC Atari Macro Assembler</a><br><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="amac.htm#introduction">
+Introduction</a><br><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="amac.htm#usingamac">
+Using AMAC</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="amac.htm#examples"><img src="decor/r_arrow.gif" alt="Some Examples" border=0 height=13 width=13>
+Some examples</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="amac.htm#macroexamples"><img src="decor/r_arrow.gif" alt="Macro Examples" border=0 height=13 width=13>
+Macro examples</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="amac.htm#moresource"><img src="decor/r_arrow.gif" alt="More Example Source Code" border=0 height=13 width=13>
+More example source code</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="amac.htm#operators"><img src="decor/r_arrow.gif" alt="Some Operators" border=0 height=13 width=13>
+Some operators</a><br><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="amac.htm#errorcodes">
+Some error-codes</a><br><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="amac.htm#xformer">
+Assembling with PC Xformer</a><br><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="amac.htm#copyprotection">
+How to get rid of the copy protection</a><br><br>
+<br></td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; ont-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#topofpage"><img src="decor/u_arrow.gif" alt="Top of Page" border=0 height=13 width=13>
+Top of Page</a></td></tr></table>
+<hr width="100%" size="2" style="color: #8668f5;">
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="atarimacroassembler" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+THE AMAC ATARI MACRO ASSEMBLER</a><br>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
+This file is intended to give a little bit of direction to anyone in possession of AMAC but not having
+documentation. It also tells how to remove the copy protection. It's thrown together and unstructured,
+but perhaps contains enough info to allow you to make use of AMAC.<br><br></a></td></tr></table></td></tr></table>
+<table align="center">
+<tr><td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<hr width="96%" size="1" color="#FFFFFF"><br>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="introduction" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+INTRODUCTION</a><br>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
+AMAC came out in 1981, I believe. It wasn't very successful because it ran headlong into the famous
+MAC-65 cartridge. AMAC had a number of disadvantages. It was disk based (as opposed to keeping source
+code in memory), which tended to make it very slow on big files. It didn't have an integrated
+environment (editor was separate). It had a bug in its macro facility which caused it to blow up if
+macros over a certain length were written. (I wrote Atari about this bug, but they didn't respond. My
+guess is that they decided not to support AMAC since it was getting creamed by MAC-65 anyway.) It also
+had horrible copy protection of the type that causes the disk to grind and reset several times on each
+loading. Since programming sessions often include multiple toggles between assembler and editor, this
+was intolerable.<br><br>
+Why would I now recommend AMAC despite these flaws?<br>
+Simply because most of them can be eliminated, making it a fine assembler. The copy protection was
+easy to remove. The macro bug wasn't a big deal after I found that only long macros cause the problem.
+(Most macros are small, anyway.) The lack of a built in editor now looks like an advantage. AMAC will
+work with plain text source files from any editor. Integrated environment type cartridges like BASIC
+and MAC-65 now seem hokey with their forced line numbers and the requirement to hit Return on each
+edited line, etc. The speed problem went away with the advent of things like ramdisks, SIO2PC, and
+Darek's Xformer. AMAC doesn't flinch at large files. I now like to edit on a PC plain text editor, and
+use Xformer to run AMAC on the PC, accessing the file directly (after converting CR/LFs to ATASCII
+EOLs).<br><br>
+I've pointed out AMAC's flaws and how they are overcome. Outside of the flaws I mentioned, AMAC is a
+great 6502 assembler: robust, flexible, and full featured.<br><br></a></td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#atarimacroassembler"><img src="decor/l_arrow.gif" alt="The AMAC Atari Macro Assembler" border=0 height=13 width=13>
+The AMAC Atari Macro Assembler&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<hr width="96%" size="1" color="#FFFFFF"><br>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="usingamac" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+USING AMAC</a><br>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
+The syntax used by AMAC is pretty standard. Knowing the command line functions is critical.<br><br>
+First, run AMAC. Then, you're prompted for a source file and options. The first entry must be the
+filespec you want to assemble. The other options are:<br><br>
+H=Dn &nbsp; &nbsp; &nbsp; &nbsp; put output file on disk #n<br>
+H=&lt;filespec&gt; put output file to spec given<br>
+H=0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;don't generate object code<br>
+L=P: &nbsp; &nbsp; &nbsp; &nbsp; listing to printer<br>
+L=Dn: &nbsp; &nbsp; &nbsp; &nbsp;listing to disk #n,<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(name.PRN is filename)<br>
+L=S: &nbsp; &nbsp; &nbsp; &nbsp; listing to screen<br>
+L=0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;default (no listing)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(this can speed assembly)<br>
+O=n &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;make run address = n<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(same as END n statement)<br>
+S=&lt;filespec&gt; specify systext file<br>
+S &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;use default systext D:SYSTEXT.AST<br>
+S=0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;specify no systext file for this<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;assembly<br>
+R=F &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;full reference map<br>
+R=S &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;short reference map<br>
+R=0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;no reference map<br><br>
+Here's a sample command line to put AMAC into operation:<br><br>
+D:KEYER.SOR S=D2:SYSTEXT L=S:<br><br>
+Assembles my file KEYER.SOR. Looks for a systext file on D2:. Puts a listing to the screen. The object
+file will be KEYER.OBJ by default and will go to D:.<br><br>
+Break stops assembly; CTRL-1 pauses assembly if listing to screen is in effect.<br><br>
+I'm not going to try to list everything in AMAC's syntax; just stuff I use a lot.<br><br>
+Remember, a label (if any) starts in the first column; then tab or spaces; then an opcode or pseudo
+op; then data; then a semicolon starts a comment field if used.<br><br>
+Labels end in a space. Ending in a colon is acceptable but not required and the colon isn't part of
+the label when you reference it.<br><br>
+Labels can be made from UC or LC letters, numbers, and the symbol @. A colon starts a local label. The
+underscore character can appear in a label for readability but isn't considered part of the label. So
+AB_CD is the same label as ABCD. Only the first 6 characters of a label are significant.<br><br></a>
+</td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#introduction"><img src="decor/l_arrow.gif" alt="Introduction" border=0 height=13 width=13>
+Introduction&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table><br>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="examples" style="font-size: large; font-family: Arial; color: #366636; font-weight: bold;">
+Here are some examples:</a><br>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
+STORE:  DS 1; define one byte of memory storage<br>
+EOL: &nbsp; DB $9B ; define a variable called EOL<br><br>
+START:  LDA #2 ; load accumulator with the number 2.<br><br>
+Note that the # meant load A with the immediate value 2. Without the #, the same line would load A
+with the value stored at memory location $0002.<br><br>
+Confusing memory labels with immediate values is one of the most vexing problems for beginners.<br><br>
+Usually, memory is referenced by a name (label) rather than absolute value.<br><br>
+&nbsp; STA STORE ; store accumulator at memory location<br>
+&nbsp; called STORE.<br>
+&nbsp; LDX EOL ; load X with number stored at EOL<br><br>
+END START<br><br>
+An END statement must appear at the end of the file. If you follow it with an address (here, the label
+START), the address will be the run address of the program created.<br><br></a></td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#usingamac"><img src="decor/u_arrow.gif" alt="Using AMAC" border=0 height=13 width=13>
+Using AMAC</a></td></tr></table><br>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="macroexamples" style="font-size: large; font-family: Arial; color: #366636; font-weight: bold;">
+Here's an example of a macro:</a><br>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
+; This MACRO puts a record. The<br>
+; parameters are IOCB # and<br>
+; address of RECORD.<br>
+;<br>
+PUTREC: MACRO I, A<br>
+&nbsp; LDX #%1*$10<br>
+&nbsp; LDA #0<br>
+&nbsp; STA ICBLH,X<br>
+&nbsp; LDA #$80<br>
+&nbsp; STA ICBLL,X<br>
+&nbsp; LDA #9<br>
+&nbsp; STA ICCOM,X<br>
+&nbsp; LDA #LOW %2<br>
+&nbsp; STA ICBAL,X<br>
+&nbsp; LDA #HIGH %2<br>
+&nbsp; STA ICBAH,X<br>
+&nbsp; JSR CIOV<br>
+&nbsp; ENDM<br><br>
+The I, A arguments are dummies; you refer to them by %1 and %2 in the macro.<br><br>
+The ENDM statement ends the macro.<br><br>
+****You must precede it with an ATASCII tab.****<br><br>
+If your editor uses multiple spaces for tabs, hit ESC-TAB on your atari to put in the right pointing
+triangle TAB symbol.<br><br>
+I'd use this macro like this:<br><br>
+LABEL: &nbsp;PUTREC 0, TEXT<br><br>
+0 is for IOCB 0 (the screen) and TEXT would be a label for the address where I'd stored a string, like
+this:<br><br>
+TEXT: &nbsp;DB `whats going on???',$9b<br><br>
+As you can see, the macro has been used to make a kind of simple PRINT statement.<br><br>
+You will usually start your file with a bunch of `equates' which are labels for addresses or numbers
+you want to refer to by name. (Or you might put these in a &quot;systext&quot; file.)
+Here's an example of what might go in one:<br><br>
+WSYNC &nbsp; EQU &nbsp;$D40A<br>
+COLPF1 &nbsp;EQU &nbsp;$D017<br>
+COLPF2 &nbsp;EQU &nbsp;$D018<br>
+COLBK &nbsp; EQU &nbsp;$D01A<br>
+COLOR1 &nbsp;EQU &nbsp;$2C5<br>
+COLOR2 &nbsp;EQU &nbsp;$2C6<br>
+COLOR4 &nbsp;EQU &nbsp;$2C8 &nbsp;;Background<br>
+NMIEN &nbsp; EQU &nbsp;$D40E ;b7/DLI b8/VBI<br>
+VDSLST &nbsp;EQU &nbsp;$200 &nbsp;;NMI OS vector<br>
+DOSVEC &nbsp;EQU &nbsp;$000A ;this program's start vector<br>
+DOSINI &nbsp;EQU &nbsp;$000C ;this program's init vector<br>
+POKMSK &nbsp;EQU &nbsp;$0010 ;mask for POKEY IRQ enable<br>
+RTCLOK &nbsp;EQU &nbsp;$0012 ;60 Hz clock<br>
+VIMIRQ &nbsp;EQU &nbsp;$0216 ;immediate IRQ vector<br>
+SSKCTL &nbsp;EQU &nbsp;$0232 ;serial port control<br>
+MEMLO &nbsp; EQU &nbsp;$02E7 ;start of user memory<br>
+CH &nbsp;&nbsp; &nbsp; EQU &nbsp;$02FC ;character buffer<br>
+ICCOM &nbsp; EQU &nbsp;$0342 ;CIO command block<br><br>
+Note that you can use the EQU pseudo-op or = interchangeably, as in:<br><br>
+ICCOM = $0342<br><br>
+Note that these equates don't actually put anything into memory or into the object file. They just
+associate a number with a symbol, so you can refer to it by symbol name in your program.<br><br>
+</a></td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#usingamac"><img src="decor/u_arrow.gif" alt="Using AMAC" border=0 height=13 width=13>
+Using AMAC</a></td></tr></table><br>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="moresource" style="font-size: large; font-family: Arial; color: #366636; font-weight: bold;">
+Here's some more example source code:</a><br>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
+; Clear the message buffer area:<br>
+&nbsp; LDA #0;  Set up FILLA routine to<br>
+&nbsp; STA ZP1L; clear BMESS thru +FFF<br>
+&nbsp; LDA #HIGH BMESS; to all 0's.<br>
+&nbsp; STA ZP1L+1<br>
+&nbsp; LDA #$FF; Low byte is abs $FF<br>
+&nbsp; STA SIZEB<br>
+&nbsp; LDA #HIGH [BMESS + $FFF]<br>
+&nbsp; STA SIZEB+1<br>
+&nbsp; LDA #0<br>
+&nbsp; JSR FILLA<br><br>
+&nbsp;  JSR RINIT; `Real' Initialization<br>
+; Init ZBUF to point to TBUF:<br>
+&nbsp; LDA #LOW TBUF<br>
+&nbsp; STA ZBUF<br>
+&nbsp; LDA #HIGH TBUF<br>
+&nbsp; STA ZBUF+1<br><br>
+; Point vertical blank to my custom<br>
+; VBI routine:<br><br>
+DOMYV LDX #HIGH MYVBI<br>
+&nbsp; LDY #LOW MYVBI<br>
+&nbsp; LDA #6; Immediate VBI<br>
+&nbsp; JSR $E45C<br><br>
+You can see some operators here. HIGH and LOW extract the high and low bytes of a word, for example.
+(Addresses are stored as words.) Note also that expressions can include math, such as ZBUF+1, which
+refers to address ZBUF plus 1.<br><br></a></td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#usingamac"><img src="decor/u_arrow.gif" alt="Using AMAC" border=0 height=13 width=13>
+Using AMAC</a></td></tr></table><br>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="operators" style="font-size: large; font-family: Arial; color: #366636; font-weight: bold;">
+Here are some operators AMAC uses:</a><br>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
++, -, /, * ; add, subtract, divide, multiply<br>
+NOT - bit by bit complement<br>
+AND - logical and<br>
+& - same as AND<br>
+OR - logical OR<br>
+XOR - logical exclusive OR<br>
+= logical equal, also EQ<br>
+&lt;&gt; not equal, also NE<br>
+&lt; less than, also LT<br>
+&gt; greater than, also GT<br>
+&lt;= less than or equal, also LE<br>
+&gt;= greater or equal, also GE<br>
+SHR right shift n bits<br>
+SHL left shift n bits<br><br>
+***Brackets [] (not parenthesis) set precedence levels.***<br><br>
+As you'd expect, there are IF and ENDIF statements to use the logical tests and conditionally skip
+sections of code.<br><br>
+There's a PROC ... EPROC feature to allow defining procedures, which just means local symbol ranges.
+Local labels must start with a colon. I use it because on big files it gets hard to think of unique
+labels for jump targets, etc, after you've used a zillion of them. Within a PROC you can assign local
+labels accessible only within the PROC and reusuable elsewhere. Like this:<br><br>
+; Copy the character set down to<br>
+; $4000:<br><br>
+&nbsp; PROC<br>
+&nbsp; LDA #$40<br>
+&nbsp; STA :MVCH+5; Init self altering<br>
+&nbsp; LDA #0; code.<br>
+&nbsp; STA :MVCH+4<br>
+&nbsp; STA :MVCH+1<br>
+&nbsp; LDA #$E0<br>
+&nbsp; STA :MVCH+2<br>
+:LOOP &nbsp; LDY #0<br>
+:MVCH &nbsp; LDA $E000,Y; Get char from ROM<br>
+&nbsp; STA $4000,Y; put it into RAM<br>
+&nbsp; INY<br>
+&nbsp; BNE :MVCH; Done with a page?<br>
+&nbsp; INC :MVCH+2; Increment pages, ROM<br>
+&nbsp; INC :MVCH+5; and RAM<br>
+&nbsp; LDA :MVCH+2; Done all 4 pages?<br>
+&nbsp; CMP #$E4<br>
+&nbsp; BNE :MVCH; If not, loop...<br>
+&nbsp; LDA #$40; Point CHBAS to new base:<br>
+&nbsp; STA $2F4<br>
+&nbsp; STA $D409; Hardware CHBASE<br><br>
+; Now make return and carat print<br>
+; as spaces:<br><br>
+&nbsp; LDY #7<br>
+:LP2 LDA #0<br>
+&nbsp; &nbsp;&nbsp; STA $41F0,Y; $41F0 starts ^<br>
+&nbsp; &nbsp;&nbsp; LDA #$FF; Return prints inverse<br>
+&nbsp; &nbsp;&nbsp; STA $42D8,Y; $42D8 starts ret.<br>
+&nbsp; &nbsp;&nbsp; DEY<br>
+&nbsp; &nbsp;&nbsp; BPL :LP2<br>
+&nbsp; &nbsp;&nbsp; EPROC<br><br>
+The ORG statement is used to tell the assembler where in memory to put the code it generates.
+Therefore, there's got to be an ORG statement in the program before any code or data statements. You
+can also put in additional ORGs if you need to make the code discontinuous.<br><br>
+Also, the star * is the current value of the location counter: it's the value of the next memory
+address the assembler is going to use. See the ORG in the program starting below:<br><br>
+; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;KEYER<br>
+; An electronic keyer program by<br>
+; Nick Kennedy. Begun: 5/17/87.<br>
+; r1.1: I moved the ORG up to $8000 to<br>
+; get out of the EMDE expansion window<br>
+; because MYVBI and the new DLIST have<br>
+; NMI's which may occur during RAMDISK<br>
+; I/O, causing lockup. Could just get<br>
+; the VBI AND DLIST out if space were<br>
+; a problem.<br><br>
+;  POKEY TIMER AND AUDIO USAGE:<br>
+; TV sidetone source: Channel 3<br>
+; Sidetone via console spkr: Ch. 4<br><br>
+; Code element timer (16 bit res.):<br>
+; Channel 1 into Channel 2, IRQ from<br>
+; Channel 2. Note: Hi byte to 2; Low<br>
+; to 1.<br>
+VTIMR4 &nbsp; &nbsp;EQU $214<br>
+VTIMR2 &nbsp; &nbsp;EQU $212<br>
+FPREG &nbsp; &nbsp; EQU $CB; Point to speed/ratio<br>
+KBAT EQU $4D; OS sets to 0 when key<br>
+; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; pressed.<br>
+ATRCT &nbsp; &nbsp; EQU $4F; My attract flag. Go<br>
+; to attract mode when b7 is set.<br>
+; BMESS is the start of the message<br>
+; storage area. Note there is a $1000<br>
+; byte limit (4K) due to ANTIC scroll<br>
+; counter limit.<br>
+BMESS  &nbsp; &nbsp; EQU $3000<br>
+; TBUF is the 256 byte transmit buffer<br>
+; for the keyboard sender...<br>
+&nbsp; ORG $8000<br>
+TBUF EQU *-$100<br><br>
+; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;INITIALIZE:<br><br>
+INIT: &nbsp; &nbsp; JSR POKINI<br><br>
+You can see above, I ORG'd the program to $8000, then used the program counter to compute an address
+$100 bytes lower to use for a buffer. The program will start at $8000 which is the value of label INIT
+and contains the code, JSR POKINI.<br><br>
+Oh yeah, you can have INCLUDE files. This means you can break your source code down into multiple
+files and a statement within one file will cause the assembler to open another and resume assembly
+there:<br><br>
+&nbsp; INCLUDE D2:FILE2.SOR<br><br>
+for example. At one time, I had a shell type executive source file which just had and ORG and a few
+equates, then half dozen INCLUDE statements to bring in other files, then an END statement. Now I use
+emulators and PC editors which aren't daunted by big files, so I don't split `em up anymore. There can
+be other reasons to split files up, though.<br><br>
+Getting back to pseudo-ops that declare memory space or data storage...<br><br>
+&nbsp; DB is flexible in storing single or multiple bytes or<br>
+&nbsp; character strings.<br>
+&nbsp; DB 100 ; store single byte 100<br>
+&nbsp; DB 1, 7, $25 ; store three bytes (separate in the DB<br>
+&nbsp; statement by commas)<br>
+&nbsp; DB `Howdy', $9B ; store a string, followed by a byte<br>
+MWEN DW BMESS + 320; End of M-window<br><br>
+&nbsp; &nbsp;; Above stores a word with calculated value of BMESS +<br>
+&nbsp; &nbsp;320 and assignes the label MWEN to it.<br><br>
+&nbsp; &nbsp;Note that labels don't have to end in colons, although<br>
+&nbsp; &nbsp;they can if you are used to that style.<br><br>
+&nbsp; &nbsp;DB HIGH MWEN ; store high byte of word MWEN<br><br>
+&nbsp; &nbsp;Note again that EQU and = don't actually cause<br>
+&nbsp; &nbsp;anything to be stored in memory, but DB and DW do.<br><br>
+Numbers of different bases:<br><br>
+Use % for binary, as in %11001010<br>
+Use $ for hex, as in $01FF<br>
+Use plain for decimal, as 300<br>
+Use @ for octal as in @212 (why use octal? don't know)<br><br>
+Symbols (labels) must be unique in first 6 chars (others are ignored). Must start with a letter or
+number, or colon for local. Can start with ? and be excluded from reference map.<br><br></a></td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#usingamac"><img src="decor/l_arrow.gif" alt="Using AMAC" border=0 height=13 width=13>
+Using AMAC&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<hr width="96%" size="1" color="#FFFFFF"><br>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="errorcodes" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Some Error Codes</a><br>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
+A - Address error, addressing mode not supported by opcode<br><br>
+D - Duplicate label; using same label twice<br><br>
+E - Expression error; can't understand expression in the address field of the source line<br><br>
+I - Instruction field not recoginzed, three NOPs are generated<br><br>
+L - Label field not recognized, three NOPs are generated<br><br>
+N - Number error, doesn't match radix; > 16 bits, etc.<br><br>
+S - Syntax error in statement; too many or two few address subfields<br><br>
+U - Reference to an undefined symbol. (Very popular error! You mistyped a label name.)<br><br>
+V - Expression overflow; value truncated<br><br></a></td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#usingamac"><img src="decor/l_arrow.gif" alt="Using AMAC" border=0 height=13 width=13>
+Using AMAC&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<hr width="96%" size="1" color="#FFFFFF"><br>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="xformer" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Assembling with PC Xformer</a><br>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
+Here's a file I wrote to remind myself of how I use AMAC to assemble a big project on the PC using
+Xformer:<br><br>
+TO_NICK.TXT<br><br>
+This file is intend to remind me of what form the KEYER program is in and how I currently assemble it:<br><br>
+I've copied all the individual files into one big file called BIGKEY.PCF. PCF means PC file. This file
+has the all the EOLs (155 or $9B) converted to CR/LF (13,10) and the ATASCII TABs converted to ASCII
+TABs (127 or $7F to 09).<br><br>
+I edit the PCF file on the PC. Then I use batch file BIG_2_ATR.BAT to convert the CR/LFs and TABs back
+to Atari style using the utility TT. I make TT create a separate file called BIGKEY.ATF to be accessed
+by AMAC. Next, I run XFORMER on the PC, loading a disk image with DOS and AMAC as D1: and BIGKEY.ATF
+as D2. AMAC WILL run on D1 and assemble the native PC file BIGKEY.ATF from D2. It takes a couple of
+minutes to assemble. I use this command line:<br><br>
+L AMAC [return], then AMAC runs, then<br><br>
+&nbsp; D2:BIGKEY.ATF H=D:KEYER.OBJ<br><br>
+So the object code is put on the disk image D1.<br><br></a></td></tr></table></td></tr></table>
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#errorcodes"><img src="decor/l_arrow.gif" alt="Error-Codes" border=0 height=13 width=13>
+Error-codes&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<hr width="96%" size="1" color="#FFFFFF"><br>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="copyprotection" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+How to get rid of the copy protection</a><br>
+<a style="font-size: small; font-family: Arial Black; color: #a62626;">
+(Plus a little tutorial on Atari DOS file structure and function.)<br></a>
+<a style="font-size: small; font-family: Courier; color: #080850; font-weight: bold;"><br>
+You need a sector editor and you need to know how to look at the directory to locate the first sector
+number of the file AMAC.<br><br>
+My disassembly of the first sector of the file showed that the first thing it does is set up to read a
+bad sector. The way to fix it is to make the RUN (or maybe it's INIT?) address start right after the
+bad sector check, effectively bypassing it. If you fix it with a sector editor, you'd see that the
+first sector of the file starts with the six byte header FF FF 00 26 2B 26. That tells DOS to load the
+file starting with the 7th byte (meaning the 6 byte header isn't part of the file), putting it at
+memory $2600 thru $262B. (The FFs are a RUN file identifier, 00 26 means start loading at $2600 and 2B
+26 means end loading at $2600.)<br><br>
+This first segment loaded ends with the 50th byte of the sector (which is the 44th byte of the file).
+Next comes the header (Note: no FF's, which are optional except for the ones in the first segment's
+header) for the next load segment. It's just two bytes, loaded at $02E2 thru $02E3. This has special
+meaning to DOS. In a multi-segment load, if an address is loaded into $02E2, DOS begins execution at
+that address. So you see that starting with byte 51 of the segment is this data:<br><br>
+E2 02 E3 02 00 26<br><br>
+Which can be translated as, &quot;start loading at $02E2, end loading at $02E3, data to load: $00,
+$26&quot;<br><br>
+By the way, you did know that 16 bit addresses are stored backwards (low byte first), right? This load
+segment stores address $2600 at address $2E2. That's the very start of the program where all that bad
+copy protection stuff takes place. Execution after the copy protection check succeeds continues at
+$2626, therefore we just want to change the header of the 2nd segment to look like this:<br><br>
+E2 02 E3 02 26 26<br><br>
+There, mission accomplished. Now the copy protection routine is still part of the program, but it no
+longer gets executed.<br><br></a></td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#xformer"><img src="decor/l_arrow.gif" alt="Assembling with PC Xformer" border=0 height=13 width=13>
+Assembling with PC Xformer&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="amac.htm#topofpage"><img src="decor/u_arrow.gif" alt="Top of Page" border=0 height=13 width=13>
+Top of Page</a></td></tr></table>
+<hr width="96%" size="1" color="#FFFFFF"><br><br><br><br><br>
+</body></html>

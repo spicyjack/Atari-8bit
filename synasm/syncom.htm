@@ -1,0 +1,563 @@
+<html>
+<head>
+<title>SynAssembler Commands</title>
+</head>
+<body BGCOLOR=""#ffffff"  LINK=#0000FF  VLINK=#FF0000  ALINK=#FF0000>
+<A HREF="syndx.htm">Back to Index</A><br>
+<center><A NAME="com"><h3>COMMANDS</h3></A></center>
+<BLOCKQUOTE>
+ <A HREF="#ovr">Editing commands-Overview</A><br>
+ <A HREF="#dtl">Editing commands-Detail</A><br>
+ <A HREF="#dos">DOS commands</A><br>
+ <A HREF="#mon">Monitor commands</A><br>
+</BLOCKQUOTE>
+<br>
+There are three types of commands in the SYNASSEMBLER: EDITING commands DOS
+ commands and MONITOR commands.  The EDITING commands are used to control the
+ Editor and the assembler.  Commands are typed immediately after the prompt
+ symbol, which looks like this [Ok.].
+<br><br>
+<A NAME="ovr"><h3>EDITING COMMANDS</h3></a>
+<A HREF="#com">Back to Commands</A><br>
+There are seventeen editing commands in the SYNASSEMBLER. All editing
+ commands may be abbreviated to the first three letters if you so desire.
+<br><br><table CELLSPACING="8" CELLPADDING="8">
+<tr><td width="15%"><a href="#asm">ASM</a></td>
+<td width="50%">Assemble source program, put object program
+into memory, and produce assembly listing.</td></tr>
+<tr><td><a href="#cop">COP</a>y</td><td>Duplicates specified lines in the source.</td></tr>
+<tr><td><a href="#del">DEL</a></a>ete</td><td>Delete specified line.</td></tr>
+<tr><td><a href="#fin">FIN</a>d</td><td>List all lines containing the specified string.
+</td></tr>
+<tr><td><a href="#hid">HID</a>e</td><td>Changes the HIMEM pointer to 'hide' current source
+ code prior to a MER</a>ge command.</td></tr>
+<tr><td><a href="#inc">INC</a>rement</td><td>Set the line # increment for
+ automatic line numbering.</td></tr>
+<tr><td><a href="#lis">LIS</a>t</td><td>List the source program or specified lines of source
+ code.</td></tr>
+<tr><td><a href="#mem">MEM</a>ory</td><td>Display the beginning and ending address.</td></tr>
+<tr><td><a href="#mer">MER</a>ge</td><td>Use with HIDe to join source programs.</td></tr>
+<tr><td><a href="#mov">MOV</a>e</td><td>Moves a line of source code from one specified
+ location to another.</td></tr>
+<tr><td><a href="#new">NEW</a></td><td>Delete the entire source program.</td></tr>
+<tr><td><a href="#ren">REN</a>umber</td><td>Renumber all or specified lines of source
+ code.</td></tr>
+<tr><td><a href="#rep">REP</a>lace</td><td>Replace a specified string with another
+ specified string.</td></tr>
+<tr><td><a href="#res">RES</a>tore</td><td>Restores HIMEM pointer after HIDe and MERge.</td></tr>
+<tr><td><a href="#run">RUN</a></td><td>Begins execution of your object program.</td></tr>
+<tr><td><a href="#val">VAL</a></td><td>Evaluates an operand expression and prints the value
+ in hexadecimal.</td></tr>
+<tr><td><a href="#mon">MON</a></td><td>Exit the editor and enter the monitor.</td></tr>
+</table>
+<br>
+<A NAME="dtl"><h3>EDITING COMMAND DETAIL</h3></a>
+<A HREF="#com">Back to Commands</A><br>
+<br>
+The SYNASSEMBLER editor, combines the powerful Atari screen editing features
+ with a BASIC-like line editor, Source programs are entered and edited in
+ almost exactly the same way you would enter and edit an Atari BASIC program.
+<br><br>
+<a name="asm"><b>ASM</b> command:</a>
+<br><br>
+SYNASSEMBLER is a two pass assembler.  The ASM command initiates assembly of
+ your source program.  During the first pass it builds a symbol table with
+ the definition of every label that is used in your program.  During the
+ second pass the assembler stores the object code into memory or disk and
+ produces an assembly listing.  At the end of the second pass a list, in
+ alphabetical order, of all the labels and their definitions is produced.
+<br><br>
+If any errors are detected during either pass, an error message will be
+ printed as well as the offending line.  The error message will briefly
+ explain the type of error encountered and the line will be positioned for
+ easy editing.  All of these messages abort the assembly process so that as
+ soon as you correct the error condition you may immediately restart the
+ assembly.
+<br><br>
+If you are listing the assembly to the screen you may use the [CTRL]+[1]
+ control to start and stop your listing.  You may abort the assembly process
+ by hitting the [BREAK] key in pass two of the SYNASSEMBLER.
+<br><br><br>
+<a name="cop"><b>COPY</b> L1 L2</a>
+<br><br>
+This command places a copy of line L2 just before L1 in the source.  The new
+ line is assigned line number L1.  The old line L2 remains in the source.
+  This command should be followed by a renumber command if there are multiple
+ lines with the same line number in the source.
+<br><br><br>
+COPY L1 L2 L3
+<br><br>
+This command places a copy of lines L2 through L3 just before line L1 in the
+ source.  The old lines are assigned line number L1. The old line L2 through
+ L3 remain in the source. This command should be followed by a renumber
+ command if there are any multiple lines with the same line number in the
+ source.
+<br><br><br>
+<a name="del"><b>DEL</b>ete command:</a>
+<br><br>
+Deletes a line or a range of lines from your source program.  Another way to
+ delete a single line is to type it's line #, followed immediately by a
+ carriage return.
+<br><br><br>
+<a name="hid"><b>HID</b>e AND <b>MER</b>ge</a>
+<br><br>
+These two commands, when used with the LOAD command allow you to join a
+ program from disk or tape to a program that is already in memory.
+<br><br><br>
+HIDe temporarily changes the HIMEM pointer so that it appears as if there
+ were no source proaram in memory.  To remind you that you are HIDe-ing,
+ the prompt symbol changes to [H] ok.  After HIDe-ing a program, you can
+ load another one from disk or tape.  Then you type MERge  to join the two
+ programs together.
+<br><br>
+After this sequence of commands the program which was already in memory will
+ follow after the program just LOADed.  If the line numbers are not already
+ as you wish them to be, you can use the RENUMBER command to assign new ones.
+<br><br>
+For example, suppose that we have 2 source programs on the disk named "PART1"
+ and "PART2".  We want to join them together so that "PART1" precedes "PART2".
+<br><br><pre>
+        Ok.
+        LOAD "D:PART1"
+        Ok.
+        LIST
+        00010 *       PROGPAM NUMBER ONE
+        00020 MAIN    JSR SUBROUTINE
+        00030         RTS
+        Ok.
+        LOAD "D:PART2"
+        Ok.
+        LIST
+        00010 *       PROGRAM NUMBER TWO
+        00020 SUBROUTINE
+        00030         LDA BOAT.LOC
+        00040         ASL
+        00050         ASL
+        00060         RTS
+        Ok.
+        HIDE
+        [H] Ok.
+        LOAD "D:PART1"
+        [H] Ok.
+        LIST
+        00010 *       PROGRAM NUMBER ONE
+        00020 MAIN    JSR SUBROUTINE
+        00030         RTS
+        [H] Ok.
+        MERGE
+        Ok.
+</pre><br><br>
+<a name="inc"><b>INC</b>rement</a>
+<br><br>
+Sets the increment used for automatic line number generation.  The increment
+ is normally 10, but you may set it to any value between 0 and 9999.
+<br><blockquote>INC 5<br></blockquote>
+<br>
+<a name="fin"><b>FIN</b>d</a>
+<br><br>
+The FINd command allows you to search through your source program for a given
+ text string, and list all the lines that contain that string.  The correct
+ procedure for use of this command is as follows: Type FINd, followed by a
+ space and then the string for which you are searching.  Every character you
+ type between the space and the carriage return is part of the search key.
+ (NOTE: you may append or prefix spaces to any string to perform label
+ searches.)
+<br><br><br>
+<a name="lis"><b>LIST</b> L1 L2</a>
+<br><br>
+Lists a single line, a range of lines or your entire program.  It works just
+ like the list command in BASIC.  While a program or range of lines is
+ listing you can use the standard Atari pause control [CTRL1], to start and
+ stop the listing to the screen.  You may abort the listing by pressing the
+ [BREAK] key.
+<br><br><br>
+<a name="mem"><b>MEM</b>ory</a>
+<br><br>
+Displays the beginning and ending memory address of the source program and of
+ the symbol table.
+<br><br><pre>
+ Source program: $9B99-9C1F
+  Source length: $0086
+   Symbol table: $1F00-1F00
+</pre>
+Memory between the top of the symbol table and the bottom of the source
+ program is free to be used without clobbering anything.
+<br><br><br>
+<a name="mer"><b>MER</b>ge</a>; SEE "<a href="#hid">HID</a>e and MERge"
+<br><br><br>
+<a name="mov"><b>MOV</b>e L1 L2</a>
+<br><br>
+This command places a copy of line L2 just before L1 in the source.  The new
+ line is assigned line number L1.  The old line L2 is removed from the source
+.  This command should be followed by a renumber command if there are
+ multiple lines with the same line number in the source.
+<br><br><br>
+MOVe L1 L2 L3
+<br><br>
+This command places a copy of lines L2 through L3 just before line L1 in the
+ source.  The new lines are assigned line number L1.  The old lines L2
+ through L3 are removed from the source.  This command should be followed by
+ a renumber command if there are multiple lines with the same line number in
+ the source.
+<br><br><br>
+<a name="new"><b>NEW</b></a>
+<br><br>
+This command acts just like it's BASIC counterpart.  It deletes the current
+ source program from memory and restarts SYNASSEMBLER just as though you were
+ to reboot the program.
+<br><br><br>
+NOTE:	A source program must, of course, be assembled into memory before it
+ can be executed with the RUN command.
+<br><br><br>
+<a name="ren"><b>REN</b>umber</a>
+<br><br>
+Renumbers all or part of the lines in your source program with the specified
+ starting line number and increment.  There are three optional parameters for
+ specyifying the line number to assign the first renumbered line (base), the
+ increment, and the place in your program to begin renumbering (start).
+  There are four possible forms of the command:
+<br><br><pre>
+        REN             Renumber the whole source program:
+                        BASE=1000, INC=10, START=0
+
+        REN #           Renumber the whole source program:
+                        BASE=#, INC=10, START=0
+
+        REN #1,#2       Renumber the whole source program:
+                        BASE=#1, INC=#2, START=0
+
+        REN #1,#2,#3    Renumber all lines from #3 through the end.
+                        BASE=#1, INC=#2, START=#3
+
+        The last form above is useful for opening up a "hole" in the line
+        numbers	for entering a new section of code.
+
+        OK.
+        LIST
+        00000 * A RENUMBER EXAMPLE
+        00003 START     LDA #100
+        00013           STA $95
+        00058           LDA #99
+        00103           STA $A0
+        00110           RTS
+        Ok.
+        REN
+        Ok.
+        LIST
+        00010 * A RENUMBER EXAMPLE
+        00020 START     LDA #100
+        00030           STA $95
+        00040           LDA #90
+        00050           STA $A0
+        00060           RTS
+        Ok.
+        REN 100
+        Ok.
+        LIST
+        00100 * A RENUMBER EXAMPLE
+        00110 START     LOA #100
+        00120           STA $95
+        00130           LDA #90
+        00140           STA $A0
+        00150           RTS
+        Ok.
+
+        REN 2000,4
+        Ok.
+        LIST
+        02000 * A RENUMBER EXAMPLE
+        02004 START     LDA #100
+        02008           STA $95
+        02012           LDA #90
+        02016           STA $A0
+        02020           RTS
+        OK.
+        REN 3000,10,2008
+        OK.
+        LIST
+        02000 * A RENUMBER EXAMPLE
+        02004 START     LDA #100
+        03000           STA $95
+        03010           LDA #90
+        03020           STA $A0
+        03030           RTS
+</pre><br>
+<a name="rep"><b>REP</b>lace dS1dS2d</a>
+<br><br>
+This command replaces all occurences of string S1 with string S2 in the
+ source. d is a delimiter and must be a non-space printable character that
+ does not appear in either, S1 or S2.
+<br><br><br>
+REPlace dSidS2dtP
+<br><br>
+This command causes a search to be made for string S1. The search starts at
+ the beginning of the source.  Whenever S1 is found, the line containing it
+ is listed and the user is prompted for 1 of 3 actions:
+<br><br><pre>
+       Y or [RETURN]-relace S1 with S2 and continue.
+       N do not replace S1 with S2 and continue search.
+       X do not replace S1 with S2 and stop search.
+
+       d is a delimiter and must be a non-space, printable
+         character not appearing in either SI or S2.
+</pre><br>
+<a name="res"><b>RES</b>tore</a>
+<br><br>
+Restores the root source program if an assembly is aborted while inside an
+ "included" module.
+<br><br><br>
+The 'root source program" is the source program that is in memory at the time
+ the "ASM" command is issued.  If this source program uses the ".IN"
+ directive to include additional source files, it is possible that assembly
+ might be aborted either manually by typing a [BREAK] key during the listing
+ phase, or automatically due to an error in the source program.
+<br><br><br>
+If the assembly is aborted during the time that the root program is hidden,
+ the prompt character changes from "Ok" to "[I] Ok". The RESTORE command
+ will reset the memory pointers so that the root program is no longer hidden,
+ and change the prompt character back to "Ok".
+<br><br><br>
+You do not have to use the REStore command after an abort unless you wish to
+ get back to the root source program for editing purposes. If you type the
+ ASM command, the assembler automatically restores before starting the
+ assembly.
+<br><br><br>
+If an assembly aborts due to an error in a source line, you may correct the
+ source line, SAVE the module on the appropriate file, and type ASM to
+ restart the assembly.
+<br><br><br>
+<a name="run"><b>RUN</b></a>
+<br><br>
+Begins execution of your object program.  An expression MUST follow the RUN
+ command to define the place to begin execution of the program.  For example,
+ "RUN BEGIN" will cause execution to begin at the point in your program where
+ the label BEGIN is defined. Your program will return to SYNASSEMBLER by
+ using an RTS instruction in your program. You may abort your program by
+ hitting the [RESET] key. Or, you may use the [BREAK] key to break and fall
+ back to the monitor.
+<br><br><br>
+<a name="val"><b>VALue</b></a>
+<br><br>
+The VAL command will evaluate any legal operand expression, and print the
+ value in hexadecimal. It may be used to quickly convert decimal numbers to
+ hexadecimal, to determine the ASCII code for a character or to find the
+ value of a label from the last assembled program.
+<br><br><pre>
+	EXAMPLE:
+
+        VAL 'T
+        $0054         00084
+        OK.
+        VAL 3493 + $3493
+        $4238         16952
+        OK.
+        VAL START + S12
+        $4200         16896
+        OK.
+</pre><br>
+<A NAME="dos"><h3>DOS commands:</h3></a>
+<A HREF="#com">Back to Commands</A><br>
+<br><br><br>
+<b>LOAD and SAVE commands:</b>
+<br><br>
+These commands are used to store your source files onto Disk or Tape in the
+ internal compressed form. This saves disk space and speed.
+<br><br>
+EXAMPLE: LOAd "D:GAME1.TXT" or SAVE "D:MISC.SRC"
+<br><br><br>
+<b>BLOad and BSAve commands:</b>
+<br><br>
+These commands are used to load and save BINARY files to disk.
+<br><br>
+NOTE: BLOad and BSAve function in the same manner as the L and K options in
+ Atari DOS II.
+<br><pre>
+EXAMPLE: BLOad "D:GAME.OBJ".
+                 (This will load the binary file called GAME.OBJ
+                 into memory at the address where it was saved.)
+
+         BLOad "D:GAME.OBJ",$2000
+                 (this will load GAME.OBJ starting at HEX 2000,
+                 not at the address where i t was saved.)
+
+EXAMPLE: BSAve "D:GAME.OBJ",$2000,$4000
+                 (This saves a binary file called GAME.OBJ from
+                 Hex location $2000 to $4000.
+</pre><br>
+<b>NOTE: the $ always must precede a hexadecimal number.
+SYMASSEMBLER assumes a decimal number if the $ sign is not present.
+</b><br><br><br>
+<b>ENTer</b>
+<br><br>
+This command allows you to enter ASCII text directly from tape or disk.  It
+ functions like the ENTER command in Atari BASIC.  You can use this command
+ to ENTER Atari assembler source files and then convert them to SYNASSEMBLER
+ format.
+<br><br>
+  EXAMPLE: ENTer "D:ATARIFIL.SRC" or ENTer"C:".
+<br><br><br>
+<b>TYPe</b>
+<br><br>
+The TYPE command is used to save your source to any device in full ASCII
+ format.
+<br><pre>
+  EXAMPLE: TYPe "D:MYSOURCE.TXT"
+                  (This comand saves the full ASCII source under
+                   the MYSOURCE.TXT file, to disk drive 1)
+           TYPe "P:" ... sends the source file to the printer.
+</pre><br>
+<b>DIRectory</b>
+<br><br>
+The directory command is used to examine the contents of your diskettes.
+<br><pre>
+  EXAMPLE: DIR by itself will show you the catalog for disk drive 1
+           DIR "D:*.OBJ" will show anything in the catalog on drive 1
+               with an OBJ extender.
+           DIR "D2:*.TXT" will show anything in the catalog on drive 2
+               with an OBJ extender.
+</pre><br>
+<b>DOS</b>
+<br><br>
+The DOS command jumps from SYNASSEMBLER into the resident DOS in your system.
+<br><br><br>
+<b>OUTput</b>
+<br><br>
+The OUTput command is used to redirect the output of SYNASSEMBLER to another
+ device; eg. printer, disk, screen etc.
+<br><br>
+EXAMPLE: OUT "P:"
+<br><br>
+After changing the output you may use the ASM command to send assembled
+ listings to the device specified.  To cancel the redirection simply type
+ OUTput without a filespec.
+<br><br>
+EXAMPLE: OUTput.
+<br><br><br>
+<A NAME="mon"><h3>ZYNAPSE MONITOR</h3></a>
+<A HREF="#com">Back to Commands</A><br>
+<br><br>
+The ZYNAPSE monitor in SYNASSEMBLER allows you to examine, change, move, and
+ verify memory.  You may read and write to disk and cassette, dis-assemble
+ machine-language programs; execute programs; perform hexadecimal arithmetic;
+ read and write sectors directly to and from disk; and monitor program
+ execution for debugging purposes.
+<br><br>
+<b>MONITOR COMMANDS</b>
+<br><br>
+<b>DISPLAY MEMORY: adrs1.adrs2 [RETURN]</b>
+This command allows you to display the memory from address1 to address2. 
+<br><br>
+  EXAMPLE: 2000.4000 and [RETURN]
+<br><br><br>
+<b>CHANGE MEMORY: adrs;data data .....</b>
+<br><br>
+In order to change data at a particular address enter the address (in HEX of
+ course), and then a semi-colon(;) after which you may enter as much data as
+ you wish making sure that each byte is separated by exactly one space.
+<br><pre>
+  EXAMPLE: 2000;4C 00 9D
+</pre><br>
+After having entered an address, you may just use a semi-colon to indicate
+ the next location for your next data entry.
+<br><pre>
+  EXAMPLE: 2000;4C
+               ;00
+               ;9D
+</pre><br>
+This example has the same effect as the previous example.
+<br><br><br>
+<b>DIS-ASSEMBLING MEMORY: adrsL</b>
+<br><br>
+This command allows you to dis-assemble 20 instructions starting at the
+ specified address.  By typing L again the next 20 instructions will be
+ dis-assembled.
+<br><br><br>
+<b>ADDITION AND SUBTRACTION (HEX): data+data or data-data</b>
+<br><br>
+You may add or subtract data (in HEX) simply by entering data and pressing
+ [RETURN].
+<br><br><br>
+<b>MOVING MEMORY: adrs1&ltadrs2.adrs3M</b>
+<br><br>
+You may easily move data from one part memory to another.  You first specify
+ the address into which you wish to move, and then the range of memory that
+ is to be moved.
+<br><pre>
+  EXAMPLE:   2000<3FF0.4000M
+</pre><br>
+<b>VERIFY MEMORY: adrs1&ltadrs2.adrs3V</b>
+<br><br>
+If you wish to compare two blocks of memory, you can easily do so by
+ specifying the starting address of the block you wish to compare and then
+ the range that you wish it compared to.
+<br><pre>
+  EXAMPLE:   2000<3FF0.4000V
+</pre><br>
+<b>DISK (READ and WRITE): adrs&ltsec1.sec2r (READ);
+ adrs&ltsec1.sec2w (WRITE)</b>
+<br><br>
+This unique feature of the ZYNAPSE monitor allows you to access the disk
+ directly.  The first parameter is the starting address of the buffer in
+ which you wish to store the contents of the sec1 through sec2.  Note:The
+ READ and WRITE commands are lowercase. (CAUTION: BE EXTREMELY CAREFUL WHEN
+ ACCESSING THE DISK DIRECTLY.  YOU CAN EASILY OVERWRITE THE CONTENTS OF YOUR
+ DISK.)
+<br><pre>
+  EXAMPLE: 2000<1.4r (reads sector 1 through 4 into
+                      buffer starting at 2000)
+           2000<1.4w (wites the contents of buffer starting
+                      at 2000 to sectors 1 through 4.)
+</pre><br>
+<b>RESTORING NORMAL MODE: N</b>
+<br><br><br>
+This command tells the assembler to restore the original screen color and tab
+ stops to the power-up specifications.
+<br><br>
+OTHER COMMANDS
+<br><br><br>
+These commands are mainly used for execution and debugging assembly language
+ programs.
+<br><br>
+<b>EXECUTE: G</b>
+<br><br>
+The G command is used to execute a program from the monitor, by typing the
+ program address and the G command.
+<br><pre>
+[*] Ok.
+4000G
+</pre><br>
+This will execute a program at 4000
+<br><br><br>
+<b>EXAMINE and MODIFY registers: R</b>
+<br><br>
+The R command allows you to examine and modify the 6502 registers (A,X,Y,P,S).
+<br><pre>
+[*] Ok.
+R
+A=05 X=10 Y=50 P=30 S=F7
+</pre>
+They can now be modified with the ";" command
+<br><br><br>
+<b>STEP and TRACE: S, T (see also DEBUGGING)</b>
+<br><br>
+The S and T commands are for single stepping your assembly language program
+ but the T repeats the S command indefinitely. The S command will execute one
+ instruction:
+<br><pre>
+[*] Ok
+4000S
+4000: A9 03    LDA   #$03
+A=03 X=00 Y=00 P=90 S=F0
+</pre><br>
+At this point you may modify the register.
+<br><br>
+The T command will do the same thing as the S command except it will just
+ repeat it forever.  To get out of this mode, just tap the [BREAK] key.
+<br><br>
+<b>QUIT: Q</b>
+<br><br>
+The Q command will return you to the assembler.<br><br>
+<A HREF="syndx.htm">Back to Index</A>
+ or <A HREF="#com">Back to Commands</A>
+ or <A HREF="synfmt.htm">Next Section</A><br>
+</body></html>

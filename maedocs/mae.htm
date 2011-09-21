@@ -1,0 +1,2387 @@
+<html>
+<head><title>MAE Manual</title>
+<meta name="meta-generator" content="Atari">
+<meta name="keywords" content="compile, john, help, editor, manual, debug, harris, xref, atari, 400, 800, 600xk, 800xl, 65xe, 130xe, 1200xl, 1400xl, 1450xl, 1450xld, bbs, support, .byte, .word, config, opcode, assembly"><meta name="keywords" content="develope, computer language, binair, binary, byte, bit, nibble, address, label, macro, location, lda, sta, cmp, ldy, sty, cpy, ldx, stx, cpx, bmi, beq, long, bpl, bne, nop, directive, printer, list">
+<meta name="audience" content="developers">
+<meta name="author" content="SysOp Fox-1">
+<meta name="copyright" content="(none)">
+<meta name="page-topic" content="education">
+<meta name="page-type" content="help">
+<meta name="robots" content="index, follow">
+<meta name="description" content="The compleet MAE manual in HTML format. A macro-assembler for the Atari 8-bit computers to make 6502c and 65c816 code. Still supported by John Harris, the author.">
+<meta name="keywords" content="atari, atari xl, 16bit, atari xe, atari 8bit, 6502, 65816, 6502c, 65c816, 65c02, mac65, assembler, john harris, programming, coding, assembling, disk, cross, freaks, text, cartridge, machine code, source">
+<meta name="revisit-after" content="35 days">
+</head>
+<body background="decor/bg_mac.gif" bgcolor="#d4d4ff">
+<a name="tableofcontents"></a>
+
+<table width="96%" align="center" border="1" bgcolor="#080682"><tr align="center"><td>
+<table width="100%" bgcolor="#080682">
+<tr align="center"><td rowspan="2"><a style="font-size: xx-large; font-family: Arial Black; color: #ff6626;">MAE&nbsp;</a></td>
+<td rowspan="2" align="center"><img src="decor/a8bit_ani.gif" width=104 height=26 alt="Atari 6502" border=0></td>
+<td align="center"><a style="font-size: x-small; font-family: arial; color: #a6ffa6;">
+(John Harris: &nbsp; john@pulsarinteractive.com)</a>
+</td></tr><tr><td align="center" valign="top">
+<a style="font-size: xx-small; font-family: Comic Sans MS; color: #a6ffa6;">
+(HTML conversion by SysOp Fox-1, February 2000)</a>
+</td></tr></table></td></tr></table>
+
+<table align="center">
+<tr><td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td align="center"><a style="color: #0404a0; ont-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/a8men.htm"><img src="decor/u_arrow.gif" alt="To Main-Index" border=0 height=13 width=13>
+To Main-Index</a></td></tr></table>
+<hr width="100%" size="2" style="color: #8668f5;">
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a style="font-size: large; font-family: Arial Black; color: #a02222; font-weight: bold;">
+TABLE OF CONTENTS<br></a><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="mae.htm#welcome">
+Welcome<br></a>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#features"><img src="decor/r_arrow.gif" alt="Features" border=0 height=13 width=13>
+Features</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#memoryusage"><img src="decor/r_arrow.gif" alt="Memory Usage & Configuration" border=0 height=13 width=13>
+Memory Usage and Configuration<br></a>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#mainmenu"><img src="decor/r_arrow.gif" alt="The Main Menu" border=0 height=13 width=13>
+The Main Menu<br></a>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#editorfileformat"><img src="decor/r_arrow.gif" alt="Editor File Format" border=0 height=13 width=13>
+Editor File Format</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#editingcommands"><img src="decor/r_arrow.gif" alt="Editing Commands" border=0 height=13 width=13>
+Editing Commands</a><br><br><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="mae.htm#assemblersection">
+Assembler Section</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#expressions"><img src="decor/r_arrow.gif" alt="Expressions" border=0 height=13 width=13>
+Expressions</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#labels"><img src="decor/r_arrow.gif" alt="Labels" border=0 height=13 width=13>
+Labels</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#addressingmodes"><img src="decor/r_arrow.gif" alt="Addressing Modes" border=0 height=13 width=13>
+Addressing Modes</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#pseudoops"><img src="decor/r_arrow.gif" alt="Pseudo-Ops" border=0 height=13 width=13>
+Pseudo-Ops</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#conditionalassembly"><img src="decor/r_arrow.gif" alt="Conditional Assembly" border=0 height=13 width=13>
+Conditional Assembly</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#macros"><img src="decor/r_arrow.gif" alt="Macros" border=0 height=13 width=13>
+Macros</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#errormessages"><img src="decor/r_arrow.gif" alt="Error Messages" border=0 height=13 width=13>
+Error Messages</a><br><br><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="mae.htm#debugger">
+Debugger</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#generalinformation"><img src="decor/r_arrow.gif" alt="General Information" border=0 height=13 width=13>
+General Information</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#commands"><img src="decor/r_arrow.gif" alt="Commands" border=0 height=13 width=13>
+Commands</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#debug80userfunction"><img src="decor/r_arrow.gif" alt="Debug80 User Function" border=0 height=13 width=13>
+The Debug80 User Function</a><br><br><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="mae.htm#installnotes">
+Install Notes</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#configcomoperation"><img src="decor/r_arrow.gif" alt="CONFIG.COM Operation" border=0 height=13 width=13>
+CONFIG.COM Operation</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#64kversion"><img src="decor/r_arrow.gif" alt="64K Version" border=0 height=13 width=13>
+64K Version</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#6480columndrivers"><img src="decor/r_arrow.gif" alt="64/80 Column Drivers" border=0 height=13 width=13>
+64/80 Column Drivers</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#using6480columndrivers"><img src="decor/r_arrow.gif" alt="Using the 64/80 Column Drivers" border=0 height=13 width=13>
+Using the 64/80 Column Drivers</a><br><br><br>
+<a style="font-size: large; font-family: Arial; color: #127012; font-weight: bold; text-decoration: underline;" href="mae.htm#history">
+History</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#version12"><img src="decor/r_arrow.gif" alt="New for Version 1.2" border=0 height=13 width=13>
+New for Version 1.2</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#version11"><img src="decor/r_arrow.gif" alt="New for Version 1.1" border=0 height=13 width=13>
+New for Version 1.1</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#version10"><img src="decor/r_arrow.gif" alt="New for Version 1.0" border=0 height=13 width=13>
+New for Version 1.0</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#version099"><img src="decor/r_arrow.gif" alt="New for Version 0.99" border=0 height=13 width=13>
+New for Version 0.99</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#version095"><img src="decor/r_arrow.gif" alt="New for Version 0.95" border=0 height=13 width=13>
+New for Version 0.95</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#version093"><img src="decor/r_arrow.gif" alt="New for Version 0.93" border=0 height=13 width=13>
+New for Version 0.93</a><br>
+&nbsp; <a style="color: #0404a0; font-size: small; font-family: sans-serif; font-weight: normal; font-style: normal; text-decoration: none;" href="mae.htm#version092"><img src="decor/r_arrow.gif" alt="New for Version 0.92" border=0 height=13 width=13>
+New for Version 0.92</a><br></tr></td></table>
+
+<br><table align="center">
+<tr><td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="http://www7.brinkster.com/atari/proginfo.htm"><img src="decor/l_arrow.gif" alt="Programming Info Index" border=0 height=13 width=13>
+Programming Info Index&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td align="center"><a style="color: #0404a0; ont-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Top of Page" border=0 height=13 width=13>
+Top of Page</a></td></tr></table>
+<hr width="100%" size="2" style="color: #8668f5;"><br><br>
+
+<table width="98%"><tr><td>
+<a name="welcome" style="font-size: x-large; font-family: Arial; color: #366636; font-weight: bold;">
+WELCOME&nbsp; </a>
+<a style="font-size: large; font-family: Arial; color: #a62626;">
+to the MAE assembler</a><br><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+The design goal of MAE was to provide a highly integrated environment for an </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#editorfileformat">
+editor </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+, </a><a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#assemblersection">
+assembler </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+, and </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debugger">
+debugger </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+. It is very easy to use, and contains many features to save the programmer keystrokes, and
+development time. It does not take the approach of, &quot;If I make the assembly speed fast enough,
+nothing else matters.&quot; I believe that only a small portion of a project's development time is
+spent waiting for the assembler to assemble your file. Therefore, programming efforts were mainly
+concentrated on making the editing and debugging processes easier.<br>
+MAE is fairly quick, but not the fastest assembler available. For example, the editor module of MAE
+is 2850 lines of source, and assembles to a disk file in 18 seconds.<br><br>
+MAE uses the standard E: device to allow easy compatibility with the XEP80 and other 80 column devices
+or software drivers. The speed of Atari's built-in 40 column device is not the greatest, and so you
+will also find the HYPER E: screen accelerator on the disk. This will more than double the screen
+performance when it is installed, and it is highly recommended. MAE also includes software drivers
+that allow </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#6480columndrivers">
+64 column and 80 column </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;editing on a high-speed Gr.8 screen. Thanks goes to Itay Chamiel
+for his work on these drivers.<br><br>
+I am always interested in hearing comments or suggestions about MAE. You can reach me at:<br></a></td></tr>
+<tr><td><table bgcolor="#ddd8fd" align="center">
+<tr><td align="center" colspan="2"><a style="font-size: small; font-family: Verdana; color: #004000;">John Harris</a></td></tr>
+<tr><td align="center" colspan="2"><a style="font-size: medium; font-family: Courier; color: #400000;">45346 Graceway Dr</a></td></tr>
+<tr><td align="center" colspan="2"><a style="font-size: medium; font-family: Courier; color: #400000;">Ahwahnee CA 93601</a></td></tr>
+<tr><td align="center" colspan="2"><a style="font-size: medium; font-family: Courier; color: #400000;">USA</a></td></tr>
+<tr><td align="right"><a style="font-size: medium; font-family: Courier; color: #000040;">&nbsp; &nbsp; internet: &nbsp; </a></td>
+<td><a href="mailto:jharris@poboxes.com?Subject=MAE Manual on Thunderdome" style="font-size: medium; font-family: Courier; color: #000040;">
+jharris@poboxes.com</a></td></tr>
+<tr><td align="right"><a style="font-size: medium; font-family: Courier; color: #000040;">or: &nbsp;  </a></td>
+<td><a href="mailto:john@pulsarinteractive.com?Subject=MAE Manual on Thunderdome" style="font-size: medium; font-family: Courier; color: #000040;">
+john@pulsarinteractive.com</a></td></tr></table></td></tr></table><br>
+
+<table align="center">
+<tr><td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="features" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Features </a>
+<a style="font-size: medium; font-family: Courier New; color: #4646b6; font-weight: bold;">
+of the MAE development system</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+Here are some of the features of the MAE development system.<br><br>
+MAE provides an excellent full-screen type editor with many features such as key macros, automatic
+'JSR' and return to subroutine labels, block moves and copies, and multiple undo.<br><br>
+Compatible with the </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debug80userfunction">
+XEP80 </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+, and probably most other video boards that provide an E: handler interface. Software drivers for </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#6480columndrivers">
+64 and 80 column </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;screens are also provided.<br><br>
+High level of integration between editor, assembler, and debugger. The editor can take you directly
+to lines that had </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#errormessages">
+assembly errors </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">. The </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debugger">
+debugger </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;can reference labels in the symbol table and assemble single program lines.<br><br>
+Very efficient -- it will save you a lot of typing.<br><br>
+True local </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#labels">
+labels </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;that are referenced between global labels.<br><br>
+Full text substitution macros.<br><br>
+Can assemble directly to bank select memory or bank select cartridges.<br><br>
+Uses very little system RAM. Most of the code resides in bank select memory.<br><br>
+Full 65816 and 24 bit support.<br></a></td></tr></table><br>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#welcome"><img src="decor/l_arrow.gif" alt="Welcome" border=0 height=13 width=13>
+Welcome&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#efefff"><br>
+
+<table width="98%"><tr><td>
+<a name="memoryusage" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Memory Usage </a>
+<a style="font-size: medium; font-family: Courier New; color: #4646b6; font-weight: bold;">and </a>
+<a name="memoryusage" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Configuration</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+This assembler is designed to run in up to 3 banks of the extended memory available on the 130XE or
+other memory expanded Atari. The bank numbers are configurable. A portion of the assembler must reside
+outside of bank select RAM, and in this version, it will occupy $B700-$BBFC.<br><br>
+Memory usage for the source file and symbol table is configurable. In addition, they can use bank
+select RAM for addresses within the $4000-$7FFF range, which keeps this area in main RAM free for the
+user. Having the symbol table in bank select RAM has one other benefit. It will usually stay intact
+so that the labels can be used from the debugger. The default values for memory usage will place the
+symbol table in one bank by itself, and the source buffer from LOMEM to $B6FF, with the segment from
+$4000-$7FFF in another bank of extended RAM. $4000-$7FFF in main RAM is free to the user, unless
+running the 64 or 80 column handlers which use part of this space, from $5600-$7FFF.<br><br>
+This assembler isn't designed for a </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#64kversion">
+64K machine </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+, but it can be configured to operate in a limited fashion. Because the bulk of the code sits at
+$4000-$7FFF, it is right in the middle of RAM if you don't have bank select memory. The best you will
+be able to do, is set the text buffer from $8000-$B6FF, and the symbol table from LOMEM to $3FFF.
+That will only give you about 14K for your text buffer, and your symbol table may not always be
+available for the debugger, but otherwise, all functions should work as described. See </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#installnotes">
+INSTALL.DOC </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;for more details.<br><br>
+Zero page memory is saved and restored from the editor and assembler, so that they will effectively
+leave all of ZP available to the user.<br><br>
+Buffer memory addresses and several configurable parameters are stored at the beginning of the program
+file. The parameters are located at +3 bytes from the start address, which will be +9 bytes when
+counting the DOS binary header. A utility, </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#configcomoperation">
+CONFIG.COM </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;is now provided to edit these parameters. A description of them follows. (Words are 6502 standard
+Lo,Hi)<br></a><br></td></tr></table>
+
+<table width="98%" bgcolor="#c8c8f8"><tr><td>
+<table border="1" cellspacing="1" cellpadding="0" bordercolor="#D0D0F0" bgcolor="#E0E0FF">
+<tr><td width="82" align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Word</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Text buffer start adr. If 0, the editor will use MEMLO. (Default)</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Word</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Text buffer end. If 0, the editor will use MEMTOP. Default $B6FF.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Word</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Symbol table start adr. Default $4000, in bank select memory.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Word</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Symbol table end. Default $7EFF. (The code for symbol table search is at $7F00).</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Assembly CPU mode. 0=65816, $80=6502.  Other bits may be used in the future.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Editor mode. Three bits are currently defined:</a></td></tr>
+<tr><td style="font-size: medium;">&nbsp;</td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+&nbsp; - When bit 7 is on ($80), Insert mode is active.</a></td></tr>
+<tr><td style="font-size: medium; font-family: Arial; color: #6d2424;">&nbsp;</td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+&nbsp; - When bit 6 is on ($40), spaces are converted into Tabs.</a></td></tr>
+<tr><td style="font-size: medium; font-family: Arial; color: #6d2424;">&nbsp;</td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+&nbsp; - When bit 5 is on ($20), editor will start with Caps lock on.</a></td></tr>
+<tr><td style="font-size: medium; font-family: Arial; color: #6d2424;">&nbsp;</td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+&nbsp; - Other bits may be used in the future.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Debugger mode. Currently unused, but reserved for future options.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">3 Bytes</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Tab settings for Assembly code fields.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- When drawing the screen for a particular location, such as a </a>
+<a style="font-size: x-small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#commands">
+Find or Goto command </a>
+<a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+&nbsp;this byte sets the screen row where the desired line will be located. If you set this to 0, the line
+will be on the top row. $0C will put the line in the middle of the screen. Default is 6.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- # of lines the PgUp & PgDn command will move by. Setting this to $18 gives single screen paging.
+If you normally use scrolling for short moves, you can set this value to something like $60 to jump
+through the file in larger steps.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Line length saved in the Undo buffers. Default is 39. You can increase this to 79, if you want entire
+80 column lines saved. You can also decrease this number to something like 25, if you want to increase
+the number of history buffers without using extra memory. You would only lose the comment field for
+any restored lines.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- # of Undo buffers. This number sets how many lines of history can be undo'ed. Default is 16.
+Multiplied by the number above, equals the total size needed for undo storage, located at the end of
+the text buffer.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Sets what bank of extended memory to put the assembler. It should be a value appropriate for the
+$D301 register. Default is $E3.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Sets what bank to put the symbol table. Default is $E7. Be aware that there is a small piece of code
+from $7F00-$7FFF that gets stored in the same bank as the symbol table.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">Byte</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Sets what bank to put part of the source text. Default is $EB. If source memory is configured from
+LOMEM to $B6FF, the segment from $4000-$7FFF will be put in this bank, leaving that region of main
+RAM free for object code or other uses.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">2 Bytes</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- An optimistic number of bytes for future expansion.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #6d2424;">String</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Default drive and dir spec. Must be in the form Dn:?????, like &quot;D3:*.*&quot;, or
+&quot;D3:*.S&quot; if you want dir listings to only show a certain file type. Filenames for loading
+and saving do not require a full &quot;Dn:&quot; filespec. If you type just a name, it will be
+preceded with the default drive selected here.</a></td></tr></table></td></tr></table><br>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#welcome"><img src="decor/l_arrow.gif" alt="Welcome" border=0 height=13 width=13>
+Welcome&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="mainmenu" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+The Main Menu</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+The program will display the main menu once it has loaded. During an editing session, the Esc key
+will return to this menu, and Esc will also return to the editor when you are in the menu.<br><br>
+Starting in version 1.2, MAE now displays the amount of free memory in the source and symbol table
+buffers.<br><br>
+Main Menu Commands:<br></a><br></td></tr></table>
+
+<table width="98%" bgcolor="#c8c8f8"><tr><td>
+<table border="1" cellspacing="1" cellpadding="0" bordercolor="#D0D0F0" bgcolor="#E0E0FF">
+<tr><td width="96" align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">A</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Assemble current file. &nbsp; Hold the Shift key when pressing A to turn on the assembler listing. The
+only current way to send an assembler listing to the printer, is to first use the &quot;O&quot; debugger command
+to enable output echo to the printer.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">B</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Break to the monitor. &nbsp; Actually issues a 00 BRK instruction.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">D</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Go to DOS. &nbsp; If you return to the editor by running at the start address, the source file will
+still be intact. This is automatic in SpartaDOS by using the RUN command. For other DOSes, you will
+need to supply the starting address which is currently $B800, but may change in later versions.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">L</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Load file. &nbsp; You do not need to type an entire filespec. The default drive 'Dn:' will be
+prepended if the entered name doesn't have a ':'. Press Shift-L to append to the end of an existing
+file.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">M</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Macro &nbsp;load and save. &nbsp; The contents of the </a>
+<a style="font-size: x-small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#keymacros">
+keyboard macro buffer </a>
+<a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+&nbsp;can be saved to and loaded from disk files. This allows you to create useful key macros and save them
+to disk for later use.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">P</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Do Pass 2 only of the assembly. &nbsp; A full assembly must have already been performed, and then this
+function may be used if the source code was changed in such a way that didn't effect any label
+addresses. This can cut assembly time about in half, but please do not use it unless you understand
+what it does and are certain that no label addresses have been changed since the last assembly.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">S</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Save File. &nbsp; Save displays the last loaded filename. Press Return to accept it, or backspace and
+change. Press Shift-S to save a marked text block. To do this, mark the starting line with ^Z, then
+move to the ending line and enter the Esc-Shift-S command. To print a file or text block, you may
+need to convert the text to spaces only, and then save to P:.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">T</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Tab convert. &nbsp; It will prompt to convert to Tabs or Spaces. Tab converted text will have $7F TAB
+characters for any sequences of spaces that can be compressed. The conversion is done from back to
+front for best speed, but it can still take awhile. It is also possible to run out of RAM when
+converting to spaces. After this command is entered, the editor will remain in the specified mode.
+In other words, if you do a tab convert to spaces, all future entered lines will remain in an
+expanded space format.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">V</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- (Value) &nbsp; Will allow you to enter any expression, and then displays the calculated value in both hex
+and decimal. This can be handy for getting the value of labels, or as a simple calculator.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">X</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Perform cross reference listing. &nbsp; The source file must already have been assembled with the A command.
+It allows you to enter a label name to start from, or just press return to create a cross reference
+for the entire symbol table. Be prepared for this to take awhile. This is a simple implementation
+that requires a full pass of assembly for each label. On the positive side, it doesn't require any
+memory to build an XRef table, and so generating an XRef on large files should not have any problems
+running out of memory. Plus, being able to specify label names directly makes it very easy, and much
+quicker, to get a report for one or two labels of immediate interest.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">1-9</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Get directory, and set default drive. &nbsp; If you just want to change the default drive without getting a
+dir listing, press Esc after pressing the desired number.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #0a0864;">Shift-Clear</a></td>
+<td><a style="font-size: x-small; font-family: Courier New; color: #143a04; font-weight: bold;">
+- Clear text buffer.</a></td></tr></table></td></tr></table><br>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#welcome"><img src="decor/l_arrow.gif" alt="Welcome" border=0 height=13 width=13>
+Welcome&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="editorfileformat" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Editor File Format</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+The editor saves files in straight ATASCII. It can either keep all spaces expanded, or can use $7F
+TAB characters to reduce the size of the file. The text can be freely converted between these formats.
+TAB compression and expansion is done on a line by line basis while you are editing, which is
+different from the way most editors handle TABs. While you are editing a line, TAB characters are not
+present, and the line will edit in the same way as if it had only spaces. When the line is saved back
+into the file, the program will see if it can convert any sequences of spaces into TABs, based on the
+configured TAB fields. TABs are not rigidly enforced. Meaning, if you slide a comment field a little
+to the left to make more room, that spacing will be retained, and that particular place simply won't
+be TAB converted. Thus, it is simply a manner of saving memory and file space. The editor will
+actually run faster with the TAB setting on, especially with the XEP80.<br><br>
+The editor allows line lengths up to 79 columns, and will scroll horizontally for displays that are
+narrower than this.<br><br></a></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#welcome"><img src="decor/l_arrow.gif" alt="Welcome" border=0 height=13 width=13>
+Welcome&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="editingcommands" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Editing Commands</a><br>
+&nbsp; <a style="font-size: x-small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#movingaround">
+Moving Around </a>&nbsp;&nbsp;
+<a style="font-size: x-small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#findreplace">
+Find & Replace </a>&nbsp;&nbsp;
+<a style="font-size: x-small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#blockmovescopies">
+Block Moves & Copies </a>&nbsp;&nbsp;
+<a style="font-size: x-small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#keymacros">
+Key Macros </a>&nbsp;&nbsp;
+<a style="font-size: x-small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#miscotherstuff">
+Misc Other Stuff </a>
+<br><a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+Standard Atari editing keys apply, with a few exceptions. Clr & Set Tab have no effect. Use the
+configure bytes to change tabs. Pressing the Caps key without Shift will always set lower case
+instead of toggling. Use Shift-Caps to set upper case. 1200XL function keys, as well as the standard
+Atari arrow keys, can be used to move the cursor.<br><br>
+Return will insert a new line if pressed at the end of the current line. Otherwise, it will just move
+to the line below. Return does not break a line in the middle, which works out better when entering
+source code.<br><br>
+In the following tables, a &quot;^&quot; symbol means to press Control along with the key after the
+&quot;^&quot;. &quot;S^&quot; means press both the Shift and Control keys.<br></a><br></td></tr></table>
+
+<table width="98%" bgcolor="#c8c8f8"><tr><td>
+<table border="1" cellspacing="1" cellpadding="0" bordercolor="#D0D0F0" bgcolor="#E0E0FF">
+<tr bgcolor="#dae8fa"><td height="34" colspan="2" align="center">
+<a name="movingaround" style="font-size: large; font-family: Courier New; color: #020256; font-weight: bold;">
+MOVING AROUND</a></td></tr>
+<tr><td width="82" align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^Up</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Scroll Up</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^Dn</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Scroll Down. These two commands are handy, because they scroll immediately, without waiting for the
+cursor to reach the screen's edge.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^&lt;</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Page up by configurable # of lines</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^&gt;</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Page Down</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^,</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Start of line</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^.</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+End of line</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^T</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Top of file</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^B</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Bottom of file</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^S</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Set mark at current location</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^M</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Go to Mark</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^G</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Goto line number. When entering the line number at the prompt, you can also enter a '+' or '-' as the
+first character to move a number of lines relative to the current location.</a></td></tr>
+<tr bgcolor="#dae8fa"><td height="34" colspan="2" align="center"><a name="findreplace" style="font-size: large; font-family: Courier New; color: #020256; font-weight: bold;">
+FIND & REPLACE</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^F</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Find text -- not case sensitive. '?' can be used as a wildcard.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^?</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Change the wildcard character. After issuing the command, press any other key to set the wildcard to
+that character. The wildcard character is shared between the editor and debugger, and changing it
+within either module will affect uses in both modules.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^F</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Find by searching backwards towards the start of the file.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^R</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Replace -- forward direction only. It will ask for a Find string and then a Replace string. For all
+matches of the find string, the editor will display an inverse '&gt;' symbol in front of the occurrence.
+You may press Y to replace it, N to skip it, A to replace all occurrences to the end of the text, or
+Esc to abort. Max length for Find or Replace is 15 characters.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^N</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Next. If the previous operation was a replace, then you will be in the prompted replace mode if the
+string is found. Otherwise, if the previous operation was a Find, then you will simply be taken to
+the next occurrence.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^P</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Find Previous match, by searching backwards.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^L</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Enter a label name, and the editor will jump to where the label is defined. (By searching from the
+first column only.)</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^J</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+The editor's version of a JSR. It looks at the operand field of the current line, and jumps to where
+that label is defined. It also sets a mark at the current line so that you can return with a ^H. The
+use of this function is not limited to JSR instructions. JMPs, branches, even data variable locations
+can be traced with this command. Basically, for any line that contains an operand field, ^J will
+attempt to find the location where that label is defined.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^H</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Return to previous position where a ^J command was entered. ^H is also used to jump to locations that
+gave assembly errors. During the assembly, up to 16 error positions will be remembered. All bookmarks,
+and marks set from the ^J and error position reporting, will auto-adjust to any changes in the source
+text, so that they will always point to the correct line in the source file.</a></td></tr>
+<tr bgcolor="#dae8fa"><td height="34" colspan="2" align="center"><a name="blockmovescopies" style="font-size: large; font-family: Courier New; color: #020256; font-weight: bold;">
+BLOCK MOVES & COPIES</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^Z</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Set block start.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^X</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Cut from block start to current line, in a forwards direction only. If you find you want to mark a
+block backwards, the easiest way to do this, is to set the mark at the current line, then move
+backwards to the start of the block. Press ^Z, then press ^M to return to where you started, and give
+the ^X or ^C command. A clear to end of file operation can be done by pressing the keys, ^Z, ^B, ^X.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^C</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Copy text from block start to current line, into the cut buffer. The text is left unchanged.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^V</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Paste the cut buffer at current line.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^D</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+If there is a ^Z block mark set, ^D will duplicate the text block. Effectively, it does a ^C followed
+by a ^V. Because this process clears the ^Z mark, multiple presses of ^D will not produce multiple
+copies of the same block. Use ^V to paste additional blocks. If there is no ^Z mark, then ^D will
+duplicate only the current line.</a></td></tr>
+<tr bgcolor="#dae8fa"><td height="34" colspan="2" align="center"><a name="keymacros" style="font-size: large; font-family: Courier New; color: #020256; font-weight: bold;">
+KEY MACROS</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^W</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+(Write) Begin key macro recording. When done, press ^3. Up to 80 keystrokes can be recorded,
+including Esc-Menu commands.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^E</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Execute Macro</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^K</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Prompts for a number, and then will repeat the next entered key that number of times. ^K cannot be
+used within a macro, but it can be used to execute ^E multiple times.</a></td></tr>
+<tr bgcolor="#dae8fa"><td height="34" colspan="2" align="center"><a name="miscotherstuff" style="font-size: large; font-family: Courier New; color: #020256; font-weight: bold;">
+MISC OTHER STUFF</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^Del</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Delete to end of line</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^I</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Toggle Insert/Replace mode.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^A</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Accept next keypress as literal ATASCII value. This lets you enter Control graphic or international
+characters that would otherwise be treated as editor commands.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^U</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Undo line deletes, or changed lines. Does not undo block operations. A handy way to move one or more
+lines from one place to another, is to delete the original lines, move to the destination, and then
+use the Undo operation.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^(</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+If a label exists on the current text line, move it up to the previous line. (lines that already
+contain labels or comments are skipped over)</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^)</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Same as above, but moves the label down.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^[</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Move the current line up one position relative to the lines around it.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">S^]</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Move the current line down one position.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">^;</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+Comments or uncomments a block of text. You can first mark the start of a text block with ^Z, and
+then press ^; on the last line of the block. If the block does not start with a commented line, then
+&quot;;&quot; characters will be added to the front of all lines in the block. If the block is already
+commented, then the &quot;;&quot;s will be removed. If you do not set a ^Z block mark first, then this
+command will process only the current line, and move the cursor down. This can be a faster way of
+commenting just a few lines.</a></td></tr></table></td></tr></table><br>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#welcome"><img src="decor/l_arrow.gif" alt="Welcome" border=0 height=13 width=13>
+Welcome&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="4" color="#eFefFF"><br></td></tr></table>
+
+<table width="100%"><tr><td align="right"><table width="98%"><tr><td>
+<a name="assemblersection" style="font-size: x-large; font-family: Arial; color: #366636; font-weight: bold;">
+ASSEMBLER SECTION</a></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#welcome"><img src="decor/l_arrow.gif" alt="Welcome" border=0 height=13 width=13>
+Welcome&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="expressions" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Expressions</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+Expressions can be made from decimal numbers, hex numbers by using &quot;$&quot;, binary numbers by
+using &quot;%&quot;, single ASCII characters with a &quot;'&quot; (single quote), and label names.<br><br>
+Any of these values can be mixed with math operators +-*/, ! (bitwise OR), & (bitwise AND), ^
+(exclusive OR), \ (modulo),  and unary -. The vertical bar | can be used in place of !.<br><br>
+There are four logical operators that will return values of either 0 (false) or 1 (true). These are
+&lt;, &gt;, =, and # (not equal). These operators are primarily for conditional assembly .IF
+statement use.<br><br>
+There are also special unary operators that refer to the low byte, high byte, and bank byte
+(24-bit highest byte) of the calculated expression. these operators are &lt;, &gt;, and ^.<br><br>
+There is no operator precedence. All math is evaluated left to right, with the exception of leading
+unary operators &lt;, &gt;, ^, and - which are done after the rest of the expression has been
+evaluated.<br><br>
+Do not put any spaces in the middle of expressions. Spaces are considered by MAE to be separators
+between different expressions.<br><br>
+Examples of valid expressions:<br><br>
+ &nbsp; LDA #'A-$20 &nbsp; &nbsp; ;= $21<br>
+ &nbsp; LDA #-1 &nbsp; &nbsp; &nbsp; &nbsp; ;= $FF<br>
+ &nbsp; LDA #-1+2 &nbsp; &nbsp; &nbsp; ;= $FD (the unary - is done last)<br>
+ &nbsp; LDA #%101&3 &nbsp; &nbsp; ;= 1<br>
+ &nbsp; LDA #&gt;$1234+1 &nbsp; ;= $12<br>
+ &nbsp; LDA #&gt;$1234+256 ;= $13<br>
+ &nbsp; LDA #^$123456 &nbsp; ;= $12<br>
+ &nbsp; LDA #&gt;$123456 &nbsp; ;= $34 (mid byte)<br>
+ &nbsp; LDA #1&gt;3 &nbsp; &nbsp; &nbsp; &nbsp;;= 0 (false)<br><br>
+All of these expression types can be used in .BY statements as well.<br>
+Like:<br><br>
+ &nbsp; LOWS &nbsp;.BY &lt;LABEL1 &lt;LABEL2 &lt;LABEL3<br>
+ &nbsp; HIGHS .BY &gt;LABEL1 &gt;LABEL2 &gt;LABEL3<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; .BY 15+3!%1000<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; etc...<br>
+<br></a></td></tr></table>
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#assemblersection"><img src="decor/l_arrow.gif" alt="Assembler Section" border=0 height=13 width=13>
+Assembler Section&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="labels" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Labels</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+The first character of a label may be any letter, or the symbols @, _, or ?.  All remaining characters
+may also include numbers plus the '.' symbol. Labels may be up to 15 characters long.<br><br>
+Label names, and for that matter all text entered with the assembler, can be entered in upper or lower
+case. Labels are not case-sensitive.<br><br>
+When the first character of a label is '?', the label is a 'local label'. Locals are defined only in
+the source code segment between two global (i.e. non-local) labels. References to local labels cannot
+cross a global label definition.<br><br>
+Internally, the assembler creates local labels by appending the local onto the end of the previous
+global label. Thus in the following code segment:<br><br>
+ &nbsp; &nbsp;DELAY  &nbsp;LDX #100<br>
+ &nbsp; &nbsp;?L &nbsp; &nbsp; DEX<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BNE ?L<br><br>
+'?L' is a local label, and will be entered in the symbol table as DELAY?L. Knowing how the label is
+stored, allows you to access it from the debugger or the Esc-V expression evaluator. You can also
+code a direct reference to the label DELAY?L if you need to access the local from the other side of
+the global label DELAY.<br><br>
+Locals are not printed in X-reference or symbol table listings, which makes them very useful for
+simple loop and branch structures where you don't want to think up unique label names for all
+occurrences.<br><br></a></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#assemblersection"><img src="decor/l_arrow.gif" alt="Assembler Section" border=0 height=13 width=13>
+Assembler Section&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="addressingmodes" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Addressing Modes</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+All 6502 and 65816 addressing modes are supported. Any addresses that evaluate less than $100 will use
+zero-page modes when possible. Zero-page labels must be defined before being used, because when MAE
+encounters a reference to a label which is not yet defined, it will assume absolute addressing. If
+that label is later defined to be zero-page, MAE will use zero-page addressing on pass 2, but it won't
+know that it used absolute addressing on pass 1, and thus the program addresses from this point on
+will be incorrect.<br><br>
+Beginning with version 1.2, MAE checks for such phase errors by verifying that program labels are at
+the same PC address on pass 2 as they were on pass 1. If a mismatch is found, a PHASE error will be
+displayed. Also new in version 1.2, is the .ZP pseudo-op, which pre-defines a label as zero-page type.
+This can be useful if you have labels defined in multiple modules, and the label needs to be used
+prior to the module where it is defined.<br><br>
+There is also a way to force 8 bit, 16 bit, or 24 bit addresses using the operators &lt;, !, and &gt;.
+(Yes, I know this is inconsistent with the immediate operators for low, high and bank bytes -- I
+didn't write the 65816 assembler specifications). This can be really useful for forcing absolute 16
+bit addressing on zero page labels, to add 1 cycle in time critical applications. For the 65816, it
+can force direct page addressing for non-ZP labels, (which of course requires you to move the direct
+page register to the proper page address). ALL 24-bit addresses must be preceded by the &gt;
+character.<br><br>
+The operands for the 65816 MVP and MVN instructions should be simple bank bytes -- not full addresses.
+Ex:<br><br>
+ &nbsp; &nbsp; &nbsp; MVP $40 $80<br>
+moves memory from bank $40 to bank $80,<br>
+using the addresses in X and Y.<br><br>
+Or:<br><br>
+ &nbsp; &nbsp; &nbsp; MVP ^SRC ^DEST<br>
+Use the bank byte of the source and destination addresses.<br><br></a></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#assemblersection"><img src="decor/l_arrow.gif" alt="Assembler Section" border=0 height=13 width=13>
+Assembler Section&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="pseudoops" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Pseudo-Ops</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+Note that only 2 letters are required, but if additional letters are present they will be truncated
+without assembly errors. For example, you may use pseudo-ops like '.byte' and '.org'.  Personally, I
+really like having the pseudo-ops the same width as all 6502 instructions, and only use 2 letters.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .02</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">	   
+Set 6502-only mode. In this mode, all 65816-specific instructions will be flagged as
+&quot;NOT 6502&quot; errors. The code will still be assembled in these cases, however it will not run
+properly on 6502 based machines.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .24</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Sets the symbol table and program counter to use 24 bit addresses. This is only useful for 65816
+programs, and may crash your machine if you try to use it without having a 65816 CPU.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .816</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Set 65816 mode, so that non-6502 instructions will not be flagged as errors. The initial setting of
+the .02 versus .816 assembly mode depends upon which processor version of MAE you are running. The
+opening menu display shows the current version number, and also an indication of whether it is a 6502
+or 65816 version of the program. The initial assembly mode will match this.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .AB</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">	   
+The assembler will generate byte-sized values for accumulator-related immediate constants. (Default)</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .AW</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+The assembler will generate word-sized values for accumulator-related immediate constants. This is
+only useful for 65816 programs.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .BA </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+byte</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+For bank addressing, you can specify an operand to force assembler generated object code into bank
+select RAM. This byte will be stored into location $D301 when storing bytes of object code into RAM.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .BI </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+filename</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Includes the contents of a binary disk file into the assembly. If this file does not contain a DOS
+binary header, it will be assembled as in-line data at the current PC. Otherwise, a file that contains
+a header will be loaded at its load address.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .BY </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+[+byte] bytes and/or ASCII</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Store byte values in memory. ASCII strings can be specified by enclosing the string in either single
+or double quotes.<br><br>
+If the first character of the operand field is a '+', then the following byte will be used as a
+constant and added to all remaining bytes of the instruction.<br>
+Ex:<br>
+&nbsp; &nbsp; &nbsp; .BY +$80 1 10 $10 'Hello' $9B<br><br>
+will generate:<br>
+&nbsp; &nbsp; &nbsp; &nbsp; 81 8A 90 C8 E5 EC EC EF 1B<br><br>
+Values in .BY statements may also be separated with commas for compatibility with other assemblers.
+Spaces are allowed since they are easier to type.<br><br>
+See also .SB which creates ATASCII screen codes, and .CB which creates strings in which the last byte
+is EOR'ed with $80.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .CA </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+byte</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+This is to allow for assembly directly into a bank select cartridge environment. The byte is placed in
+the X register, and a STA $D500,X is performed when object code bytes are stored into memory. The only
+catch, is that the assembler needs to be able to return the bank select cartridge to normal. There is
+currently a 'STA $D5DC' for this purpose, but this may not be the right address for your cartridge
+setup. You should search the disk file for this instruction, ($8D $DC $D5), and replace it with the
+appropriate address.<br><br>
+NOTE: The standard public version of MAE resides partially in the cartridge address space, and as such
+this pseudo-op will not work properly. Custom versions of MAE that reside in different areas of system
+RAM, such as just above your LOMEM, can be provided upon request.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .CB </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+[+byte] bytes and/or ASCII</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+This is in the same format as the .BY pseudo-op, except that the last character on the line will be
+EOR'ed with $80.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .CL</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Close output object code file. When using the .OU pseudo-op to create object code files on disk, the
+file will normally be closed at the end of assembly. However, if you wish to close the file before
+that, it can be forced closed with the .CL pseudo-op. You may use this to create multiple output files
+in one assembly, or to place something in RAM in addition to the disk file.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .DC </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">	   
+word byte</a><br> 
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Define constant-filled block. This will fill an area of size 'word' with the constant 'byte'.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .DS </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+word</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Define storage. This will reserve an area of storage equal to size 'word'.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .EC</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Do not display macro generated code in the assembly listing. Only the macro call itself will
+appear.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .EL</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Used after a conditional .IF statement, this marks the &quot;ELSE&quot portion of assembly. See the
+section on </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#conditionalassembly">
+conditional assembly </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;for more details.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .EJ</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Eject -- Send a form feed code to eject the page in an assembly listing.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .EN</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+This is an optional pseudo-op to mark the end of assembly. It can be placed before the end of your
+source file to prevent a portion of it from being assembled.<br><br>
+.EN can also be used to mark the end of a .IF conditional assembly section, (as in .ENDIF). Because
+pseudo-ops are only recognized to two characters, the .EN command will perform an ENDIF function when
+encountered within a conditional assembly section, and will end the assembly otherwise. The
+&quot;***&quot; ENDIF operator used in pre-1.1 versions of MAE is still supported, and actually
+preferred since there is no ambiguity here. It is also a little more visible at the source level.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .ES</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Display the object code resulting from Macro expansions.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .FL </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+floating point numbers</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Stores 6-byte BCD floating point numbers for use with the OS FP ROM
+routines.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .HE </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+hex bytes</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Store hex bytes in memory. This is a convenient method to enter strings of hex bytes, since it does
+not require the use of the '$' character. The bytes are still separated by spaces however, which I
+feel makes a much more readable layout than the 'all run together' form of hex statement that some
+other assemblers use.<br>
+Example:<br>
+&nbsp; &nbsp; &nbsp; .HE 0 55 AA FF</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .IB </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+The assembler will generate byte-sized values for index register-related immediate constants.
+(Default)</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .IW</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+The assembler will generate word-sized values for index register-related immediate constants. This is
+only useful for 65816 programs.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .IF </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+expression</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+The expression will be evaluated, and if true, (non-zero), the statements following the .IF, up to a
+.EL or .EN (or ***) will be assembled. If the expression is false, then the block of statements will
+not be assembled. See the section on </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#conditionalassembly">
+conditional assembly </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;for more details.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .IN </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">	   
+filename</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Include additional files in the assembly. Only the main source file can contain .IN pseudo-ops. You
+cannot nest them. Default drive processing works the same here as it does when loading files from the
+editor, and so you will usually not need any 'Dn:' types of filespecs. The file name only should be
+sufficient. No quotes are needed either.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .LC</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Turn off (clear) the display of the assembly listing. (Default)</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .LL</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Display the assembly listing on this line only, even if the full listing is turned off. This can be
+extremely handy to display the program counter value at important positions in the source file.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .LO </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">	    
+longwords</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Stores longwords, (3 byte values) in memory.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .LS</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Turn on (set) the display of the assembly listing.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .MC </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">	   	   
+adr</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Move Code to a different address than the .OR assembly origin. If you are assembling to RAM, your
+code will be stored starting at the address after the .MC pseudo-op. When assembling to disk, the .MC
+address will be used when creating the binary file headers, affecting where the code will be loaded
+into.</a><br><br>
+<a style="font-size: large; font-family: Arial; color: #043204;">	   	   
+&nbsp; !!!name </a>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+.MD</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Begin </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#macros">
+macro </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;definition. Described in a separate section.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .ME</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+End </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#macros">
+macro </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;definition.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .MG</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Mark the current .IN include file as Macro Global. This keeps this file in memory throughout the
+assembly, which is required if the file contains macros that are referenced in other included files.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .OC</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Turn off (clear) the storing of object code in memory.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .OR </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+adr</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Sets the origin address for the assembly.<br><br>
+Note: If there is a label on this line, it will be given the value of the new origin. This is not the
+same as in Mac/65 which could use its origin directive to reserve space (*= *+1). You should use the
+.DS pseudo-op for reserving space.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .OS </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Turn on (set) the storing of object code in memory. (Default)</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .OU </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+filename </a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Create an output disk file for the object code. Regretfully, this file is made up of individual 256
+byte segments much like Mac/65 does. I apologize for the laziness here on my part, but it really was
+a lot easier to do this way. You should run some type of strip program to de-segment the file for
+optimal size and speed. The .OU pseudo-op should be placed above the .OR pseudo-op.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .PR </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+&quot;text&quot;</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Print a text message to the screen on pass 1 of the assembly. This is generally used with the .VA
+pseudo-op when prompting for values to be entered from the keyboard.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .SB </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+[+byte] bytes and/or ASCII</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+This is in the same format as the .BY pseudo-op, except that it will convert all bytes into ATASCII
+screen codes before storing them. The ATASCII conversion is done before any constant is added with
+the '+' modifier.</a><br><br>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+&nbsp; label </a>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+.VA</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Will print a '?', and then accept input from the keyboard. You may enter any value, which will be
+given to the label in front of the .VA.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; .WO </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+words</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Stores words in memory. Multiple words can be entered.</a><br><br>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+&nbsp; label </a>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+.ZP</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Pre-defines a label as zero-page type. This can be useful if you have labels defined in multiple
+modules, and the label needs to be used prior to the module where it is defined. Normally, this would
+create a phase error during assembly whenever MAE encounters a forward label reference (where it will
+assume absolute addressing) which later turns out to be zero page. The error can be prevented by
+specifying such labels as .ZP in the first module. Note that .ZP usage must precede the actual label
+definition.</a><br><br>
+<a style="font-size: large; font-family: Arial Black; color: #081262;">
+&nbsp; SET </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+label = expression</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Set the specified label to a new value. This instruction allows a label to be redefined with different
+values during the assembly. Any label can be SET.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#assemblersection"><img src="decor/l_arrow.gif" alt="Assembler Section" border=0 height=13 width=13>
+Assembler Section&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="conditionalassembly" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Conditional Assembly</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+Conditional assembly allows the programmer to adapt the assembly process to different conditions.
+Blocks of code can be included or skipped over based upon the value of an expression. The format of
+conditional assembly is:<br><br>
+&nbsp; .IF expression<br>
+&nbsp; &nbsp; &nbsp; &nbsp; ;This block of code is assembled if the<br>
+&nbsp; &nbsp; &nbsp; &nbsp; ;expression is true.<br>
+&nbsp; .EL<br>
+&nbsp; &nbsp; &nbsp; &nbsp; ;Else, this block of code gets assembled<br>
+&nbsp; &nbsp; &nbsp; &nbsp; ;(when the expression is false)<br>
+&nbsp; .EN &nbsp; ;Marks the end of the conditional block.<br><br>
+The operand of the .IF instruction will be evaluated, and if the expression is true, then the source
+code following the .IF will be assembled until reaching a .EL or .EN pseudo-op. (Once again,
+two-letter pseudo-ops are a convenience, not a requirement. You are free to use the more standard
+.ELSE and .ENDIF if you prefer). The .EL portion is optional, and is used when you want one block of
+code to be assembled when the condition is true, and a different block when the condition is false.
+The end of the conditional is marked with either .EN or three asterisks ***. &nbsp; '***' is
+equivalent to an ENDIF statement, and is somewhat preferable since .EN will be interpreted as 'end
+of assembly' when it occurs outside of a valid conditional assembly block. '***' is non-ambiguous and
+will flag an </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#errormessages">
+assembly error </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;if it does not have a matching .IF.<br><br>
+Examples of Conditional Assembly:<br><br>
+&nbsp; .IF FLAG<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;This block of code gets asm'ed<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;when FLAG &lt;&gt; 0<br>
+&nbsp; ***<br><br>
+&nbsp; .IF FLAG=0<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;This block does when FLAG = 0<br>
+&nbsp; ***<br><br>
+&nbsp; .IF FLAG1!FLAG2<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;asm'ed if FLAG1 or FLAG2 &lt;&gt; 0<br>
+&nbsp; ***<br><br>
+&nbsp; .IF FLAG1^FLAG2<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;asm'ed if FLAG1<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;or FLAG2 &lt;&gt; 0,<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;but not both<br>
+&nbsp; ***<br><br>
+&nbsp; .IF WIDTH=40<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;This gets asm'ed when width = 40<br>
+&nbsp; ***<br><br>
+&nbsp; .IF WIDTH = 40 &nbsp;;This is INVALID.<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;Do not put spaces in expressions.<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;Spaces separate expressions from<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;each other.<br><br>
+&nbsp; .IF WIDTH#40<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;This gets asm'ed when width &lt;&gt; 40<br>
+&nbsp; ***<br><br>
+&nbsp; .IF WIDTH&lt;40<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;asm'ed if WIDTH less than 40<br>
+&nbsp; .EL<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;asm'ed if WIDTH greater or equal to 40<br>
+&nbsp; ***<br><br>
+&nbsp; .IF WIDTH&gt;40<br>
+&nbsp; . &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;if WIDTH greater than 40<br>
+&nbsp; ***<br><br></a></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#assemblersection"><img src="decor/l_arrow.gif" alt="Assembler Section" border=0 height=13 width=13>
+Assembler Section&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="macros" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Macros</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+Macros must be defined before they are used in your source. The definition looks like this:<br><br>
+!!!name .MD<br>
+&nbsp; &nbsp; &nbsp; &nbsp; ; body of the macro<br>
+&nbsp; &nbsp; &nbsp; &nbsp; .ME<br><br>
+Where 'name' is the name of the macro. The three exclamation marks are a special macro identifier,
+and must precede the macro name. The body of the macro definition will follow, and should be ended
+with a .ME pseudo-op.<br><br>
+The macro definition must be resident in memory when it is called. If you link multiple source files
+with .INclude </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#pseudoops">
+pseudo-ops </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+, then you need to ensure that any macro definitions are forced to be memory resident by using .MG
+within the file that contains the macros. Typically, you can put all your definitions in one file, put
+in the .MG option, and then include it at the beginning of your assembly.
+The root source file, that is, the one that is in memory when you issue the Esc-A assemble command, is
+always memory resident anyway and thus macros defined in your root source file are always available to
+other included files without the need for .MG.<br><br>
+Beginning with MAE version 1.1, the assembler now has free-format and full text substitution macros.
+Macro parameters can be anything, and will be passed to the macro routine in their original text form.
+The number of parameters passed by the macro call is not rigidly enforced, and in fact the macro
+definition no longer has to specify the number of expected parameters. Within the body of the macro,
+parameters are accessed by using a ':' followed by a number from 1 to 9, corresponding to the order of
+parameters on the calling line. (Parameters are separated by spaces, and nothing else). A special
+macro parameter, ':0' can be used to get the actual number of parameters passed in. When a macro is
+expanded, any ':n' strings that are not within quotes will be replaced with the text from the calling
+line. Text within quotes will normally be left as-is, which means there needs to be a special method
+of getting a macro parameter expanded inside of quote marks. Two double quotes in a row, &quot;&quot;,
+will be replaced with one double quote, and subsequent macro parameters will be expanded. Then use
+another set of two double quotes to close. See the macro examples below for more details on how this
+works.<br><br>
+An individual macro may pass up to 9 parameters, but there is also a limit on the total number of
+parameters including all nesting levels. This limit is 16. If a macro uses 8 parameters, then any
+nested macros it calls can use at most 8 additional parameters.<br><br>
+Any labels defined within a macro must use a special form. Because macros can be expanded multiple
+times, a special label type exists to avoid errors from multiple label definitions. These label types
+start with three periods, followed by any normal label name. These special macro labels will be given
+unique numbers with each macro expansion to keep them separate. You can consider them local labels to
+each macro expansion.<br><br>
+Here's an example of a macro to increment a two byte value:<br><br>
+!!!IND .MD<br>
+&nbsp;&nbsp; &nbsp; &nbsp; INC :1<br>
+&nbsp;&nbsp; &nbsp; &nbsp; BNE ...SKP<br>
+&nbsp;&nbsp; &nbsp; &nbsp; INC 1+:1<br>
+...SKP .ME<br><br>
+To call this macro, you would use:<br><br>
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; IND $80<br><br>
+Since a macro call will pass any text characters, you could call the same macro with:<br><br>
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; IND $80,X<br><br>
+Note that the structure of the second INC instruction in the macro body is important here for this to
+work correctly. If the line were written &quot;INC :1+1&quot;, it would get expanded to &quot;INC
+$80,X+1&quot; which is not valid.<br><br>
+Here are more examples that don't do anything specific code-wise, but serve to demonstrate various
+macro techniques. The calling line will be listed first, followed by the definition and what it will
+actually be expanded to.<br><br>
+&nbsp; &nbsp;&nbsp; &nbsp; PRT &quot;HELLO&quot; $9B &quot;THERE&quot; $9B<br><br>
+!!!PRT .MD<br>
+&nbsp; &nbsp;&nbsp; &nbsp; JSR PRINT<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;JSR PRINT<br>
+&nbsp; &nbsp;&nbsp; &nbsp; .BY :1 :2 :3 :4 :5 :6 :7 :8 0<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;.BY &quot;HELLO&quot; $9B &quot;THERE&quot; $9B 0<br>
+&nbsp; &nbsp;&nbsp; &nbsp; .ME<br><br>
+Parameters that are not defined on the calling line are simply replaced with null strings. They do
+got generate errors. The PRINT subroutine in this example would pull the return address off the stack,
+display the string that it points to until 0 is reached, and then push that address back on the stack
+so program flow continues with the next line of code.<br><br>
+&nbsp; &nbsp;&nbsp; &nbsp; TST $80<br><br>
+!!!TST .MD<br>
+&nbsp; &nbsp;&nbsp; &nbsp; .BY :1 &nbsp;&nbsp; &nbsp; .BY $80 &nbsp; ;direct substitution<br>
+&nbsp; &nbsp;&nbsp; &nbsp; .BY &quot;:1&quot; &nbsp;&nbsp; .BY &quot;:1&quot;&nbsp; ;strings inside quotes<br>
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;are not expanded<br>
+&nbsp; &nbsp;&nbsp; &nbsp; .BY &quot;&quot;:1&quot;&quot;&nbsp; .BY &quot;$80&quot; ;two quotes get converted<br>
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;to one, and the<br>
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;parameter gets expanded<br>
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;since it is not<br>
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;between quote marks.<br><br>
+Here's a more complicated example that can be used as a debugging aide during development.<br><br>
+&nbsp; &nbsp; &nbsp; ASSERT INDEX CC #$80<br><br>
+!!!ASSERT .MD<br>
+&nbsp; &nbsp; &nbsp; .IF DEBUG<br>
+&nbsp; &nbsp; &nbsp; PHP &nbsp; &nbsp; &nbsp; &nbsp; PHP<br>
+&nbsp; &nbsp; &nbsp; PHA &nbsp; &nbsp; &nbsp; &nbsp; PHA<br>
+&nbsp; &nbsp; &nbsp; LDA :1 &nbsp;&nbsp; &nbsp; LDA INDEX<br>
+&nbsp; &nbsp; &nbsp; CMP :3 &nbsp;&nbsp; &nbsp; CMP #$80<br>
+&nbsp; &nbsp; &nbsp; B:2 ...OK &nbsp; BCC ...OK<br>
+&nbsp; &nbsp; &nbsp; JSR PRINT &nbsp; JSR PRINT<br>
+&nbsp; &nbsp; &nbsp; .BY &quot;Assert Failed: &quot; &quot;&quot;:1 :2 :3&quot;&quot; 0<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .BY &quot;Assert Failed: &quot; &quot;INDEX CC $80&quot; 0<br>
+...OK  PLA<br>
+&nbsp; &nbsp; &nbsp; PLP<br>
+&nbsp; &nbsp; &nbsp; ***<br><br>
+The idea behind the ASSERT macro, is that it can be used to verify the value of key variables, notify
+the programmer when the value is not in range, and all the code disappears when you assemble the final
+version simply by setting the DEBUG flag to 0.<br><br>
+There are more macro examples in the supplied include file MACROS. If you create some really useful
+macros, please send them to me and let me know if they can be included in future MAE distributions.
+<br><br></a></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#assemblersection"><img src="decor/l_arrow.gif" alt="Assembler Section" border=0 height=13 width=13>
+Assembler Section&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="errormessages" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Error Messages</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+These are the error messages that can be produced by the assembler. Error messages are marked with an
+'!', and also include the source line number that they occurred on. If you are assembling a single
+file, or if the errors occurs in your main file, you will be able to use the editor ^H command to jump
+directly to the errors. For errors that occur in included files, you will need to load in that file,
+and jump to those line numbers manually using the ^G goto line number command.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; BRANCH</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Branch instruction out of range.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; OPCODE</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Error in opcode field.  This can be either a bad 65816 instruction, bad pseudo-op, or an undefined
+macro.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; DUP</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Duplicate label definition.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; EOF</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+End of File error. All assemblies must end with a .EN pseudo-op. This should be in the main source
+file, not in any included files. This error can also occur if a conditional or macro definition is
+pending at the .EN.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; UNDEF</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Undefined label reference.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; NEST</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Nesting error. .MD macro definitions cannot contain additional definitions. .IN included files may not
+include additional .IN files. Endif &quot;***&quot; mark without associated .IF statement.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; OPERAND</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Error in operand field.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; ADR MODE</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Addressing mode not supported.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; BAD LABEL</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Bad characters in label name.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; MACRO OV</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Macro overflow in either the number of expansions, or level of nested expansions.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; SYM OV</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Symbol table overflow.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; PARMS</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Number of macro parameters in the call does not match the definition.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; LABEL MISSING</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Missing label on either a SET pseudo-op or in an = equate definition.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; NOT 6502</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+This instruction is only valid on 65816 processors, and will not run on 6502-based computers. This
+error is only generated if you have used the .02 pseudo-op to generate 6502-only code.</a><br><br>
+<a style="font-size: medium; font-family: sans-serif; color: #580262; font-weight: bold;">
+&nbsp; PHASE</a><br>
+<a style="font-size: x-small; font-family: MS Sans Serif; color: #522208; font-weight: bold;">
+Zero-page variables must be defined, or pre-defined with .ZP, before they are used.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#assemblersection"><img src="decor/l_arrow.gif" alt="Assembler Section" border=0 height=13 width=13>
+Assembler Section&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="4" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="debugger" style="font-size: x-large; font-family: Arial; color: #366636; font-weight: bold;">
+DEBUGGER</a></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#assemblersection"><img src="decor/l_arrow.gif" alt="Assembler Section" border=0 height=13 width=13>
+Assembler Section&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFeFFF"><br>
+
+<table width="98%"><tr><td>
+<a name="generalinformation" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+General Information</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+Filenames default to the current drive number which can be changed. (input of 'FILE' = 'D1:FILE')
+A full filespec will override the default.<br><br>
+Non destructive prompt character (.) for ease in full screen editing. Also, the prompt does not
+interfere with command decoding. If the cursor is moved up to redo a prior command, the '.' does not
+need to be deleted.<br><br>
+Upper and Lower case accepted.<br><br>
+The debugger is ZP clean, so all of ZP is available for the user.<br><br>
+You can look at RAM under the OS, by resetting the bit in $D301, as long as you are using SpartaDOS or
+some method of handling interrupts when the OS is disabled.<br><br>
+The debugger uses the E: handler, which can allow two screen debugging with some 80 column devices.
+(Your program is displayed through the Atari, while debugging output is on the 80 column device.)
+Currently, the </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debug80userfunction">
+XEP80 </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;does not work very well in this manner, because its screen drivers require the Atari DMA to be turned
+off. You can partially support this by adding an external user function to toggle DMA. More
+information about this will be given in a later section. For machines without an 80 column device, the
+debugger supports flipping between two display lists, one for the E: screen, and one for your program.
+In all cases, there can be potential conflicts when trying to debug programs that use the E: handler
+themselves, as both the debugger and your program struggle for the same locations. The debugger's
+design is admittedly not ideal for use in this situation, but it works out well for programs that
+create their own screen.<br><br>
+Any continuous displays can be paused and stepped one line at a time with the space bar. Press 'C' to
+return to continuous display. ESC, RETURN, or BREAK will stop the display. While the display is
+paused, the V command for switching view screens, and also the U user function, can both be used.<br><br>
+ALL addresses and data bytes can be entered in HEX (default), in DECIMAL with # (#1234), in BINARY
+with % (%10011010), in ASCII with ' ('A) or as a label currently defined in the MAE symbol table with
+. (.LABEL). Arithmetic operators +-*/&!\^  can also be used, and will be performed left to right. Any
+combination of these can be mixed at any time in a completely free format scheme, with no limits on
+length. (Ex: 2000-#256+'W/100) Very little will be mentioned about this feature later on, but ALL
+numbers for ALL commands accept this versatile entry system.<br><br>
+All commands use spaces as delimiters. A '?' indicates a command error. Parameter uses for commands
+are abbreviated to:<br><br>
+&nbsp;adr: a 16 bit address.<br>
+&nbsp; by: an 8 bit byte. ('by' with numbers indicates a string of bytes.)<br>
+&nbsp;bit: a 0 or a 1.<br>
+char: an ASCII character.<br><br>
+Quantities in [brackets] are optional parameters. Default values will be used if they are not entered.
+All non-bracketted values must be entered. Any other upper case characters or symbols should be
+entered as stated.<br><br>
+'Current address' refers to the last displayed or changed address, (+$1), and is separate from the
+current program counter or PC.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#debugger"><img src="decor/l_arrow.gif" alt="Debugger" border=0 height=13 width=13>
+Debugger&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="commands" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Commands</a><br><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Display Memory </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; M[M] [adr] [adr][/]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Displays 8 bytes of hex and ASCII when using M, or 16 bytes of ASCII only when using MM. Displays 3
+lines worth if you enter only one address, otherwise it will display up to the second address, if
+entered. Displays from current address if no parameters. '/' = to $FFFF. The '/' can be used on all
+other commands as well. Does not display ASCII control characters when output is being sent to an
+external device.<br><br>
+The hex bytes in the hex and ASCII display (but not the ASCII bytes), or the ASCII bytes in the
+ASCII-only display, may be changed using standard screen editing.<br><br>
+When displaying hex and ASCII from a 24-bit address, the last two bytes of ASCII will not be displayed,
+due to screen width limitations.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Peek Memory </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; P adr1 [adr2..] [*]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Special memory display that allows multiple addresses to be entered, and only prints one byte per
+address. * causes a continuous print of the list of addresses, and is really useful for finding
+keycodes from $D209, or examining any locations that have changing data. Push Break to abort the
+continuous peek.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Change Memory </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; :adr by1 [by2..by8]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+The change memory command ':' can be entered directly, or edited from the display memory command. Only
+8 data bytes will be changed. You can substitute the character = for the adr, which will then use the
+current address. This allows you to enter successive lines of bytes without requiring any other
+addresses.<br>
+Ex:<br><br>
+&nbsp; &nbsp; :600 1 2 3 4 5 6 7 8<br>
+&nbsp; &nbsp; := 9 A B C D E F<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; ASCII Mem Change </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; C adr ASCII_STRING</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Stores ASCII string at adr.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Disassemble </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; D [M][X][R] [adr]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Disassembles memory starting at adr, or the current adr if not entered. When disassembling 65816 code,
+instructions that change the register sizes will automatically be detected, and adjust the immediate
+operands in the listing accordingly. When beginning a disassembly however, it will not know the
+current state of the register sizes and will default to 8 bits. The M, X, and R options in the command
+line will force 16-bit M, X, and both Registers to be used at the starting address. The single
+instruction that gets disassembled as part of the register display or trace mode will always be
+correct, since the register sizes can be obtained directly from the processor status register.<br><br>
+The disassembly code, (the instructions -- not the hex bytes), can be modified using normal screen
+editing. This gives you a single line assembler process that is a direct link to the syntax processor
+in the main </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#assemblersection">
+assembler section </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+. Therefore, it uses the same format, and has all of the same features as any one line of code that
+you could enter in the assembler section. You can use labels, &lt; and &gt; operators, and even </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#pseudoops">
+pseudo-ops </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+! You can enter branch instructions with an address like &quot;*+8 &quot;, which means the current
+PC +8. The only restriction is that you cannot use a macro call.<br><br>
+Single line assembly can be started from scratch, (as opposed to editing an existing disassembly), by
+typing, &quot;-adr .&quot; followed by an Assembly mnemonic. (The '.' is necessary). Such as:<br><br>
+&nbsp; &nbsp; -600 .LDA #0<br><br>
+Because the period is a marker for the beginning of the instruction field, entering a pseudo-op will
+require two periods. Such as:<br><br>
+&nbsp; &nbsp; -600 ..HE 55 AA FF<br><br>
+This gives you additional methods for putting bytes into memory. Since the regular Change Memory
+command is limited to 8 bytes, you can use the above .HE format when you want to enter more bytes than
+that. Or use .BY when you want to enter mixed strings of ASCII, HEX, and DECIMAL. Maximum line entry
+length is always limited to 80 characters though. Other pseudo-ops that can be useful are, .DC for
+blocks of constant data, and .SB for ATASCII screen code bytes. You can also enter the .24, .AB, .AW,
+.IB, and .IW pseudo-ops to control the size of the operands that you enter, just as you would need to
+do in the assembler. None of the other pseudo-ops produce useful results, and some can be hazardous to
+use.<br><br>
+From within the single line assembler, you may enter '*' as the first mnemonic character to continue
+disassembly from that address forward.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Display Registers </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; R</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Displays 6502 registers in this form:<br><br>
+&nbsp; &nbsp; ,A  X  Y  NV-BDIZC SP<br>
+&nbsp; &nbsp; ;AB 5D FA 10110001 FF 7014 LDA #$00<br><br>
+The 65816 version of MAE displays registers in this form:<br><br>
+&nbsp; &nbsp; ,NVMXDIZCE 0000 00 00<br>
+&nbsp; &nbsp; ;00AB 005D 00FA FF 7014 LDA #$00<br><br>
+Status flags will be inverse when they are set, and normal when clear. The remaining numbers on the
+top line are the Direct Page register, the DBR, and the PBR. The upper byte of the stack pointer is
+not displayed. 16-bit numbers for registers A, X, and Y are displayed on the next line, however only
+the A register will currently show the correct 16-bit value. Full 16-bit support for X and Y will be
+provided when there is an OS upgrade readily available to handle the native mode interrupts.<br><br>
+Note: The Direct Page register and DBR are currently inactive, and will always display 0. The PBR will
+display the proper value, but can not be changed by editing the register display. Currently, it can
+only be set by entering a 24-bit address into the G or I </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#commands">
+debugger commands </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Change Registers </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; ; register bytes</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Supports screen editing of R command. Status flags can be modified in bit form. When entering values
+directly, a comma will skip to the next register, and you don't need to enter all the values.<br>
+EX: ';55' will change the A register to 55. ';,,20' will change Y to 20.<br><br>
+When setting flags in the 65816 version, you can enter either normal or inverse flag characters, or
+enter 0's or 1's, and can freely mix the two.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Goto </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; G[S] [adr] [*brkpt] [C by] [r by] [Pf bit]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Run program at adr, or PC if not entered. At any time during execution, the Break key will return to
+the debugger and display the current registers and PC. Use the 'S' option to run code that ends in an
+RTS.<br>
+(Note: When using the S option, the PC adr in the register display on return is an internal address,
+not the address where the actual RTS occurred.)<br><br>
+A breakpoint will create a return point to the debugger whenever a particular address or condition is
+reached. *brkpt will place a 00 (BRK) at the breakpoint address. For this reason, breakpoints can not
+be used for programs in ROM. A '?' will be printed in this case. The breakpoint must also be set at an
+opcode rather than an operand location so that it will execute. The rest of the parameters add
+conditions to the breakpoint.<br><br>
+C + by Counts the number of times the breakpoint is reached. Execution continues until the BRK is
+passed the specified number of times. Breakpoints can also test for specific conditions by specifying
+(r) reg name and (by) byte it must contain in order to BRK. Processor flags can also be tested by 'P'
++ flag character + (bit) for condition. Use the flag characters as in the register display.<br><br>
+The breakpoint will be skipped over until the specific condition is reached. When both count and
+condition options are used, the count will apply to the number of times the condition is met.
+Execution speed will be slightly slower than real time in this mode. Actual speed will depend on how
+often the program is interrupted to check conditions.<br><br>
+NOTE: A peculiar bug in the 6502 chip causes breakpoints to be intermittently skipped over. When the
+BRK interrupt occurs, the program counter+2 is pushed on the stack, but instead of jumping through the
+interrupt vector, the OS will occasionally just return to the program at PC+2. This is usually a very
+rare occurrence, but can happen more often when using conditional breakpoints on very small and quick
+loops, thus BRK interrupts are occurring very rapidly. It took many years before I was able to really
+understand what was going on, and be assured that the problem was indeed in the 6502, and not a bug
+in the debugger. I eventually found written documentation of the problem from other sources.<br><br>
+ADDITIONAL NOTE: This bug does not occur on the 65816 processor!<br><br>
+&nbsp; &nbsp; &nbsp; Go command examples.<br>
+G 2000 &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; = Run program at $2000<br>
+G 4000 *4124 &nbsp; &nbsp;= Run at $4000, and break at $4124<br>
+G *3100 A'Q &nbsp; &nbsp; = Run at current PC and break at 3100<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; when A register equals ASCII 'Q'<br>
+G *4200 C10 PZ1 = Run at PC and break at 4200 the 16th<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; time the zero flag is set<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Remove Breakpt </a>
+<a style="font-size: large; font-family: Arial; color: #043204;">
+&nbsp; *</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Brkpts remove themselves, and replace what was there when the BRK is executed. However, in case the
+program stops at other than the brkpt, * will remove it. This can occur when the Break key is pressed,
+conditional or count values are not reached, or when the BRK is set in an operand rather than an
+opcode. Setting a new brkpt with the G command will also remove an unused BRK.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Exit to DOS </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; X [char]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+When no additional characters are entered, the BRK vector at $206 will be restored to whatever it was
+when MAE was started. If you would like to keep the BRK vector trapped by the debugger, you may enter
+any character after the X. (I could not come up with a decisive and memorable letter to use for this
+purpose, so I leave it to you to choose your own.)<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Return to Assembler </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; A</a><br><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Fill Memory </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; F adr1 adr2 [by1] [by2 by3...]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Fill memory with 0 if no data bytes. Otherwise enter 1 byte, or a sequence of any number of bytes to
+fill with.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Transfer Mem </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; T adr1 adr2 adr3</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Move memory from adr1 through adr2 to adr3. Handles overlapping moves.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Hunt for Chars </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; H adr1 adr2 by1 [by2...][?]</a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Hunt for String </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; H adr1 adr2 'ASCII string [?]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Hunt memory for ASCII string or string of hex bytes up to length of 30. Use '?' for a wildcard to
+match anything. Note that the default wild card byte is also $3F hex, meaning that any searches with
+3F in a hex string will be treated as a wildcard as well. See the next command for changing the
+wildcard character in cases of interference. Realize the number entry system will let you search for
+things like &quot;A9 'A&quot;, (as in LDA #'A), but not the reverse of this. Entering &quot;'A A9&quot;
+will put the hunt into full ASCII form, and search for the literal string that you typed in. The
+second example can actually be entered in the form &quot;? 'A A9&quot;, using a wildcard to avoid the
+initial ' identifier. For one more example, let's say you wanted to search for a JSR to a MAE defined
+label. This can be entered as &quot;20 .&lt;LABEL .&gt;LABEL&quot;.<br><br>
+Searches through the OS ROM area will automatically skip $D000-$D7FF. So you may simply enter a search
+range of $C000-FFFF.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Change wild card </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; ? char</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Change the wild card for the Hunt command to 'char'. This is used in case a character in the search
+string needs to be '?' or HEX 3F.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Compare mem </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; K adr1 adr2 adr3</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Compare memory from adr1 to adr2 with memory starting at adr3. Displays all addresses with
+differences.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; DEC to HEX </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; # decimal number</a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; HEX to DEC </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; $ by</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Displays hex values of decimal numbers and vice versa.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Change Output </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; O [filespec]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Send output to screen and filespec. O by itself returns to just screen output. Use &quot;O P:&quot; to
+send output to the printer.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Re-open Editor IOCB </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; E</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+This is useful for returning to the text screen from a graphics mode, or 80-column display, or to
+reset the screen after changing RAMTOP. The other IOCB's used are: #3 disk reads, #4 disk writes, and
+#6 external output.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Change View </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; V</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+When debugging a program that creates a new display list, the V command can toggle between the
+program's screen and the debugging text screen. The debugger stores the display list address for the
+text screen, initially at $BC20, and updates this whenever the E command is used. The V command checks
+this address against what is currently in the display list pointer, to decide whether it needs to
+restore the text screen, (saving the previous value), or return to the last saved value of your
+program's screen. While the debugger doesn't initially know where your program's screen is going to be,
+it picks this information up the first time you issue the V command with your program's screen active.<br><br>
+In some cases, swapping the display list pointer may not be sufficient to display both screens in
+their proper format. Such as when using different character sets, or different GPRIOR modes. For this
+reason, operation of the V function can be extended through two user accessible vectors at $BFF7 and
+$BFFA. $BFFA will be called when switching to your program's screen, and $BFF7 will be called when
+switching back to the debugger's screen. You can insert JMP intructions here that point to extra
+routines that update whichever other hardware locations are needed.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Query MAE symbol table </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; Q adr</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp; &nbsp; &nbsp; (Sorry, I was running out of letters)<br>
+Search the current symbol table for a label that matches the value entered for adr. If found, the
+label will be printed. This is basically the reverse procedure for symbol table lookup, and as such
+will only work well when the requested value has only one label associated to it.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Trace Instr </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; I [adr]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Traces program an instruction at a time. Trace normally works on programs in ROM, except 'G' and 'R'
+options as noted below. After each step, the debugger will wait for one of the following keypresses to
+control the tracing mode:<br></a><br></td></tr></table>
+
+<table width="98%" bgcolor="#c8c8f8"><tr><td>
+<table border="1" cellspacing="1" cellpadding="0" bordercolor="#D0D0F0" bgcolor="#E0E0FF">
+<tr><td width="82" align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+Space</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Steps one instruction at a time.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+C</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Continuous trace.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+D</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Disassemble next instructions. Useful for previewing code that you are about to step through. The
+program counter will remain at its current location.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+G</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Execute all instructions up to current 'D' command listing. Use to quickly execute loops or other
+structures. First use 'D' to find a spot past the structure, then 'G' will execute everything up to
+that point. This command puts a Breakpoint at the end position, and therefore cannot be used if the
+program is in ROM.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+S</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Execute entire subroutine as one step.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+R</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Return from subroutine. Use this command if you are already in a subroutine, and wish to return to
+the previous level. A BRK will be placed at the instruction the subroutine returns to, and therefore
+cannot be used for programs in ROM.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+L</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Like the return from subroutine, but does an RTL return from 24-bit subroutine calls.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+P</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Peek the value of the operand of the current instruction. Operand calculation is crude, using simple
+absolute or direct page addressing on the operand value. It does not attempt to calculate indexed or
+indirect operand addressing. Thus, if you do a P on an instruction like &quot;STA ($80),Y&quot;, it
+will return the contents of location $80 -- which can theoretically be useful, but the function is
+intended for use on instructions with simple absolute or direct page addressing modes.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+Q</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Perform a Q debugger command on the operand of the current instruction. If the operand value is
+defined in the current MAE symbol table, the label name will be printed. You can use this on JMP, JSR
+and branch instructions to get an idea where you're going, and also on any memory references that have
+you thinking, &quot;What the heck is *that*?&quot;</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+U</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Execute the user function. The carry will be clear, and $F0 will contain the PC for the currently
+displayed instruction.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+V</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Execute the V command to change DLIST views.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+X</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+- Ignore instruction. Skip to the next one without executing.</a></td></tr>
+<tr><td align="center" valign="top"><a style="font-size: medium; font-family: Arial; color: #024306;">
+ESC, RETURN, or BREAK</a></td>
+<td><a style="font-size: small; font-family: Courier New; color: #3a0802; font-weight: bold;">
+&nbsp; exits trace mode.</a></td></tr></table></td></tr></table><br>
+<table width="98%"><tr><td>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Change Default Drv </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; / 1-9</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+All default drive accesses change to drive number entered, including uses in the assembler section.
+The starting default drive number will be the same as the current SpartaDOS drive.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Binary Load </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; L [@adr][-adr] filename</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Load DOS II binary file where it was saved, or at @adr if entered. Prints a '?' if the file is not DOS
+II format. Loads appended files, but @adr only works on 1st part. -adr loads raw data with no header
+using a straight CIO transfer. Both PC and default address are set to the load address.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Binary Save </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; S [-]adr1 adr2 [@adr3] [+]file</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Save DOS II binary file from adr1 to adr2. If @adr3 is entered, it will be used as the header allowing
+the file to load in at a different address than where it was saved. Use '-' for a CIO save without
+header. If + is entered, append to existing file.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Directory </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; \ [name or spec]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp; &nbsp; &nbsp; (Sorry, I *am* out of letters)<br>
+Displays disk directory. Default of Dn:*.*. A filespec of D2: = D2:*.*<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Sector Read </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; R adr sector# [ending sector]</a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Sector Write </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; W adr sector# [ending sector]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Direct sector I/O to default drive. Reads single and double density disks automatically including
+single density sectors 1-3 of a DD disk.<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; Evaluate Exp. </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; = by1(+-*/&!^\)[by2..] &nbsp;(no spaces)</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Prints hex and decimal values of expression evaluated left to right.
+Can also be used for ASCII convert. (='A)<br></a><br>
+<a style="font-size: medium; font-family: Arial Black; color: #081262;">
+&nbsp; User Function </a>
+<a style="font-size: medium; font-family: Arial; color: #043204;">
+&nbsp; U [adr1] [adr2] [adr3]</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+Accepts up to 3 24-bit parameters, which will be stored at $F0, $F7, and $F3. $F7 and $F3 will be 0 if
+not entered, while $F0 will have the current address if not entered. In addition, the carry flag will
+be set if no parms. Then jumps to the end address of the debugger-3. ($BBFD in top of RAM version)
+User function expects an RTS return.<br><br>
+When the user function is called from a paused Trace or other display, the carry will be clear, and
+$F0 will contain the PC or current address respectively.<br></a><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#debugger"><img src="decor/l_arrow.gif" alt="Debugger" border=0 height=13 width=13>
+Debugger&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="debug80userfunction" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+The Debug80 User Function</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+There is a file on the disk called DEBUG80. This loads into the area for the debugger's user function,
+and can be loaded either from DOS, or from the debugger with the L command. This function is intended
+to help debug Atari programs while using the XEP80. As mentioned earlier, the driver for the XEP80
+will not run unless the Atari's DMA turned off. DEBUG80 provides a toggle for the DMA control, so that
+the program screen can be turned on or off as needed.<br><br>
+XEP80 debugging is still very limited, because you cannot issue any commands while the Atari DMA is
+enabled. Any attempts to do so, will corrupt the XEP80 screen, and probably require turning the power
+to the XEP80 off and on to recover it. You can only toggle the DMA when the screen display is paused,
+like from a memory dump or trace mode. Still, you may find applications where it is very helpful to
+view debugging information and the screen display at the same time, and this extension will let you do
+this.<br></a><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#debugger"><img src="decor/l_arrow.gif" alt="Debugger" border=0 height=13 width=13>
+Debugger&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="4" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="installnotes" style="font-size: x-large; font-family: Arial; color: #366636; font-weight: bold;">
+Install Notes&nbsp; </a>
+<a style="font-size: large; font-family: Arial; color: #a62626;">
+for the MAE assembler</a><br><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+MAE.COM as supplied in the archive will run as-is on a 128K+ machine, in standard 40 column mode.
+Instructions for creating a version for </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#64kversion">
+64K machines </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;and/or </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#6480columndrivers">
+64/80 column </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;versions follow.<br><br>
+Please backup the original MAE.COM file or keep the archive itself before making any customized
+versions.<br><br>
+Some of these installations require changing the buffer addresses for MAE's source text and symbol
+table. For these cases you should run the </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#configcomoperation">
+config utility </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+&nbsp;CONFIG.COM. It will try to open the file D:MAE.COM, and will save any configuration changes back to
+the MAE executable. Thus, you should make sure MAE.COM is on the current working drive, (or on drive
+1, depending upon the DOS you are using), before running CONFIG.COM. An error message will be
+displayed if it fails to load MAE.COM.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#debugger"><img src="decor/l_arrow.gif" alt="Debugger" border=0 height=13 width=13>
+Debugger&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="configcomoperation" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+CONFIG.COM Operation</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+Once the loading is successful, CONFIG will display a screen full of editable parameters. You may use
+up and down arrows to move the cursor to different fields, and then type in your new values. Return
+will advance to the next field. Backspace and left/right arrows are supported within the field.<br><br>
+Press 'Esc' when you are finished with your changes. If no errors are found in the data, CONFIG will
+prompt if you wish to save the changes back to the MAE.COM file. Press 'Y' to save them, 'Esc' to keep
+editing, or any other key to exit the program without saving.<br><br>
+If an error is detected, press 'Esc' to revert to the previous value at the start of the session, or
+any other key to keep editing. The cursor will be placed on the field that had the error.<br><br>
+Please refer to MAE.DOC for details on the parameters themselves, in the section titled </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#memoryusage">
+&quot;MEMORY USAGE AND CONFIGURATION&quot; </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#installnotes"><img src="decor/l_arrow.gif" alt="Install Notes" border=0 height=13 width=13>
+Install Notes&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="64kversion" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+64K Version</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+The bulk of the MAE executable resides in the $4000-$7FFF address range, designed to be in bank select
+memory. If you do not have banked memory, you must reconfigure MAE's buffer addresses to not overwrite
+the program. Free memory will be in two segments, from LOMEM-$3FFF, and from $8000-$B6FF. You should
+probably set the source buffer to the latter, since it is the larger segment. Use CONFIG.COM to set
+the first four addresses to $8000, $B6FF, $0000 (MAE will use the current LOMEM), and $3FFF. You
+should also change the three bank select bytes to $FF, and then save your changes.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#installnotes"><img src="decor/l_arrow.gif" alt="Install Notes" border=0 height=13 width=13>
+Install Notes&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="6480columndrivers" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+64 & 80 Column Drivers</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+64 and 80 column modes are not available on 64K machines.<br><br>
+Default 64 and 80 column drivers are now included as COL64.OBJ and COL80.OBJ. These use the ANTIC bit
+compatible handlers, and the 'A' fonts. If you don't have a compatible RAM upgrade, or wish to use the
+other font choice, please follow the directions below to create new versions of COL64.OBJ and
+COL80.OBJ.<br><br>
+HAND64.OBJ and HAND80.OBJ are drivers for 64 and 80 column screens. They take advantage of ANTIC
+memory banking so that their use does not reduce the available memory for source and symbol table.
+They reside in the base memory range of $5600-$7FFF. If you have a memory upgrade that is not
+ANTIC-bit compatible, then you must use HAND64X.OBJ and HAND80X.OBJ. These versions will have to place
+the screen and dislay list from $9500-$B6FF. Code and data will be $6FF0-$79FF. To run the X versions
+of the handlers, you will need to reconfigure MAE's text buffer to end at $94FF instead of $B6FF
+using </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#configcomoperation">
+CONFIG.COM </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+.<br><br>
+Copy either HAND64.OBJ or HAND64X.OBJ to a new file named COL64.OBJ, and copy HAND80.OBJ or
+HAND80X.OBJ to COL80.OBJ. You now need to add character sets to these files.<br><br>
+There are two character set choices for both the 64 and 80 column handlers. A character set must be
+appended to the end of the handler's .OBJ file before the handler can be used. These files are
+COL64A.FNT, COL64B.FNT, COL80A.FNT, AND COL80B.FNT. These files should be viewable and editable in
+standard font editing packages. Choose a font file for each handler, and copy-with-append the fonts to
+the COL64.OBJ and COL80.OBJ files that you created above. The handlers are now ready for use.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#installnotes"><img src="decor/l_arrow.gif" alt="Install Notes" border=0 height=13 width=13>
+Install Notes&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="using6480columndrivers" style="font-size: large; font-family: Arial Black; color: #a62626; font-weight: bold;">
+Using the 64/80 Column Drivers</a><br>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;"><br>
+The 64 and 80 column screen handlers can be used in two different ways. The files can be loaded from
+the </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debugger">
+debugger </a>
+<a style="font-size: small; font-family: Courier; color: #121212; font-weight: bold;">
+, and then when you reenter the assembler the new handler will be active. To do this, press 'B' from
+MAE's main menu and then use a debugger command like &quot;L COL64.OBJ&quot;. Then enter 'A' to enter
+the assembler again and you should see a 64 column screen. The file &quot;COL40.OBJ&quot; can be
+loaded to return to 40 column mode. Another option, especially if you find that you want to use an
+extended column mode most of the time, is simply to append one of the COL64.OBJ or COL80.OBJ files to
+the end of the MAE.COM executable. In this way, MAE will always start up in the mode you choose, and
+you are still free to load different modes using the debugger. Personally, I think the 64 column mode
+works very well for Assembly source, while maintaining much better readability than the 80 column
+mode.<br><br>
+Note that the debugger will always run on the 40 column screen regardless of which handler is loaded
+for the assembler/editor.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#installnotes"><img src="decor/l_arrow.gif" alt="Install Notes" border=0 height=13 width=13>
+Install Notes&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="4" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="history" style="font-size: x-large; font-family: Arial; color: #366636; font-weight: bold;">
+HISTORY</a><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#installnotes"><img src="decor/l_arrow.gif" alt="Install Notes" border=0 height=13 width=13>
+Install Notes&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="version12" style="font-size: large; font-family: MS Sans Serif; color: #164686; font-weight: bold;">
+NEW FOR VERSION 1.2</a><br>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;"><br>
+Editor menu now displays amount of free space in the source and symbol table buffers.<br><br>
+MAE now checks for phase errors caused by referencing zero-page labels before they are defined. It
+verifies that program labels are at the same PC address on pass 2 as they were on pass 1. If a
+mismatch is found, a PHASE error will be displayed.<br><br>
+New </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#pseudoops">
+pseudo-op </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;.ZP, to pre-define labels as zero-page type. This can be useful if you have labels defined in multiple
+modules, and such labels need to be used prior to the module where the are defined. Note that .ZP
+usage MUST precede the actual label definition.<br><br>
+Default </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#6480columndrivers">
+64 and 80 column </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;drivers are included, so you don't have to build them if you have an ANTIC-bit compatible RAM upgrade,
+and prefer the &quot;A&quot; versions of the fonts.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#history"><img src="decor/l_arrow.gif" alt="History" border=0 height=13 width=13>
+History&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="version11" style="font-size: large; font-family: MS Sans Serif; color: #164686; font-weight: bold;">
+NEW FOR VERSION 1.1</a><br>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;"><br>
+Cybergate, my ISP, discontinued their service in my area. Thus, I have another new EMail address: &nbsp;</a>
+<a href="mailto:jharris@poboxes.com?Subject=MAE Manual on Thunderdome" style="font-size: medium; font-family: Arial; color: #621010; font-weight: bold; text-decoration: underline;">
+jharris@poboxes.com </a><br><br>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+New distribution method and installation procedure. Please read </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#installnotes">
+INSTALL.DOC </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;for details.<br><br>
+Configuration utility </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#configcomoperation">
+CONFIG.COM </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;now provided.<br><br>
+MAE now has full text substitution macros. This adds a tremendous amount of power and flexibility to
+the macro processor. The syntax is completely different, so please see the </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#macros">
+macro section </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;of ASM.DOC.<br><br>
+The ':' character can no longer be used in label names, due to conflicts with the new macro
+processing. The ';' character can't be used either, but was mistakenly listed as a valid label
+character in the docs. This hasn't been usable as a label character for many years.<br><br> </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#conditionalassembly">
+Conditional assembly </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;has been changed to be more standard, and more complete. IFE, IFN, IFP and IFM have been removed and
+replaced with .IF, .ELSE, and .ENDIF. Complementing the .IF statement are four new expression
+operators, &lt;, &gt;, =, and # (not equal).  &lt;, &gt;, and = join the list of symbols that are no
+longer allowed as part of a label name. I am sorry for any inconvenience or confusion these changes
+may be causing, but I suppose their use was non-standard to begin with. Lastly, .IF statements can now
+be nested up to seven levels deep. Please see the </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#conditionalassembly">
+conditional assembly </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;section of ASM.DOC for full details.<br><br>
+Editor </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#keymacros">
+key macros </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;can now be saved to and loaded from disk files.<br><br>
+New config bit for editor to start with Caps lock on or off.<br><br>
+Improved screen handling to do minimal text redraws when cutting and pasting. Improves screen redraw
+speed, most noticably on </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debug80userfunction">
+XEP80 </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;and software </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#6480columndrivers">
+64/80 column modes </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#history"><img src="decor/l_arrow.gif" alt="History" border=0 height=13 width=13>
+History&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="version10" style="font-size: large; font-family: MS Sans Serif; color: #164686; font-weight: bold;">
+NEW FOR VERSION 1.0</a><br>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;"><br>
+I have a new EMail address: jharris@cybergate.com<br><br>
+40 column limit on source code lines has been removed, although text is still limited to 79 columns.
+Lines will scroll horizontally to display the extra columns.<br><br>
+There are two software screen drivers provided, that allow </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#6480columndrivers">
+64 column and 80 column </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;editing on a high-speed Gr.8 screen. If your machine has Antic-compatible bank select RAM, using the
+drivers will not decrease the size of your source text buffer! The drivers were written by Itay
+Chamiel. Thanks Itay! Installation of these software drivers, as well as support for </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#64kversion">
+64K machines </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+, is described in the file </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#installnotes">
+INSTALL.DOC </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+.<br><br>
+Disassembly supports 16-bit operands. See the </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#commands">
+D command </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;in DEBUG.DOC for details.<br><br>
+24-bit address support in debugger, including hex and decimal values for the &quot;=&quot; math
+function.<br><br>
+Because of 24-bit address support, I had to move the locations of address variables. This affects the
+User function parameters, and I apologize for any inconveniences. The parameters that used to be at
+$F0, $F2, and $F4 are now at, $F0, $F7, and $F3. I know the order is unusual, but there are internal
+reasons.<br><br>
+Debugger memory display command changed somewhat due to screen width limitations with 24-bit addresses.
+New ASCII-only mode supported. See </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debugger">
+DEBUG.DOC </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;for details.<br><br>
+While tracing, a new option L has been added to RTL from 24-bit subroutine calls. (65816 version of
+MAE only).<br><br>
+New assembler </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#pseudoops">
+pseudo-ops </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;.CByte for making ASCII strings with the most significant bit set on the last character. Also .FLoat
+for defining constants in the OS floating point format.<br><br>
+New </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#editingcommands">
+editor command </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;Ctrl-; can be used to comment or uncomment a block of text by adding or removing &quot;;&quot;
+characters at the start of each line. Mark the start of the block with Ctrl-Z, and then press Ctrl-;
+at the end of the block. You can also mark one line at a time by using Ctrl-; without a Ctrl-Z block
+mark.<br><br>
+Editor command Ctrl-D, which used to just duplicate a single line, can now be used to duplicate an
+entire block if there is a Ctrl-Z block mark set. This makes it consistant with the operation of
+Ctrl-;.<br><br>
+Shifted 1200XL function keys should now work for moving to the beginning or end of lines, or the
+beginning or end of the file.<br><br>
+Cursor column position is retained while scrolling in the editor.<br><br>
+MAE was not fully ZP clean, but should be now.<br><br>
+The debugger will use High-speed SpartaDOS SIO routines, if present. Unfortunately, sector reading and
+writing will no longer work on the old 400/800 operating system as a result, unless you are using
+SpartaDOS.<br><br>
+In the editor, Ctrl-N did not work properly when pressed on a blank line.<br><br>
+Conditional assembly could get messed up when source code contained a label on a line by itself.<br><br>
+.BI pseudo-op was broken in version .99.<br><br>
+New version of Hyper E: included, which fixes an incompatibility with TextPro, and adds support for
+the SDX CON: device.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#history"><img src="decor/l_arrow.gif" alt="History" border=0 height=13 width=13>
+History&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="version099" style="font-size: large; font-family: MS Sans Serif; color: #164686; font-weight: bold;">
+NEW FOR VERSION 0.99</a><br>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;"><br>
+65816 opcodes and tracing are now supported in the debugger. There is still no support for 24-bit
+address entry, so technically, the debugger can be considered 65802-compatible.<br><br>
+There are new </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#pseudoops">
+pseudo-ops </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;in the assembler. &quot;.02&quot; can be used when you need to assemble 6502-only code. When this
+opcode is active, all 65816 specific instructions will be flagged with a &quot;NOT 6502&quot;
+error.&nbsp; &quot;.816&quot; selects the 65816 assembly mode. The initial assembly mode is set to
+whichever processor version of the MAE assembler you are using. The initial version sign-on message
+shows the processor version of MAE, which will also be the default assembly mode.<br><br>
+There has been a significant increase in assembly speed. MAE will be about twice as fast, depending on
+the size of your source files. Small files will show less of an improvement, whereas larger files will
+show an even bigger difference. Assembly time is closer to a linear relationship to source file size,
+whereas it used to be somewhat exponential.<br><br>
+There have been big changes in memory configuration, resulting in twice as much symbol table space, a
+little more source space, and all of main memory from $4000-$7FFF free to the user. The region from
+$400-$5FF is no longer used by MAE. The debugger has been moved to bank select memory now, reducing
+the main memory usage to $B700-$BBFC. In its place however, MAE uses up to three banks of extended
+memory for optimal configuration. Due to these and other changes, the format of the memory
+configuration bytes at the start of the file has changed. Consult MAE.DOC for full details. MAE
+actually still runs in 64K machines, and will continue to do so, but the amount of RAM available for
+source text has dropped from 17K down to only 14K for 64K'ers.<br><br>
+Two new operators have been added to the assembler and debugger expression evaluators. You can now use
+&quot;^&quot; for exclusive or, and &quot;\&quot; for modulo. Because of this, these characters can no
+longer be used in label names.<br><br>
+There are two new </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#editingcommands">
+editor functions </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+. You can move an individual line of text up or down with respect to surrounding lines. Press
+Shift-Ctrl-[ to move a line up, and Shift-Ctrl-] to move it down. In a similar function, you can move
+a label by itself up or down to adjacent lines. Press Shift-Ctrl-( to move the label up, or
+Shift-Ctrl-) to move the label down. Lines that start with comments or other labels will automatically
+be skipped.<br><br>
+Full SpartaDOS directory listings are now supported.<br><br>
+The &quot;*&quot at the start of a marked text block would not get erased on lines that did not begin
+with a label. Also, the location of the block start was not getting updated when surrounding text was
+edited.<br><br>
+There was a bug which prevented macros from being recognized when they were defined after a .IN
+included files.<br><br>
+JVC and JVS macros were missing from the example </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#macros">
+MACROS </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;file.<br><br>
+There was a bug that could sometimes clear your entire source text if you used the Esc-V menu option
+to get the value of a label which was undefined. This bug only occurred after an assembly aborted with
+one of a few fatal error types.<br><br>
+I didn't realize that MyDOS could use ':' characters as subdirectory path separators. This confused
+MAE's ':' search routine to determine if full filespecs (or just file names) were being entered. The
+effect was that MAE would not load files properly from subdirectories unless you used '&gt;' for path
+separators. It works better now, unless you have subdirectory names that are one or two characters
+long. If you had a directory named &quot;T&quot;, and tried to load &quot;T:FILE&quot;, it would think
+you were referring to a T: device. Thus, it is recommended that you either always use the '&gt;'
+character as a path separator, or enter complete filespecs. Either &quot;T>FILE&quot; or
+&quot;D2:T:FILE&quot; will work fine.<br><br>
+Fixed two problems with using &quot;.&quot; to get the value of defined labels from the debugger.
+Because control was passed to the assembler's expression evaluator, the default number base became
+decimal instead of hex. Thus, if you entered &quot;.LABEL+10&quot; in the debugger, you would get the
+value at LABEL+$A, and not LABEL+$10. Processing is now returned to the debugger once the label has
+been decoded, making the rest of the line behave consistantly in regards to hex numbers. Also,
+expressions like &quot;.>LABEL&quot; were returning the wrong value.<br><br>
+The debugger command V has been changed, and is easier to add user extensions into. Please consult </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debugger">
+DEBUG.DOC </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;for details.<br><br>
+The editor could corrupt bookmarks and ^J marks if they were within a text block that got deleted,
+and close to the top of the file.<br><br>
+MAE was not restoring the BRK IRQ vector when it exited, and it now does this by default. Because it
+is sometimes desirable to leave the BRK vector installed, such as for trapping BRKs in programs called
+from DOS, you can follow the X command in the debugger with any other character to exit with BRK
+trapping still active. Note that you must be careful to not overwrite any part of the MAE program,
+including bank select RAM, if you want MAE to successfully trap BRK instructions that occur after you
+leave the assembler.<br><br>
+The debugger should no longer lock up if it encounters a BRK when output is redirected to an SIO
+device. Also, the inconsistancy with supplying filespecs in the O command has been removed. All
+filespecs are now treated the same way, for supplying Dn: in front of any input that does not in
+itself contain a &quot;:&quot; character. To send output to the printer, you should now enter
+&quot;O P:&quot;.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#history"><img src="decor/l_arrow.gif" alt="History" border=0 height=13 width=13>
+History&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="version095" style="font-size: large; font-family: MS Sans Serif; color: #164686; font-weight: bold;">
+NEW FOR VERSION 0.95</a><br>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;"><br>
+Conditional breakpoints were not working in the .95 version.<br><br>
+The 65816 version of MAE has a new register display that shows 16-bit registers for A, X, and Y.
+Processor status bits are now displayed as normal characters for bits that are off, and inverse
+characters for bits that are on. When changing bits, either normal/inverse, or 0's & 1's may be typed,
+and are freely mixable. The Emulation Mode shadow bit is also displayed, and can be changed. Make sure
+you have native mode interrupt handlers available before changing this bit. Also note that this bit,
+just like the rest of the status register display, only affects the state of programs run or traced
+from the debugger. Clearing the E bit will not instantly put the machine into native mode, but native
+mode will be set as soon as any user programs are run or traced.<br><br>
+In the memory configuration bytes, entering 0 for the text buffer start or end would use the value
+from LOMEM or MEMTOP respectively. Now, this ability also applies to the symbol table addresses.<br><br>
+1200XL function keys were not working, and should be fixed now.<br><br>
+It was pointed out to me that memory expansions above 128K use the high bit of $D301, which is a
+problem for the way I programmed the .BA pseudo-op. Thus, .BA now stores the entire byte at $D301, and
+a new pseudo-op, .CA, has been added for bank select cartridge support. I also realized that support
+for bank select carts is worthless when the assembler resides in the cartridge address space. My
+personal version is located at my LOMEM, and so I didn't realize the problem here. If anyone wants a
+custom version of the assembler located at a different address, please let me know and I will be happy
+to provide it for you.<br><br>
+The .WO and .LO pseudo-ops support multiple addresses now.<br><br>
+There are misc. small cleanups, such as .EN is no longer required at the end of the source text,
+&quot;()&quot; characters are no longer necessary for enclosing parameters of a macro definition, and
+other cosmetic changes.<br><br>
+Disregard the earlier note about default drive detection being different in the .95 version. MAE still
+detects Sparta's default drive correctly, even if MAE is started from a different drive.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#history"><img src="decor/l_arrow.gif" alt="History" border=0 height=13 width=13>
+History&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="version093" style="font-size: large; font-family: MS Sans Serif; color: #164686; font-weight: bold;">
+NEW FOR VERSION 0.93</a><br>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;"><br>
+When assembling code to disk, the .MC pseudo-op can now be used to make the object code load at a
+different address than where it is assembled, much like the way the function already worked in RAM.<br><br>
+When recording key macros in the editor, you must now use Ctrl-3 to end recording, instead of Esc.
+This allows Esc menu commands to be entered into macros, primarily to support a chain of assemble
+commands when your program contains several modules. The next version of the assembler should allow
+loading and saving macros to disk, which will further enhance the macro usefulness.<br><br>
+Hunt routine in the monitor now automatically skips over the area from $D000-$D7FF. So you can search
+the OS using $C000-$FFFF and not generate any hardware accesses.<br><br>
+Hunt and Memory display routines would not always stop when the address reached $FFFF. This has been
+fixed.<br><br>
+I removed the automatic OS routine detection from the trace function. Now, you must use the S key to
+trace through OS functions in one step, just like any other subroutine. You can also use the R key if
+you are already within the OS code. The reason for doing this, is that it makes things more consistant,
+and also allows you to trace code in the $C000-$FFFF area if you need to.<br><br>
+Pseudo-ops are now available in the debugger's single line assembler.<br><br>
+The </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debugger">
+debugger </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;now includes a built-in function for switching between display lists for the debugging text screen,
+and your program's screen. It uses the letter &quot;V&quot;, for change View. Both V and the
+&quot;U&quot; user function can be called from both the trace mode, as well as any paused memory or
+disassembly listing. The &quot;%&quot; key did not work as a wildcard in the debugger, since it was
+interpretted as the start of a binary number. I have changed the default wildcard to &quot;?&quot; in
+both the </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#debugger">
+debugger </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;and </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#editorfileformat">
+editor </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+. This propagated through a few of the </a>
+<a style="font-size: small; font-family: Arial; color: #020280; text-decoration: underline;" href="mae.htm#commands">
+debugger command key </a>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;">
+&nbsp;assignments, along with a few other changes as well. Overall, I feel the key assignments have been
+improved, and they won't be changed from now on. Here is a sumnmary of the changes:<br><br>
+&nbsp; &nbsp; ? - Change Wildcard<br>
+&nbsp; &nbsp; = - Evaluate expression<br>
+&nbsp; &nbsp; V - Change display view<br>
+&nbsp; &nbsp; \ - Disk Directory<br><br>
+The editor uses the same wildcard configuration byte as the debugger. You can use the debugger's
+&quot;?&quot; command, or a Cntl-? in the editor to change the wildcard character. Both modules will
+use the new assignment.<br><br>
+1200XL function keys are now supported for moving the cursor.<br><br>
+You may enter Ctrl-key graphic symbols or international characters into the editor by pressing Ctrl-A,
+and then the key you wish to enter.<br><br>
+Now uses an improved method for detecting the default drive when first loaded. This should be
+compatible with all SpartaDOS versions, and cause no problems for non-Sparta DOSes. It also allows you
+to specify a different default drive from the command line, such as, &quot;MAE D2:&quot;.<br><br>
+The MAE.COM file now comes with a RUNAD address installed. The SpartaDOS bug that prevented using the
+RUN command to return to a program which used RUNAD has been fixed in 3.2g and later, so I have
+decided to include RUNAD in the file now.<br><br>
+Fixed a stack corruption problem when disk I/O errors occurred during assembly with a .IN include
+file.<br><br>
+Improved documentation.</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#history"><img src="decor/l_arrow.gif" alt="History" border=0 height=13 width=13>
+History&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="1" color="#eFefFF"><br>
+
+<table width="98%"><tr><td>
+<a name="version092" style="font-size: large; font-family: MS Sans Serif; color: #164686; font-weight: bold;">
+NEW FOR VERSION 0.92</a><br>
+<a style="font-size: small; font-family: Arial; color: #121212; font-weight: bold;"><br>
+When dinosaurs ruled the Earth. History has been removed to save space. They didn't even have
+computers back then, did they?</a><br><br></td></tr></table>
+
+<table align="center">
+<tr><td align="center"><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#history"><img src="decor/l_arrow.gif" alt="History" border=0 height=13 width=13>
+History&nbsp; &nbsp; &nbsp; &nbsp;</a></td>
+<td><a style="color: #0404a0; font-size: x-small; font-family: system; font-weight: normal; font-style: normal; text-decoration: none; text-align: center;" href="mae.htm#tableofcontents"><img src="decor/u_arrow.gif" alt="Table of Contents" border=0 height=13 width=13>
+Table of Contents</a></td></tr></table>
+<br><hr width="98%" size="4" color="#eFefFF"><br><br><br><br><br><br><br><br><br></td></tr></table>
+</body></html>
+
+

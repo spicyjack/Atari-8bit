@@ -1,0 +1,1161 @@
+<html>
+<title>Part Two</title>
+<a name="part two">
+<body bgcolor="white" background="strip.gif">
+<UL><ul><table bgcolor="black" width="89%" cellpadding="20"><td>
+<hr noshade size="15" width="100%" align="right" color="white">
+<font color="white" size="4"><b>Part Two</b></font>
+<a name="111">
+<p align="right"><b><font align="right" color="white" face="sans-serif" size="7">Directly <br>
+Accessing <br>
+Atari Basic <br><br><br><br><br><br><br><br></font></b></p>
+</td></table>
+<pre>
+
+	111
+
+
+<font face="courier" size="3">
+<hr noshade size="15" width="100%" align="right" color="black"><font size="4"><b>Chapter One</b></font>
+<a name="113">
+
+<p align="right"><b><font face="sans-serif" size="7">Introduction to 
+Part Two </font></b></p>
+
+
+Congratulations! If you have read all of Part 1, you are through 
+the hard stuff. In Part 2, we hope to teach you how to use at 
+least some of the abundance of information presented in the 
+Source Listing and in Part 1. In particular, we will show you 
+how to examine the various RAM and ROM tables used by
+BASIC.
+    The examples and suggestions will be written in Atari 
+BASIC. But those of you who are true-blue assembly language 
+fanatics should have little trouble translating the concepts to 
+machine code, especially with the source listing to guide you.
+Would that we could present an example program or 
+concept for each possible aspect of the BASIC interpreter, but 
+space does not allow it - nor would it be appropriate. For 
+example, although we will present here a program to list all 
+keywords and token values used by BASIC, we will not explore 
+the results (usually disastrous) of changing token values within 
+a BASIC program.
+    Part 2 begins with a pair of introductory chapters. If you are 
+experienced at hexadecimal-to-decimal conversions and with 
+the concepts of word and byte PEEKs and POKEs, you may 
+wish to skip directly to Chapter 3.
+
+
+	113
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter One</b></big>
+<a name="115">
+
+<p align="right"><b><font face="sans-serif" size="7">Hexadecimal 
+Numbers </font></b></p>
+
+	
+The word hexadecimal means, literally, "of six and ten." It
+implies, however, a number notation which uses 16 as its base
+instead of 10. Hexadecimal notation is used as a sort of
+shorthand for the eight-digit binary numbers that the 6502
+understands. If Atari BASIC understood hexadecimal numbers
+and we all had eight fingers on each hand, there would be no
+need for this chapter. Instead, to use this book you have to
+make many conversions back and forth between hexadecimal
+("hex") and decimal notation. Many BASIC users have never
+had to learn that process.
+    Virtually all the references to addresses and other values in
+this book are given in hexadecimal notation (or simply "hex"
+to us insiders). For example, we learn that the Atari BASIC
+ROM cartridge has $A000 for its lowest address and that
+location $80 contains a pointer to BASIC's current LOMEM.
+But what does all that mean?
+    First of all, if you are not familiar with 6502 assembly
+language, let me point out that there is a convention that a
+number preceded by a dollar sign ($80) is a hexadecimal
+number, even if it contains only decimal digits. Also, notice
+that in the Source Listing all numbers in the first three columns
+are hexadecimal, even though the dollar sign is not present. (To
+the right of those columns, though, only those numbers
+preceded by a dollar sign are in hex.)
+    Now, suppose I wanted to look at the contents of location
+$A4AF (SNTAB in the listing). Realistically, the only way to
+look at a memory location from BASIC is via the PEEK function
+(and see the next chapter if you are not sure how to use PEEK
+in this situation). But BASIC's language syntax requires a
+decimal number with PEEK - for instance, PEEK (15).
+    Obviously, we need some way to convert from hexadecimal
+to decimal. Aside from going out and buying one of the
+calculators made just for this purpose, the best way is probably
+to let your computer help you. And the computer can help you
+
+
+	115
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter One</b></big>
+<a name="116">
+
+even if you only understand BASIC. As an example, here's a 
+BASIC program that will convert hex to decimal notation:
+
+l0 DIM HEX$(23),NUM$(4)
+20 HEX$="@ABCDEFGHI#######JKLMNO"
+30 CVHEX=9000
+100 PRINT :PRINT "GIVE ME A HEX NUMBER"
+ll0 INPUT NUM$
+l20 GOSUB CVHEX
+l30 PRINT 'HEX ";NUM$," = DECIMAL ";NUM
+l40 GOTO 100
+9000 REM THE CONVERT HEX TO DECIMAL ROUTINE
+90l0 NUM=0
+9020 FOR 1=1 TO LEN(NUM$)
+9030 NUM=NUM*16+ASC(HEX0(ASC(NUM$(I))047))064
+9040 NEXT I :RETURN
+
+    Now, while this program might be handy for a few 
+purposes, it would be much neater if we could simply use its 
+capabilities anytime we wanted to examine or change a location 
+(or its contents) referred to by a hex address or data. And so 
+shall it be used.
+    If we remove lines 100 through 140, inclusive, then any 
+BASIC program which incorporates the rest of the program 
+may change a hex number into decimal by simply
+    1. placing the ATASCIl form of the hex number in the 
+       variable NUM$,
+    2. calling the convert routine at line 9000 (via GOSUB 
+       CVHEX), and
+    3. using the result, which is returned in the variable NUM.
+
+    In the next chapter, we will immediately begin to make use 
+of this routine. If you are not used to hex notation, you might 
+do well to type in and play with this program before 
+proceeding.
+    Finally, before we leave this subject, let's examine a routine 
+which will allow us to go the other way - that is, convert 
+decimal to hex:
+
+40 DIM DEC$(16):DEC$="0l23456789ABCDEF"
+50 CVDEC=9l00
+100 PRINT :PRINT "GIVE ME A DECIMAL NUMBER ';
+
+
+	116
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter One</b></big>
+<a name="117">
+
+ll0 INPUT DEC:NUM=DEC
+l20 GOSUB CVDEC:REM 'NUM' is destroyed by this
+l30 PRINT DEC;" Decimal	= ";NUM$;" Hex"
+l40 GOTO 100
+9l00 REM CONVERT DECIMAL TO HEX ROUTINE
+9ll0 DIV=4096
+9l20 FOR 1=1 TO 4
+9l30 N=INT(NUM/DIV):NUM$(I,I)=DEC$(N+l)
+9l40 NUM=NUM-DIV*N:DIV=DIV/16
+9l50 NEXT I
+9160 RETURN
+
+    These lines are meant to be added to the previous program, 
+though they can be used alone if you simply add this line:
+    10 DIM NUM$(4)
+We will use portions of these programs in later chapters, 
+but we may compress some of the code into fewer lines simply 
+to save wear and tear on our fingers. If you study these 
+routines, you'll recognire them in their transformed versions.
+
+
+	117
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter One</b></big>
+<a name="119">
+
+<p align="right"><b><font face="sans-serif" size="7">PEEKing and 
+POKEing </font></b></p>
+
+
+In contrast to languages which include direct machine
+addressing capability, like "C" and Forth, and in contrast to
+"school" languages like Pascal and Fortran, which specifically
+prevent such addressing, BASIC provides a sort of halfway
+measure in machine accessibility.
+    POKE is a BASIC statement. Its syntax is
+POKE &lt;address&gt;, &lt;data&gt;. Naturally, both &lt;address&gt; and
+&lt;data&gt; may be constants, variables, or even full-blown
+expressions:
+    POKE 82,0: REM change left screen margin to zero
+produces the same result as
+    LEFTMARGIN =82:POKE LEFTMARGIN,0
+    PEEK, on the other hand, is a BASIC function. It cannot
+stand alone as a statement. To use PEEK, we either PRINT the
+value (contents) of a PEEKed location, assign a PEEKed value
+to a variable, or test the value for some condition:
+    POKE 82, PEEK(82) + 1 : REM move the left margin in a
+space
+    PRINT PEEK(106) : REM where is the top of system
+memory?
+    IF PEEK(195) = 136 THEN PRINT "End of File"
+In the first example, the number POKEd into 82 will be
+whatever number was stored before, <i>plus</i> 1. As explained in
+Part 1, the PEEK function is executed before the POKE.
+    An aside: Just where did I get those addresses I used in the
+PEEKs and POKEs? One way to find them is to peruse the
+listings of Atari's operating system, available in Atari's
+technical manuals set, and the listing of BASIC in this book.
+Another way would be to use a book (like COMPUTE! Books'
+<i>Mapping the Atari</i>) or a reference card designed specifically to
+tell you about such addresses.
+   And one more thing to consider before moving on. If we
+counted all of the bit patterns possible in a single 8-bit byte (like
+
+
+	119
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter One</b></big>
+<a name="120">
+
+01010101, 11110000, and 00000001, where each 1 or 0 represents 
+a single <i>on</i> or <i>off</i> bit), we wQuldiscover that there are 256 
+unique combinations, ranging in value from 0 to 255. Since 
+each memory location can hold only one byte, it is not 
+surprising to learn that the PEEK function will always return a 
+number from 0 to 255 ($00 to $FF). Similarly, BASIC will only 
+POKE a data value that is an integer from 0 to 255. In fact, 
+BASIC will convert any data to be POKEd to an integer 
+number, rounding off any fractional parts.
+    So far so good. But suppose we want to examine a location 
+which is actually a two-byte word, such as the line number 
+where the last TRAPped error occurred, stored starting at 
+location $BA hex or 186 decimal. PEEK only lets us look at one 
+byte at a time. How do we look at two bytes? Simple: one byte 
+at a time.
+    In most cases, words in a 6502-based machine are stored in 
+memory with the least significant byte stored first. This means 
+that the second byte of each word is a count of the number of 
+256's there are in its value, and the first byte is the leftovers. 
+(Or we can more properly say that the first byte contains "the 
+word's value modulo 256.") Confused? Let's try restating that.
+    In decimal arithmetic, we can count from 0 to 9 in a single 
+digit. To go beyond 9, we have a conventionthat says the digit 
+second from the right represents the number of 10's in the 
+number, and so on.
+    If we consider bytes to be a computer's digits, which in 
+many ways they are, and if we remember that each byte may 
+represent any number from 0 to 255 (or $00 to $FF), then it is 
+logical to say that the next byte is a count of the number of 256's 
+in the number. The only thing illogical is that the higher byte 
+comes after the lower byte (like reading 37 as "7 tens and 3 
+ones instead of what we are used to).
+    Some examples might help:
+
+<b>a 6502 word	 as written	think of	decimal
+ in memory	in assembler	  it as	 value</b>
+  0100		  $0001		  0*256+1	    1
+  0001		  $0100		  1*256+0	  256
+  0204		  $0402		  4*256+2	 1026
+  FFFF		  $FFFF		255*256+255	65535
+
+So let's examine that error line location:
+    PRINT PEEK(186) +256* PEEK(187)
+
+
+	120
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Two</b></big>
+<a name="121">
+
+Do you see it? Since the second byte is a count of the number of
+256's in the value, we must multiply it by 256 to calculate its
+true value.
+    Now, in the case of line numbers, it is well and good that
+we print out a decimal value, since that is how we are used to
+thinking of them. But suppose you wished to print out some of
+BASIC's tables? You might very well wish to see the hex
+representations. The program presented here allows you to
+specify a hex address. It then presents you with the contents of
+the byte <i>and</i> the word found at that address, in both decimal
+and hex form.
+
+l0 DIM HEX$(23),NUM$(4)
+20 HEX$="@ABCDEFGHI*******JKLMNO"
+30 CVHEX=9000
+40 DIM$(16):DEC$="0123456789ABCDEF"
+50 CVDEC=9l00
+100 PRINT :PRINT "WHAT ADDRESS TO VIEW ";
+ll0 INPUT NUM$:PRINT
+120 PRINT "Address ";NUM$;" contains:"
+l30 GOSUB CVHEX:ADDR=NUM
+l40 NUM=PEEK(ADDR):GOSUB CVDEC
+150 PRINT ,"byte ";PEEK(ADDR);"	= $";NUM$(3)
+160 WORD=PEEK(ADDR)+256*PEEK(ADDR+1)
+l70 NUM=WORD:GOSUB CVDEC
+l80 PRINT ,"word ";WORD;" = $";NUM$
+l90 GOTO 100
+9000 REM THE CONVERT HEX TO DECIMAL ROUTINE
+90l0 NUM=0
+9020 FOR 1=1 TO LEN(NUM$)
+9030 NUM=NUM*16+ASC(HEX$(ASC(NUM$(I))-47))-64
+9040 NEXT I:RETURN
+9100 REM CONVERT DECIMAL TO HEX ROUTINE
+9l10 DIV=4096
+9l20 FOR 1=1 TO 4
+9130 N=INT(NUM/DIV):NUM$(I,I)=DEC$(N+l)
+9140 NUM=NUM-DIV*N:DIV=DIV/16
+9150 NEXT I
+9160 RETURN
+
+    You may have noticed that lines 10 through 50 and lines 
+9000 to the end are the same as those used in the example
+
+
+	121
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Two</b></big>
+<a name="122">
+
+programs in the last chapter. And did you see line 160, where 
+we obtained the word value by mulbplying by 256?
+    As the last point of this chapter, we need to discuss how to 
+<i>change</i> a word value. Obviously, in Atari BASIC we can't POKE 
+both bytes of a word at once any more than we could retrieve 
+both bytes at once (although BASIC A+ can, by using the 
+DPOKE statement and DPEEK function). So we must invent a 
+mechanism to do a double POKE.
+    Given that the variable ADDR contains the address at 
+which we wish to POKE a word, and given that the variable 
+WORD contains the value (in decimal) of the desired word, the 
+following code fragment will perform the double POKE:
+    POKE ADDR+1,INT(WORD/256)
+    POKE ADDR,WORD-256*PEEK(ADDR+1)
+    This is kind of sneaky code, but calculating the most 
+significant byte and POKEing the value in byte location 
+ADDR +1 first allows us to also use it as a kind of temporary 
+variable in calculating the least significant byte. By PEEKing the 
+location that already holds the high-order byte, we can subtract 
+it from the original value. The remainder is WORD modulo 256
+- the low-order byte.
+    And that's about it. Hopefully, if you were not familiar 
+with PEEK and POKE before, you now at least will not 
+approach their use with too much caution. Generally, PEEKs 
+will never harm either your running program or the machine, 
+but don't be surprised if a stray POKE or two sends your 
+computer off into never-never land. After all, you may have 
+just told BASIC to start putting your program into ROM, or 
+worse.
+    On the other hand, if you have removed your diskettes 
+and turned off your cassette recorder, the worst that can happen 
+from an erring POKE is that you'll have to turn the power off 
+and back on again. So have at it. Happy PEEKing and POKEing.
+
+
+	122
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Two</b></big>
+<a name="123">
+
+<p align="right"><b><font face="sans-serif" size="7">Listing Variables 
+in Use </font></b></p>
+
+
+Chapter 3 of Part 1 described the layout of the Variable Name 
+Table and the Variable Value Table. In particular, we read that 
+the Variable Name Table was built in a very simple fashion:
+Each new variable name, as it is encountered upon program 
+entry, is simply added to the end of the list of names. The most 
+significant bit of the last character of the name is turned on, to 
+signal the end of that name. The contents of VNTP point to the 
+beginning of the list of names, and the coritent of VNTD is the 
+address of the byte after the end of the list.
+    Now, what does all that mean? What does it imply that we 
+can do? Briefly, it implies that we can look at BASiC's memory 
+and find out what variable names are in current use. Here's a 
+program that will do exactly that:
+
+32700 QQ=128:PRINT QQ,
+32710 FOR Q=PEEK(l30)+256*PEEK(l3l) TO PE
+       EK(132)+256*PEEK(133)-1
+32720 IF PEEK(Q)<128 THEN PRINT CHR$(PEEK
+       (Q));:NEXT Q:STOP
+32730 PRINT CHR$(PEEK(Q)-128):QQ=QQ+l:PRI
+       NT QQ,:NEXT Q:STOP
+
+    Actually, this is not so much a program as it is a program 
+fragment. It is intended that you will type NEW, type in the 
+above fragment, and then LIST the fragment to a disk file (LIST 
+"D:LVAR") or to a cassette (LIST "C:"). Then type NEW again 
+and ENTER or LOAD the program whose variables you want 
+to list. Finally, use ENTER to re-enter the fragment from disk 
+(ENTER "D:LVAR") or cassette (ENTER "C:"). Then type 
+GOTO 32700 to obtain your Variable Name Table listing.
+Of course, if you had OPENed a channel to the printer 
+(OPEN #1,8,0,"P:"), you could change the PRINTs to direct 
+the listing to the printer (PRINT #1; CHR$ (&lt;expression&gt;)).
+
+
+	123
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Three</b></big>
+<a name="124">
+
+    How does the fragment work? The reason for the start and 
+end limits for the FOR loop are simple: word location 130 ($82) 
+contains the pointer to the beginning of the Variable Name 
+Table and word location 132 ($84) contains the pointer to the 
+end of that same table, plUs 1. So we simply traipse through 
+that table, printing characters as we encounter them - except 
+that when we encounter a character with its most significant bit 
+on (IF PEEK(Q) &gt;127), we turn off that bit before printing it and 
+start the next name on a new line.
+    Notice that we use the variable QQ to allow us to print out 
+the token value for each variable name. We will use this 
+information in some later chapters.
+    Also note that the variable names QQ and Q will appear in 
+your variable name listing. Sorry. We <i>can</i> write a program 
+which would accomplish the same thing without using 
+variables, but it would be two or three times as big and much 
+harder to understand. Of course, if you consistently use certain 
+variable names, such as I and J in FOR-NEXT loops, you could 
+use those names here instead, thus not affecting the count of 
+variables in use.
+    Incidentally, the STOP at the end of the third line <i>should</i> be 
+unnecessary, since the table is supposed to end with a 
+character with its upper bit on. But I've learned not to take 
+chances - things don't always go as they're supposed to.
+
+
+	124
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Four</b></big>
+<a name="125">
+
+<p align="right"><b><font face="sans-serif" size="7">Variable 
+Values </font></b></p>
+
+
+In this chapter, we will show how you can determine the value 
+of any variable by inspecting the Variable Value Table. Actually, 
+in many respects this is a waste of effort. After all, if I need to 
+know the value of the variable TOTAL, I can just type PRINT 
+TOTAL.
+    But this book is supposed to be a guide, and there are a few 
+uses for this iriformation, particularly in assembly language 
+subroutines, and it is instructive in that it gives us an inkling 
+of what BASIC goes through to evaluate a variable reference.
+    It will probably be better to present the program first, and 
+then explain what it does. Before doing so, though, note that 
+the program fragment expects you to give it a valid variable 
+token (128 through 255). No checks are made on the validity of 
+that number, since we are all intelligent humans here and since 
+we want to save program space. Enough. The program:
+
+32500 PRINT :PRINT "WHAT VARIABLE NUMBER "
+       ;:INPUT Q
+32505 Q=PEEK(134)+256*PEEK(135)+(Q-128)*8
+32510 PRINT :PRINT "VARIABLE NUMBER "PE
+       EK(Q+1),
+32515 ON INT(PEEK(Q)/64) GOTO 32600,32650
+32520 PRINT "IS A NUMBER, ":PRINT ,"VALU
+       E ";
+32525 QEXP=PEEK(Q+2):IF QEXP&gt;127 THEN PR
+       INT "-";:QEXP=QEXP-128
+32530 QNUM=0:FOR QQ=Q+3 TO Q+7
+32535 QNUM=QNUM*100+PEEK(QQ)-6*INT(PEEK(
+       QQ)/16):NEXT QQ
+32540 QEXP=QEXP-68:IF QEXP=0 THEN 32555
+32545 FOR QQ=QEXP TO SGN(QEXP) STEP -SGN
+       (QEXP)
+
+
+	125
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Four</b></big>
+<a name="126">
+
+32550 QNUM=(QEXP>0)*QNUM*100+(QEXP<0)*QN
+       UM/l00:NEXT QQ
+32555 PRINT QNUM:PRINT :GOTO 32500
+32570 IF PEEK(Q)/2&lt;&gt;INT(PEEK(Q)/2) THEN
+       32580
+32575 PRINT ,"AND IS NOT YET DIMENSIONED
+       ":POP:GOTO 32500
+32580 PRINT ,"ADDRESS IS ";PEEK(Q+2)+256
+       *PEEK(Q+3):RETURN
+32600 PRINT "IS AN ARRAY, ":GOSUB 32570
+326l0 PRINT ,"DIM 1 IS ";PEEK(Q+4)+256*P
+       EEK(Q+5)
+32615 PRINT ,"DIM 2 IS ";PEEK(Q+6)+256*P
+       EEK(Q+7)
+32620 GOTO 32500
+32650 PRINT "IS A STRING, ":GOSUB 32570
+32660 PRINT ,"LENGTH IS ";PEEK(Q+4)+256*
+       PEEK(Q+5)
+32665 PRINT ,"{3 SPACES}DIM IS ";PEEK(Q+
+       6)+256*PEEK(Q+7)
+32670 GOTO 32500
+
+    Did you get lost in all of that? I got lost several times as I 
+wrote it, but it seems to work well. Shall we discuss it?
+    The first place where confusion may arise is when I ask you 
+to give a variable token from 128 to 255, and then reveal that 
+the entry in the Variable Value Table thinks variable numbers 
+range from 0 to 127. Actually, there is no anomaly here. The 
+variable token that you input is the token value of the variable 
+in your program. The number in the table is its relative 
+position. The numbers differ only in their uppermost bit.
+    The program uses the number you specify to form an 
+address of an entry somewhere within the Variable Value 
+Table. It then displays the internal variable number and 
+examines the flag byte of the variable entry. Recall that the 
+uppermost bit ($80, or 128) of the flag byte is on, if this variable 
+is a string. The next bit ($40, or 64) is on if the variable is an 
+array. If neither is on, the variable is a normal floating point 
+number (or <I>scalar</I>, as it is sometimes called, to distinguish it 
+from a floating point array). All this is decided and acted upon 
+in line 32515.
+
+
+	126
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Four</b></big>
+<a name="127">
+
+    Before examining what happens if the number is a scalar, 
+let's look at strings and arrays. Both start out (lines 32600 
+and 32650) by identifying themselves and calling a subroutine 
+which determines if the variable has been DIMensioned yet. If 
+not, the subroutine tells us so, removes the GOSUB entry from 
+the stack, and starts the whole shebang over again. If the 
+variable is DIMensioned, though, we print its address before 
+returning. Note that the address printed is the <I>relative address</I>
+within the String/Array Table.
+If the DIMension check subroutine returns, both string and 
+array variables have their vitals printed out before the program 
+asks you for another variable number. In the case of a string, 
+we see the current length (as would be obtained by the LENgth 
+function) and its dimension. For an array, we see both 
+dimensions. Note that array dimensions here are always one 
+greater than the user program specified, so that a zero 
+dimension value means "this dimension is unused."
+    Point of interest: this program will never print a zero for an 
+array dimension. Why? Because Atari BASIC never places a 
+zero in either dimension when the DIM statement is executed. 
+In a way, this is a "feature" (a feature is a documented bug). It 
+implies that we may code DIM Xx(7) and yet use something 
+like PRINT xx(N,0). In other words, a singly dimensioned 
+array in Atari BASIC is exactly equivalent to a doubly 
+dimensioned array with a 0 as the second subscript in the DIM 
+statement.
+    Back to the listing. Fairly straightforward up until now. But 
+look what happens if the variable is a scalar, a single floating 
+point number.
+    First, we obtain the exponent byte; if its upper bit is on, the 
+number is negative, so we print the minus sign before turning 
+the bit off.
+    Second, we must loop through the five bytes of the 
+mantissa, accumulating a value. The really strange part here is 
+line 32535, 50 let's examine it closely. As we get each byte, we 
+must multiply what we have gotten so far by 100 (remember, 
+floating point numbers are in BCD format, so each byte 
+represents a power of 100). Then, what we really want to do is 
+add in 10 times the higher digit in the byte, plus the lower 
+digit. We could have gotten those numbers as follows:
+
+    NEWBCDVALUE =OLDBCDVALUE*100
+    HIGHER=INT(PEEK(QQ)/16)
+
+
+	127
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Four</b></big>
+<a name="128">
+
+    LOWER=PEEK(QQ)-l6*HIGHER
+    BYTEVALUE=10*HIGHER+LOWER
+    NEWBCDVALUE=NEWBCDVALUE+BYTEVALUE
+    OLDBCDVALUE=NEWBCDVALUE
+    Hopefully, your algebra is up to understanding how line 
+32535 is just a simplIfication of all that. If not, don't worry 
+about it. It works.
+    But we still haven't accounted for the exponent. Now, 
+exponents in the Atari floating point format are powers of 100 
+in' 'excess 64" notation, which simply means that you subtract 
+64 from the exponent to get the real power of 100. But wait! The 
+implied decimal point is all the way to the left of the number. 
+So we must bias our "excess 64', by the five multiplies-by-100 
+we did in deriving the BCD value. All that is done in line 32540.
+    Finally, we simply count the exponent down to one or up 
+to minus one, depending on what it started at. And line 32545 
+is tricky, but not too much sol will leave its inner workings as 
+an exercise for you, the reader.
+    And, hard though it may be to believe, we arrive at line 
+32555 with the number in hand. Then we PRINT it.
+    Did we really have to go through all that? Not really, but 
+perhaps it gives you an idea of what BASIC's GETTOK routine 
+($AB3E) does when it encounters a variable name.
+    Finally, to test all this out, you should type it in, LIST it 
+to disk or cassette, use NEW, and then enter or load your favorite 
+program. Finally, re-ENTER this program fragment from disk 
+or cassette and type GOTO 32500. Just for fun, you might try 
+finding the variable values for the following program:
+10 A = 12.34567890 : B = 98765432l0
+20 C = 0.0000556677
+30 GOTO 60
+40 D$ = "WILL NEVER BE EXECUTED"
+50 E(7) = 1
+60 DIM F$(30), G$(40), H(9,17), J(7)
+70 G$="ONLY THIS STRING WILL HAVE LENGTH"
+
+    Type this little guy in, ENTER the variable value printer, 
+and RUN the whole thing. Answer the variable number 
+prompt with numbers from 128 to 135 and see what you get. 
+It's interesting!
+
+
+	128
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Five</b></big>
+<a name="129">
+
+<p align="right"><b><font face="sans-serif" size="7">Examining the 
+Statement Table </font></b></p>
+
+
+If you will recall, Chapter 3 in Part I discussed the various user
+tables that existed in Atari BASIC'S RAM memory space.
+Specifically it discussed the Variable Name Table, Variable
+Value Table, Statement Table, String/Array Table, and Runtime
+Stack.
+    In the last two chapters, investigated the Variable Name 
+Table and the Variable Value Table, Table showing how Atari BASIC
+can examine itself. So what is more logical than to now use 
+Atari BASIC to display the contents of the Statement Table?
+    While we could write a program that would examine the 
+tokenized program and produce source text, there is little 
+incentive to do so. The task would be both very difficult and 
+very redundant: BASIC'S LIST command performs the same 
+task very nicely, thank you.
+    What we can do, though, write a program which will 
+show the actual hex tokens used in a logical and almost 
+readable form. Again, let's look at the program before 
+decoding what it does.
+
+10 DIM NUM$(4)
+40 DIM DEC$(16):DEC$="0123456789ABCDEF"
+50 CVDEC=9l00
+100 GOTO 32000
+110 ERROR- THIS IS AN ERROR LINE
+120 DATA AND, THIS, IS, DATA, 1,2,3
+130 REM LINES 0 TO 130 ARE FOR DEMONST
+     RATION PURPOSES ONLY
+9100 REM CONVERT DECIMAL TO HEX
+9110 DIV=4096
+9120 FOR I=1 TO 4
+9130 N=INT(NUM/DIV):NUM$(I,I)=DEC$(N+l)
+9l40 NUM=NUM-DIV*N:DIV=DIV/16
+9150 NEXT I
+9160 RETURN
+
+
+	129
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Five</b></big>
+<a name="130">
+
+32000 PEEK(136)+256*PEEK(137)
+32010 Q=PEEK(QQ)+256*PEEK(QQ+1) :QS=QQ:QQ
+      =QQ+3
+32015 IF Q&gt;32767 THEN PRINT "--END--":ST
+      OP
+32020 QL=PEEK(QQ-1)+QS:PRINT "LINE NUMBE
+      R ";Q,"LINE LENGTH ";PEEK(QQ-1)
+32030 QT=PEEK(QQ+1):PRINT "{2 SPACES}STM
+      T LENGTH ";PEEK(QQ),"STMT CODE ";P
+      EEK(QQ+1)
+32040 Q=PEEK(QQ)+QS:QQ=QQ+2
+32050 IF QQ&lt;Q THEN 32080
+32060 IF Q&lt;QL THEN PRINT :GOTO 32030
+32070 PRINT :GOTO 32010
+32080 IF QT&gt;1 AND QT&lt;55 THEN 32120
+32090 PRINT "{2 SPACES}UNTOKENIZED::";
+32100 PRINT CHR$(PEEK(QQ));:QQ=QQ+1:IF Q
+      Q&lt;Q THEN 32100
+32110 PRINT :GOTO 32010
+32120 NUM=PEEK(QQ):GOSUB CVDEC
+32125 IF PEEK(QQ))&LT;127 THEN PRINT " V=";N
+      UM$(3):GOTO 32200
+32130 IF PEEK(QQ)&gt;15 THEN PRINT " ";NUM$
+     (3);:GOTO 32200
+32140 IF PEEK(QQ)=14 THEN GOTO 32170
+32150 QQ=QQ+1 :QN=PEEK(QQ):NUM=QN:GOSUB C
+      VDEC
+32155 PRINT " S,";NUM$(3);"=";:IF QN=0 T
+      HEN 32200
+32160 FOR QQ=QQ+1 TO QQ+QN-1:PRINT CHR$(
+      PEEK(QQ));:NEXT QQ:GOTO 32190
+32170 PRINT " N=";
+32180 FOR QQ=QQ+1 TO QQ+5:NUM=PEEK(QQ):G
+      OSUB CVDEC:PRINT NUM$(3);:NEXT QQ
+32190 QQ=QQ-1 PRINT
+32200 QQ=QQ+1:IF QQ&lt;Q THEN 32120
+32210 PRINT :IF QQ&lt;QL THEN 32030
+32220 PRINT :GOTO 32010
+
+    Now, even if you don't want to type all that in, there are a 
+few points to be made about it. First, note that lines 10 through 
+50 and 9100 through 9160 are the decimal-to-hex converter from
+
+
+	130
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Five</b></big>
+<a name="131">
+
+Chapter 2. Then, let's start with line 32000 and do a functional 
+description, with the line numbers denoting the portion we are 
+examining.
+<b>32000.</b> Decimal 136 is hex $88, the location of STMTAB, the 
+pointer to the user's program space.
+<b>32010, 32020.</b> In each line, the first two bytes are the line 
+number; the next byte is the line length (actually, the offset to 
+next line). Remember, line 32768 is actually the direct statement.
+<b>32030, 32040.</b> Within a line, each statement begins with a 
+statement length (the offset to the next statement from 
+the beginning of the line) and a statement token.
+<b>32050-32070.</b> Boundary conditions are checked for.
+<b>32080-32110.</b> REM becomes statement token 0, DATA is 
+token land the error token is 55 ($37). All three of them simply 
+store the user's input unchanged.
+<b>32120.</b> Remember, an ytoken with its upper bit on 
+indicates a variable number token. They really don't need to be 
+special cased in this program, but we do so for readability.
+<b>32130.</b> Operator tokens have values of 16 to 127 ($10 to
+$7F).
+<b>32140-32160.</b> For string constants (also called <i>string literals</i>), 
+we simply print out the string length and its contents (the 
+characters between the quote signs).
+<b>32170-32180.</b> For numeric constants, we simply print 
+the hex values of all six bytes
+<b>32190-32200</b>. Clean-up. We ensure that we return for all 
+remaining tokens (if any) in each statement and for all 
+remaining statements (if any) in each line.
+Observe the FOR-NEXT loop controls in line 32180. Why 
+QQ +1 TO QQ +5 if we want six values printed out? Ah, but 
+this is a trick. Note that the loop termination value (QQ + 5) 
+involves the loop variable (QQ). The problem is, though, that 
+the loop variable is changed by the prior imphed assignment 
+(QQ =QQ+ 1) <i>when the assignment takes place</i> - which is, of 
+course, before the determination of the value of "QQ + 5" 
+takes place.
+In other words, by the time we are ready to evaluate 
+QQ + 5, the variable QQ has already been changed from its 
+original value to its new, loop controlling value (QQ +1).
+Quite possibly, the proper general solution to using a FOR 
+loop's variable in its own terrnination (or STEP) values is to
+
+
+	131
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Five</b></big>
+<a name="132">
+
+assign it to a temporary variable, thusly:
+    QTEMP=QQ:FOR QQ=QTEMP+1TO QTEMP+6
+    Did you notice that line 32160 actually has the same 
+problem? Notice that we solved it there by adding -1 to 
+the termination value to compensate for the + 1 in the initialization 
+assignment.
+   One last comment before leaving the subject of strange 
+FOR-NEXT loops. In Atari BASIC (and, indeed, in virtually all 
+microcomputer BASICs), the termination TO) value and the 
+SThP value are determined when the FOR statement is first 
+executed and are NOT changeable. Example:
+
+10 X=7:Y=2
+20 FOR I = 1 TO X STEP Y
+30 X = X+1
+40 Y = Y+X
+50 NEXT I
+
+    This FOR loop will execute exactly four times (I=1,3,5, 
+and 7). The fact that X and Y change within the loop has no 
+effect on the actual loop execution.
+
+
+	132
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Six</b></big>
+<a name="133">
+
+<p align="right"><b><font face="sans-serif" size="7">Viewing the 
+Runtime Stack </font></b></p>
+	
+
+The Runtime Stack is the last of the user RAM tables that we 
+will discuss in Part 2.
+    Perhaps you noticed that we left out a discussion of the 
+String/Array Table in Part 2 The omission was on purpose:
+there seems little purpose in PEEKing the contents of this table 
+when BASIC's PRINT statement does an admirable job of 
+letting you see all variable values. However, if you are so 
+inclined, you could use the general purpose memory PEEKer 
+program of Chapter 2 to view any portion of any memory, 
+including the "String/Array Table.
+    On the other hand, looking at the Runtime Stack is kind of 
+fun and enlightening. And the program we will present here 
+might even find use on occasion. If you are having trouble 
+tracing a program's flow through various GOSUBs and/or 
+FOR loops, simply drop in the routine below and GOSUB to it 
+at an appropriate place in your program. It will print out a LIFO 
+(Last In, First Out) listing of all active GOSUB calls and FOR-
+NEXT loop beginnings.
+
+l0 FOR J=l TO 3
+20 GOSUB 30
+30 FOR K=1 TO 5
+40 GOSUB 50
+50 JUNK=7:FOR Q=1 TO 2:GOSUB 32400
+32400 QQ=PEEK(144)+256*PEEK(145)
+324l0 IF QQ&lt;=PEEK(142)+256*PEEK(143) THE
+      N PRINT "--END OF STACK--":STOP
+32420 PRINT "AT LINE ";PEEK(QQ-3)+2S6*PE
+      EK(QQ-2);
+32430 PRINT "; OFFSET ";PEEK(QQ-l);
+32440 IF PEEK(QQ-4)=0 THEN PRINT ", GOSU
+      B" :QQ=QQ-4:GOTO 324l0
+32450 PRINT ", FOR (#";PEEK(QQ-4);")":QQ
+      =QQ-16:GOTO 324l0
+
+
+	133
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Six</b></big>
+<a name="134">
+
+    The first thing you might notice ahout this little routine is 
+that, in contrast to all the programs we have used so far, it 
+exarnines its portion of user RAM backward. That is, it starts 
+at the top (high address) of the Runtime Stack area and works 
+downward toward the bottom.
+    Again, nothing surprising. If you will recall the description 
+of entries on this stack (pages 18-19 and 133-34), you will 
+remember that every entry, whether a GOSUB or FOR, has a 
+four-byte header. And, while FOR statements also have twelve 
+bytes of termination and step value added, the four bytes are 
+always at the <i>top</i> of each entry - they are the last items put on 
+the stack.
+    Thus, we start at the top of the stack and examine four 
+bytes. If the type byte is zero, it is a GOSUB entry, and all 
+we must do is display the line number and statement offset. If we 
+remove the four-byte header by subtracting 4 from our stack 
+pointer, we are ready to examine the next entry.
+    In the case of a FOR entry, we similarly display the line 
+number and statement offset. However, each FOR entry also 
+has a variable token associated with it, so we also display that 
+token's value. With the variable name lister of Chapter 2, you 
+can find out which variable is controlling this FOR loop. 
+Finally, note that after displaying a FOR loop entry, we remove 
+sixteen bytes (the four-byte header and the two six-byte 
+floating point values) in preparation for the next entry.
+Incidentally, lines 10 through 50 are present as examples 
+only. Add lines 32400 to 32450 to your own programs and see 
+where you've come from.
+
+
+	134
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Seven</b></big>
+<a name="135">
+
+<p align="right"><b><font face="sans-serif" size="7">Fixed Tokens </font></b></p>
+
+
+In the last chapter, we discussed the last of the tables in user 
+RAM. Now we will see how and where BASIC stores its 
+internal ROM-based tables.
+    As we noted in Chapter 5 of Part 1 (and viewed via the 
+listing program of Chapter 5 in this Part), there are four kinds 
+of tokens in an Atari BASIC program: (1) statement name 
+tokens, (2) operator tokens, (3) variable tokens, and (4) 
+constant tokens (string and numeric constants). Also, we 
+learned in Part 1 how the tokenizing process works, converting 
+the user's ATASCII source code into tokens. What we didn't 
+learn, though, was exactly what token replaces what BASIC 
+keyword.
+    In this chapter, we present a program which will list all of 
+the fixed tokens (those in ROM). Actually, the program 
+presents three listings, each consisting of a list of token values 
+with their associated ATASCII strings. But wait a moment! 
+Three listings? There are only two ROM-based tables - SNTAB 
+and OPNTAB.
+    Yes, but it seems that this program is also capable of listing 
+the Variable Name Table. Why list it again, when we did it so 
+well in Chapter 3? Because we wanted to show you how BASIC 
+itself does it. In many ways, this program emulates the 
+functions of the SEARCH routine at address $A462 in the 
+source listing. And, yes, BASIC uses a single routine to search 
+all three of these same tables. You might want to examine 
+BASIC's SEARCH routine at the same time you peruse this 
+listing.
+
+100 REM we make use of tbe general purpose
+110 REM token lister tbree times:
+200 PRINT :PRINT "A LIST OF VARIABLE TOKENS"
+210 ADDR=PEEK(130)+256*PEEK(131)
+220 SKIP=0:TOKEN=128:GOSUB 1000
+300 PRINT :PRINT "A LIST OF STATEMENT TOKENS'
+310 ADDR=42159:SKIP=2:TOKEN=0:GOSUB 1000
+400 PRINT  PRINT "A LIST OF OPERATOR TOKENS"
+410 ADDR=42979:SKIP=0:TOKEN=16:GOSUB 1000
+420 STOP
+1000 REM a general purpose token listing routine
+
+
+	135
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Seven</b></big>
+<a name="136">
+
+1001 REM
+1002 REM On entry to this routine, the following
+1003 REM variables bave meanings:
+1004 REM ADDR = address of beginning of table
+1005 REM SKIP = bytes per entry to skip
+1006 REM TOKEN = starting token number
+1007 REM
+1100 ADDR=ADDR+SKIP:IF PEEK(ADDR)=0 THEN RETURN
+1110 PRINT TOKEN,:TOKEN=TOKEN+1
+1120 IF PEEK(ADDR)&gt;127 THEN 1140
+1130 PRINT CHR$(PEEK(ADDR));:ADDR=ADDR+1:GOTO 1120
+1140 PRINT CHR$(PEEK(ADDR)-128);:ADDR=ADDR+1:GOTO 1100
+
+    The main routine is actually lines 1100 through 1140 (while 
+lines 1000 through 1007 simply explain it all). it's actually fairly 
+simple. Each table is assumed to consist of a fixed number of 
+bytes followed by a variable number of ATASCII bytes, the last 
+of which has its upper bit on.
+    In line 1100, we skip over the fixed bytes (if any) and check 
+for the end of the table. After that, we simply print the token 
+value followed by the name.
+    Worth examining, though, are lines 200 through 420, 
+where we call the main subroutine. First, note that the Variable 
+Name Table has no bytes to skip and is located via its zero-page 
+pointer. Naturally, the first variable token value is 128.
+    Each entry in the Statement Name Table (SNTAB, at 
+location $A4AF) has two leading bytes (actually, the two-byte 
+address, minus 1, of the syntax table entry for this statement). 
+Statement name token values begin at zero, and 42159 is the 
+decimal address of SNTAB.
+    Finally, the smallest-numbered operator token is 16 
+decimal (except for string and numeric constants, which are 
+special cased). There are no leading bytes in the Operator 
+Name Table, and it starts at location 42979 decimal (OPNTAB, 
+at $A7E3).
+
+
+	136
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Eight</b></big>
+<a name="137">
+
+<p align="right"><b><font face="sans-serif" size="7">What Takes 
+Precedence? </font></b></p>
+
+
+There was one other ROM-based table mentioned in Part 1 
+which deserves some attention here. You may recall that when 
+an expression is executed, the execution operators are given 
+particular precedences, so that in BASIC, 2 + 3*4 equals 14, not 
+20. Chapter 7 of Part 1 does a particu1arly thorough job of 
+explaining the concepts of precedence.
+    The program presented in this chapter prints out all of 
+BASIC's operator tokens along with their token values and 
+their dual precedence values. Actually, the program provides a 
+visual readout of OPRTAB (Operator PRecedence TABle, at 
+$AC3F).
+    In each pair of precedence values listed, the first number is 
+the go-onto-stack value and the second is the come-off-stack 
+value.
+
+100 PRINT "A LIST OF OPERATOR TOKENS"
+110 PRINT " WITH THEIR PRECEDENCE TABLE VALUES"
+220 SKIP=0:TOKEN=128:GOSUB 1000
+1000 ADDR=42979:REM WHERE OP NAMES START
+1010 TOKEN=16:REM LOWEST TOKEN VALUE
+1020 REM NOW THE MAIN CODE LOOP
+1100 IF PEEK(ADDR)=0 THEN STOP
+1110 PRINT TOKEN,:PREC=PEEK(44095+TOKEN-l6)
+1120 PRINT INT(PREC/l6);":";PREC-l6*INT(PREC/l6)
+1130 PREC=PEEK(ADDR):ADDR=ADDR+l
+1140 IF PREC&lt;128 THEN PRINT CHR$(PREC);:GOTO 1130
+1100 PRINT CHR$(PREC-l28):TOKEN=TOKEN+l:GOTO 1100
+
+    If you closely examined the program in the last chapter,
+you will note a striking similarity to this program, especially 
+lines 1100 through 1150. Actually, the only thing we have really
+added is the precedence printout of line 1120.
+    And note the form of the PEEK in line 1110. Then look at 
+the line of code at address $AAF1 in the BASIC listing. Given
+
+
+	137
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Eight</b></big>
+<a name="138">
+
+the limitations of dissimilar languages, the code is identical. 
+This is more evidence that you really can use BASIC as a tool to 
+diagnose itself.
+
+
+	138
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Nine</b></big>
+<a name="139">
+
+<p align="right"><b><font face="sans-serif" size="7">Using What 
+We Know </font></b></p>
+
+
+Now that Atari BASIC stands revealed before you, what do 
+you do with it? Many authors have, even without benefit of the 
+listing in this book, either used or fooled BASIC in ways that 
+we who designed it never dreamed of.
+For example, consider what happens if you change 
+BASIC's STARP pointer ($8C) to be equal to its ENDSTAR 
+value ($8E). Remember, BASIC's SAVE command saves 
+everything from the contents of VNTP to the contents 
+of STARP (as documented in Chapter 10 of Part 1). So changing 
+what is in STARP is tantamount to telling BASIC to SAVE more 
+(or less) than what it normally would. Presto! We can now save 
+the entire array and string space to disk or tape, also.
+Is it useful? Here's one program that is, using the concepts 
+we learned in the previous chapters.
+
+30000 PRINT :PRINT "WHAT VARIABLE NUMBER
+       DO YOU":PRINT,"WISH TO FIND";
+30010 INPUT QV
+30020 QA=PEEK(130)+256*PEEK(13l):QN=l28
+30030 IF QN=QV THEN 30060
+30040 IF PEEK(QA)&lt;128 THEN QA=QA+1:GOTO
+      30040
+30050 QN=QN+1:QA=QA+1:GOTO 30030
+30060 IF PEEK(QA)&lt;128 THEN PRINT CHR$(PE
+      EK(QA));:QA=QA+1 GOTO 30060
+30070 PRINT CHR$(PEEK(QA)-l28);" IS THE
+      VARIABLE"
+30100 QA=PEEK(136)+256*PEEK(137)
+30110 QN=PEEK(QA)+256*PEEK(QA+l):QL=PEEK
+      (QA+2):QSV=QA:QA=QA+3
+30120 IF QN&gt;32767 THEN PRINT "--END--" :E
+      ND
+30130 QS=PEEK(QA) :QT=PEEK(QA+1) :QA=QA+2:
+      IF QT&gt;1 AND QT&lt;55 THEN 30l50
+
+
+	139
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<big><b>Chapter Nine</b></big>
+<a name="140">
+
+30140 QA=QSV+QL: GOTO 30110
+30150 IF PEEK(QA)=QV THEN PRINT "LINE";
+      QN:GOTO 30140
+30160 IF PEEK(QA)&gt;15 THEN 30200
+30170 IF PEEK(QA)=14 THEN QA=QA+6:GOTO 3
+      0200
+30180 QA=QA+PEEK(QA+1)+1
+30200 QA=QA+1:IF QA&lt;QSV+QS THEN 30150
+30210 IF QA&lt;QSV+QL THEN 30130
+30220 GOTO 30110
+
+    What does it do? It finds all the places in your program that 
+you used a particular variable. And how do you use it? Type it 
+in, LIST it to disk or cassette, and clear the user memory via 
+NEW. Now type, ENTER, or LOAD the program you wish to 
+investigate (and then SAVE it, if you haven't already done so). 
+Finally, ENTER this program fragment from the disk or cassette 
+where you LISTed it and type GOTO 30000.
+    Although the program asks you for a variable <i>number</i> 
+(which you can get via the program of Chapter 3), it doesn't 
+really matter if you don't know it. The program will print your 
+chosen variable's name before giving all the references. If you 
+chose wrong, try again.
+    And how does it work? Somewhat like the program token
+lister of Chapter 5, except that here we are simply skipping
+everything but variable name references. First, though, we use
+a modified Variable Name Table lister (lines 30020 through
+30070) to tell you what name you chose.
+    Then, we start at the beginning of the program (line 30100) 
+and check each user line number (30110 and 30120). Within 
+each line, we loop through, checking all statements (30130), 
+skipping entirely all REM s, DATA lines, and lines with syntax 
+errors (line 30140). If we find ourselves in an expression, we 
+check for a matching variable token reference (line 30150) and 
+print it if found, after which we skip the rest of the line. We also 
+skip over numeric and string constants (lines 30170 and 30180). 
+Finally, we check to see if we are at the end of the statement 
+(30200) or the end of a line (30210 and 30220).
+    This is a fairly large program fragment, and it will prove 
+most useful in very large programs, where you can't 
+remember, for example, how many places you are using the 
+variable name LOOP. So you mlght want to try to leave room 
+in memory for this aid; you mayhe very glad you did.
+
+
+	140
+
+<a href=absb.html>TOC</a> <a href=p1.html>Part 1</a> <a href=p2.html>Part 2</a> <a href=p3.html>Part 3</a> <a href=app.html>Appendices</a> <a href=ndx.html>Index</a>
+</pre></ul></UL>
+</body>
+</html>

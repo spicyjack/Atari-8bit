@@ -1,0 +1,454 @@
+<html>
+<title>Appendix</title>
+<body bgcolor="white" background="strip.gif">
+<pre><ul><UL><a name=äppa">
+<font face="courier" size="3">
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix A</b></font>
+<a name="273">
+
+<p align="right"><b><font face="sans-serif" size="7">Macros in 
+Source Code </font></b></p>
+
+
+The following is a listing of the macros used in this source listing. You will 
+be able to tell when a macro was used by a plus (+) sign to the left of the hex 
+code produced in column two by the assembler.
+
+ASLA:	MACRO
+%L	ASL	A
+	ENDM
+RORA:	MACRO
+%L	ROR	A
+	ENDS
+LSRA:	MACRO
+%L	LBR	A
+	ENDM
+ROLA:	MACRO
+%L	ROL
+	ENDM
+FDB:	MACRO
+%L	DW	REV (%1)
+	IF	'=%2' <> '='
+	DW	REV (%2)
+	IF	'=%3' <> '='
+	DW	REV (%3)
+	IF	'=%4' <> '='
+	DW	REV (%4)
+	IF	'=%5' <> '='
+	DW	REV (%5)
+	ENDIF
+	EBDIF
+	ENDIF
+	ENDIF
+	ENDM
+LOCAL:	MACRO
+	PROC
+	ENDM
+BYTE:	MACRO
+	IF	'%I' = '='
+%L	DB	$80+((%2-*)&$7F) XOR $40 )
+	ELSE
+	IF	'%1' = '@@'
+%L	DW	( %2 )
+	ELSE
+%L	DB	%1
+	ENDIF
+	ENDIF
+	ENDM
+
+		<b>Syntax Table Macro</b>
+
+;THIS MACRO IS 1110 TO SIMULATE THE ACTION OF THE ORIGINAL 
+;ASSEMBLER IN HANDLING SPECIAL SYNTAX TABLE PSEUDO OPS AND 
+;OPERANDS
+;
+;THE 'SYN' MACRO EXAMINES UP TO 4 ARGUMENTS FOR CERTAIN SPECIAL 
+;CASE NAMES.
+;
+;IF THE NAME 'JS' IS FOUND, IT GENERATES A SPECIAL 'RELATIVE
+;	SYNTAX JSR' TO THE LABEL FOUND IN THE NEXT PARAMETER
+
+
+	273
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix A</b></font>
+<a name="274">
+
+;
+; IF THE NAME 'AD' IS FOUND. IT GENERERATES A WORD ADDRESS 
+; 	OF THE LABEL FOUND IS THE NEST PARAMETER
+;
+; ANY OTHER NAME IS ASSUMED TO BE A SIMPLE BYTE VALUE
+SYN:	MACRO
+:SYAR2	SET	'=%2' <> '='
+:SYAR3	SET	'=%3' <> '='
+:SYRAM	SET	'=%4' <> '='
+	IF	'%1' = 'JS'
+%L	DB		XOR $45 )
+:SYARl	SET	$80+(((%2-*)&$7F) XOR $40)
+	ELSE
+	  IF	'%l' = 'AD'
+%L	  DW	(%2)
+:SYAR2	  SET	0
+	  ELSE
+%L	  DB	%1
+	  ENDIF
+	ENDIF
+
+	IF	:SYAR2
+	  IF	'%2'= 'JS'
+	  DB	$80+(((%3-*)&$7F) XOR $40)
+:SYAR3	  SET	0
+	  ELSE
+	    IF '%2' = 'AD'
+	    DW	(%3)
+:SYAR3	    SET	0
+	    ELSE
+	    DB	%2
+	    ENDIF
+	  ENDIF
+	ENDIF
+
+	IF	:SYAR3
+	  IF	'%3'= 'JS'
+	  DB	$80+(((%4-*)&$7F) XOR $40)
+:SYAR4	  SET	0
+	  ELSE
+	    IF '%3' = 'AD'
+	    DW	(%4)
+:SYAR4	    SET	0
+	    ELSE
+	    DB	%3
+	    ENDIF
+	  ENDIF
+	ENDIF
+
+	IF	:SYAR4
+	  IF	'%4'= 'JS'
+	  DB	$80+(((%5-*)&$7F) XOR $40)
+	  ELSE
+	    IF '%4' = 'AD'
+	    DW	(%5)
+	    ELSE
+	    DB	%4
+	    ENDIF
+	  ENDIF
+	ENDIF
+
+	ENDM
+
+
+	274
+
+<a name="appb">
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix B</b></font>
+<a name="275">
+
+<p align="right"><b><font face="sans-serif" size="7">The Bugs in 
+Atari BASIC </font></b></p>
+
+
+Yes, it's true. There are some bugs in Atari BASIC. Of course,
+that's not surprising, since Atari released the product as ROM
+without giving the authors a chance to do second-round bug-
+fixing. But what hurts, a little, is that most of the fixes for the
+bugs have been known since June of 1979.
+    As this book is being written, rumor has it that at last Atari
+is in the final stages of releasing a new version of the BASIC
+ROMs. Unfortunately, these modified ROMs will appear too
+late for us to comment upon them in this edition. On the other
+hand, there are supposed to be fewer than twenty fixes
+implemented (which isn't a bad record for a product as mature
+as Atari BASIC), so those of you who are willing to PEEK
+around a bit can use this listing as at least a road map to the
+new ROMs.
+    In any case, though, we thought it would be appropriate to
+mention a few of the bugs we know about, show you why they
+exist, and tell how we fixed them back there in the summer of
+'79.
+
+<b>The Editing and String Bug</b>
+In the course of editing a BASIC program, sometimes the
+system loses all or part of the program, or it simply hangs.
+Often, even SYSTEM RESET will not return control to the user. 
+    Also, string assignments that involve the movement of 
+exact multiples of 256 bytes do not move the bytes properly. 
+For example, A$=B$(257,512) would actually move bytes 513 
+through 768 of B$ into bytes 257 through 512 of A$, even if 
+neither string were DIMensioned to those values.
+    Both of these are really the same bug. And both are caused 
+because we strove to be a little too efficient.
+    There are many ways to move strings of bytes using the 
+6502's instruction set. The simplest and most-used methods, 
+though, are excruciatingly slow. So Paul and Kathleen 
+invented a super-fast set of move-memory routines, one for
+
+
+	275
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix B</b></font>
+<a name="276">
+
+moving up in memory (EXPAND, at $A881) and one for 
+moving down in memory (CONTRACT, at $A8FD). 
+Unfortunately, the routines are very complex (which is what 
+makes them fast) and difficult to interface with properly. And 
+so a bug crept into CONThACT
+    Take a look at the code of FMOVER ($A947). When we get 
+here, we expect MVLNG to contain the complement of the least 
+significant byte of the move length while MVLNG+ 1 contains 
+its most significant byte. But look what happens if the original 
+move length was, for example, $200. The complement of the 
+least significant byte ($00) is still zero ($00), so the BEQ to 
+:CONT4 occurs immediately.
+    But by then, the X register contains the number of pages to 
+move plus one (X would contain 3 in this example), so we 
+increment it (it becomes 2) and go to label :CONT3, where we 
+bump the high-order byte of both the source and destination 
+addresses. Ah, but therein lies the rub! We haven't yet done 
+anything with the first values in those source and destination 
+addresses, so we have effectively skipped 256 bytes of each!
+    The solution is to replace the BEQ :CONT4 at $A94E with 
+the following code:
+    DEX
+    BNE :CONT2
+    RTS
+    Do you see the difference? If we enter with MVLNG equal 
+to zero, we immediately move 256 bytes (at : CONT2) before ever 
+attempting to change the source and destination addresses.
+    And this fix works, honest. We've been using it like this for 
+over two years BASIC A +.
+
+<b>Minus Zero</b>
+Taking the unary minus of a number (A=0 : PRINT -A) can 
+result in garbage. Usually, this garbage will not affect 
+subsequent calculations, but it does print strangely. And how 
+did this come about?
+    We simply forgot to take into consideration the fact 
+that zero doesn't really have a sign. Look at the code for the unary 
+minus operator (XPUMINUS, at $ACA8). Do you see the 
+problem? We simplyinvert the most significant bit (the sign bit) 
+of the floating point number in FRO.
+
+
+	276
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix B</b></font>
+<a name="277">
+
+    What we should have coded would be something like this:
+      LDA   FRO
+      BEQ   :NOINJERT
+      EOR   #$80
+      STA   FRO
+    :NOINVERT
+    Luckily, this is not too severe a problem to the BASIC user 
+(one can always use "PRINT 0-A" instead of "PRINT A") 
+but just think  it only cost two bytes to fix this bug.
+
+<b>LOCATE and GET</b>
+The GET statement does not reinitialize its buffer pointer, so it 
+can do nasty things to memory if used directly after a statement 
+which has changed the system buffer pointer. For example, 
+GET can change the line number of a DATA statement if it is 
+used after a READ. Also, the same problem exists for the 
+LOCATE statement, since it calls GET.
+    From BASIC, the easiest solution is to use a function or 
+statement which is known to reset the pointer. Coding 
+"XX"' STR$(0)" works just fine, as does PRINTing 
+any number.
+    Within the source listing, the problem exists at location 
+$BC82, label GETi. If the code had simply read as follows, 
+there would be no bug:
+
+    GET1
+      JSR INTLBF; reset buffer pointer 
+      LDA #ICGTC; continue as before
+
+<b>INPUT and READ</b>
+Using either an INPUT or READ statement without a following
+variable does not cause a syntax error (as it should). Then,
+attempting to execute a statement such as 20 INPUT can cause
+total system lock-up.
+    The solution from BASIC? Be careful and don't do it.
+    And this is one bug that we will not show the fix for,
+simply because it's too long and involved. We will, however,
+point to labels SINPUT and :SREAD (at locations $A6F4 and
+$A6F5) in the Syntax Tables and show why the bug exists.
+    Note that the SINPUT does a syntax call (SYN JS,) to the
+:OPD syntax, which looks for  but does not insist upon - a
+file number specifier (# < numeric expression>). Then the
+
+
+	277
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix B</b></font>
+<a name="278">
+
+syntax joins with :SREAD, which looks for zero or more 
+variables.
+    Oops! Zero or more? Shouldn't that be one or more? That's 
+where the problem lies.
+
+<b>Do <i>Not</i> Use NOT</b>
+In all too many cases, the use of the NOT operator is 
+guaranteed to get you in trouble. If you don't believe it, try 
+this: PRINT NOT NOT 1.
+    The explanation of why the bug occurs is too lengthy to 
+give in detail here; suffice it to say that the precedence of NOT 
+is wrong. Remember the Operator Precedence Table we 
+displayed in Chapter 8 of Part 2? Look at what you got for the 
+go-onto-stack and come-off-stack precedence values for NOT.
+    Or look at location $AC57, the NOT entry in OPRTAB. 
+NOT uses a 7 for both its precedence values. But wait a minute. 
+If two operators have the same apparent precedence (as in 
+NOT NOT A or even A + B + C), the expression executor will 
+pop the first one off the stack and execute it. But with a unary 
+operator, there is nothing to execute yet.
+    And the same bug exists for both unary minus and unary 
+plus, so - -3 and + + 5 don't execute properly. Of course, since 
+unary plus doesn't really do anything, it doesn't matter. In the 
+case of unary minus, though, all but the last minus sign in a 
+string of minus signs is ignored (that is, - -3 produces -3 as a 
+result, instead of + 3, as it should). But, by an incredible 
+coincidence, the damage that unary minus causes is invisible to 
+Execute Expression as a whole and only produces the error 
+noted.
+    The fix? Well, if we want to leave NOT where it is in the 
+order of things, the only way is to restructure the whole 
+precedence table. But if we are willing to accord it a very high 
+precedence, like unary plus and minus, we can fix it - and 
+plus and minus - by changing the bytes at $AC57, $AC64, 
+and $AC65 to $DC. And, thanks to the differing go-onto-stack and 
+come-off-stack values, we can stack as many NOTs, pluses, or 
+minuses as we want.
+    Are these all the bugs we know about that can be fixed 
+easily? No. But these are the easiest to understand or the 
+easiest to fix, and we thought they were instructive.
+    Of course, unless you have an EPROM board and burner 
+handy, you may not be able to take advantage of these fixes.
+
+
+	278
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix B</b></font>
+<a name="280">
+
+But at least now you may be able to work around them as you 
+program with good old buggy-version Atari BASIC.
+    And take heart. Remember Richard's Rule: Any nontrivial 
+piece of software has bugs in it. And the corollary: Any piece of 
+software which is bug-free is trivial.
+
+
+	280
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix C</b></font>
+<a name="281">
+
+<p align="right"><b><font face="sans-serif" size="7">Labels and 
+Hexadecimal 
+Addresses </font></b></p>
+
+
+	AADD	AF52	 CGTO	0017	 CVFPI	AD56	 EREXPR	AAE0
+	AAPSTR	AB98	 CILET	0036	 CVIFP	D9AA	 EXOPOP	AB0B
+     n	ADC	AF53	 CIO	E456	 DATAD	00B6	 EXP	DDC0
+	ADFLAG	00B1	 CIX	00F2	 DATALN	00B7	 EXP1	DE03
+     n	AFP	D800	 CLALL1	BD4F  n DCBORG	0300	 EXP10	DDCC
+	AMULl	AF5D	 CLE	001D	 DEGFLG	00FB	 EXP2	DE20
+	AMUL2	AF46	 CLEN	0042	 DEGON	0006	 EXP3	DE26
+	APHM	000E	 CLIST	0004	 DIGRT	00F1	 EXPAND	A881
+	ARGOPS	0080	 CLPRR	002B	 DIRFLG	00A6	 EXPERR	DE4B
+	ARGP2	AC06	 CLSALL	BD41	 DNERR	BCB0	 EXPINT	AB2E
+	ARGPOP	ABF2	 CLSYS1	BCF1	 DOSLOC	000A	 EXPLOW	A87F
+	ARGPUS	ABBA	 CLSYSD	BCF1	 DSPFLG	02FE	 EXPOUT	DE4A
+	ARGSTK	0080	 CLT	0020	 ECSIZE	00A4	 EXPSGN	DE39
+	ARSLVL	00AA	 CMINUS	0026	 EEXP	00ED	 EXSVOP	00AB
+	ARSTKX	00AA	 CMUL	0024	 ELADVC	BADD	 EXSVPR	00AC
+     n	ASCIN	D800	 CNE	001E	 ENDSTA	008E	 FADD	DA66
+	ASLA	mac      CNFNP	0044	 ENDVVT	0088  n FASC	D8E6
+	ATAN	BE77	 CNOT	0028	 ENTDTD	00B4	 FBODY	000C
+	ATAN1	BE9A	 COLD1	A008	 EPCHAR	005D	 FCHRFL	00F0
+	ATAN2	BED4	 COLDST	A000	 ERBRTN	B920	 FDB	mac
+	ATCOEF	DFAE	 COLOR	00C8	 ERGFDE	B922	 FDIV	DB28
+	ATEMP	00AF	 COMCNT	00B0	 ERLTL	B924	 FHALF	DF6C
+	ATNOIT	BEE2	 CON	001E	 ERNOFO	B926	 FIXRST	B825
+	BININT	00D4	 COSTLO	A8FB	 ERNOLN	B928	 FLD01	DD8F
+	BOTH	BDB3	 CONTRA	A8FD  n ERON	B93E  n FLD0P	DD8D
+	BRKBYT	0011	 COPEN	BBB6	 EROVFL	B92A	 FLD0R	DD89
+	BYELOC	E471	 COR	0029	 ERRAOS	B92C	 FLDl1	DD9E
+     n	BYTE	mac	 COS	BDB1	 ERRDIM	B92E	 FLD1P	DD9C
+	C	0044	 C0X	0094	 ERRDNO	B918	 FLD1R	DD98
+	BYELOC	E471	 CPC	009D	 ERRINP	B930	 FLIM	0000
+     n	BYTE	mac	 CPLUS	0025	 ERRLN	B932	 FLIST	BAD5
+	C	0044	 CPND	001C	 ERRNSF	B916  n FLOG10  DF01
+	CAASN	002D	 CR	009B	 ERRNUM	00B9	 FLPTR	00FC
+	CACOM	003C	 CREAD	0022	 ERROOD	B934	 FMOVE	DDB6
+	CADR	0043	 CREGS	02C4	 ERROR	B940	 PMOVE1	DDB8
+	CALPRN	0038	 CRPRN	002C	 ERRPTL	B91A	 FMOVER	A947
+	CAND	002A	 CRTGI	BFF9	 ERRRAV	003C	 FMPREC	0005
+	CASC	0040	 CSASN	002E	 ERRSSL	B936	 FMUL	DADB
+	CCHX	0031	 CSC	0015	 ERRVSF	B938  n FNTAB	A829
+	CCOM	0012	 CSEQ	0034	 ERSVAL	B91C	 FONE	DE8F
+	CCR	0016	 CSGE	0031	 ERVAL	B93A	 FP9S	DFEA
+	CDATA	0001	 CSGT	0033	 ESIGN	00EF	 FPI	D9D2
+	CDIV	0027	 CSLE	002F	 EVAADR	0002	 FPONE	BE71
+	CDLPRn	0039	 CSLPRN	0037	 EVAD1	0004	 FPORG	D800
+     n	CDOL	0013	 CSLT	0032	 EVAD2	0006	 FPREC	0006
+     n	CDQ	0010	 CSNE	0030  n EVARRA	0040	 FPSCR	05E6
+	CDSLPR	003B	 CSOE	0011	 EVDIM	0001	 FPSCR1	05EC
+	CEOS0	0014	 CSROP	001D  n EVNUM	0001	 FPTR2	00FE
+	CEQ	0022	 CSTEP	001A	 EVSADR	0002	 FR0	00D4
+	CERR	0037	 CSTR	003D	 EVSCAL	0000	 FR0M	00D5
+	CEXP	0023	 CTHEN	001B	 EVSDIM	0006	 FR1	00E0
+	CFFUN	003D	 CTO	0019	 EVSDTA	0002	 FR1M	00E1
+	CFLPRN	003A	 CUMINU	0036	 EVSLEN	0004	 FR2	00E6
+	CFOR	0008	 CUPLUS	0035	 EVSTR	0080	 FRA10	DD01
+	CGE	001F	 CUSR	003F  n EVTYPE	0000	 FRA1E	DD09
+	CGOSOB	000C	 CVAFP	D800  n EVVALU	0002	 FRA20	DD05
+	CGS	0018	 CVAL	0041	 EXECNL	A95F	 FRA2E	DD0F
+	CGT	0021	 CVFASC	D8E6	 EXECNS	A962	 FRADD	AD3B
+
+
+	281
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix C</b></font>
+<a name="282">
+
+	x
+
+
+	282
+
+
+<hr noshade size="15" width="100%" align="right" color="black">
+<font size="4"><b>Appendix C</b></font>
+<a name="283">
+
+	x
+
+
+	283
+
+
+<a href=absb.html>TOC</a> <a href=p1.html>Part 1</a> <a href=p2.html>Part 2</a> <a href=p3.html>Part 3</a> <a href=app.html>Appendices</a> <a href=ndx.html>Index</a>
+</UL></ul></pre>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<html>
+<head>
+<title>Addressing Modes</title>
+</head>
+<body BGCOLOR="#ffffff" LINK=#0000FF  VLINK=#FF0000  ALINK=#FF0000>
+<A HREF="syndx.htm">Back to Index</A><br>
+<a name="adr"><h3>ADDRESSING MODES</h3></a>
+<br>
+The MOS Technology 6502 microprocessor used in the <b>ATARI</b>
+ has many great features; one of the greatest is its variety of
+ addressing modes. There are thirteen different modes in all, though
+ no single opcode can use every one of them. The chart in the
+ appendix shows which modes can be used with each opcode. But
+ first, here is a chart showing an example of each mode and the
+ way it is written in assembly language.
+<br><pre>
+       MODE                EXAMPLE
+
+       Implied             DEX          at least two blanks
+       Accumulator	   ROL          before comments begin
+       Relative	           BNE expr     
+       Immediate           LDA #expr
+                           LDA /expr
+       Zero Page           LDA expr
+       Absolute            LDA expr     Assembler uses
+       Zero Page,X         LDA expr,X   Zero Page form
+       Absolute,X          LDA expr,X   if possible;
+       Zero Page,Y         LDA expr,Y   if not, it uses
+       Absolute,Y          LDA expr,Y   Absolute form.
+       (Zero Page,X)       LDA (expr,X)
+       (Zero Page),Y       LDA (expr),Y 
+       (Absolute)          JMP (expr)
+</pre><br>
+For a full explanation of the modes and how to use them, I refer
+ you to the MOS Tecnology Hardware and Programming Manuals, as
+ well as the other references mentioned in the bibliography in Appendix IV.
+<br><br><br>
+SYNASSEMBLER has one syntactical addition. The immediate mode may
+ be indicated by either a pound sign (#) or a slash (/).
+ The "#" means that the least significant byte of the 16-bit
+ expression value should be used.
+<br><br>
+The "/" means that the most significant byte should be used.
+<br><br>
+One use for this feature is in setting up the address of a subroutine
+ or a buffer in a pointer. (A pointer is a pair of bytes containing an
+ address which "points" at a subroutine or into a buffer.) For example:
+<br><pre>
+   0080:           00010 ADR      .EQ $80
+   4000: A9 0D     00020 START    LDA #SOUND
+   4002: 85 80     00030          STA ADR
+   4004: A9 40     00040          LDA/SOUND
+   4006: 85 81     00050          STA ADR+1
+   4008: A0 00     00060          LDY  #0
+   400A: B1 80     00070          LDA  (ADR),Y
+   400C: 00        00080          BRK
+   400D: 10 20 50  00090 SOUND    .HS 102050
+   4010: 20 40 90  00100          .HS 204090
+
+              --- Symbol table ---
+   0080: ADR
+   400D: SOUND
+   4000: START
+   400D: SOUND
+</pre><br>
+Trying to comprehend and remember thirteen different addressing
+ modes can be very difficult; therefore it is convenient to try to
+ group them into categories. You may wish to consider the following
+ breakdown: implied mode, relative mode, and other modes. "Other"
+ modes now includes eleven modes, so you can break it down further:
+ accumulator, immediate, direct, and indirect.  Each of direct and
+ indirect modes can be either indexed or not indexed, and either
+ Zero page or Absolute. The following outline will give you a
+ better idea of what has been described:
+<br><br><pre>
+     I. Implied
+    II. Accumulator
+   III. Direct
+        A. Not Indexed
+           1. Zero Page
+           2. Absolute
+        B. Indexed by X-register
+           1. Zero Paqe,X
+           2. Absolute,X
+        C. Indexed by Y-register
+           1. Zero Page,Y
+           2. Absolute,Y
+    IV. Indirect
+        A. Not Indexed - (Absolute)
+        B. Indexed by X-register
+           (Zero'Page,X)
+        C. Indexed by Y-register
+           (Zero Page),Y
+</pre><br>
+<h4>IMPLIED MODE</h4>
+
+In this mode, the address is implied by the nature of the
+ instruction; the operand field is left blank.  All of the opcodes
+ in this class are only one byte long. They are:
+<br><br><center><table width="70%" cellspacing="4">
+<tr align="center">
+<td><b>BRK</b></td><td><b>DEX</b></td><td><b>PHA</b></td>
+<td><b>RTS</b></td><td><b>TAY</b></td></tr>
+<tr align="center">
+<td><b>CLC</b></td><td><b>DEY</b></td><td><b>PHP</b></td>
+<td><b>SEC</b></td><td><b>TSX</b></td></tr>
+<tr align="center">
+<td><b>CLD</b></td><td><b>INX</b></td><td><b>PLA</b></td>
+<td><b>SED</b></td><td><b>TXA</b></td></tr>
+<tr align="center">
+<td><b>CLI</b></td><td><b>INY</b></td><td><b>PLP</b></td>
+<td><b>SEI</b></td><td><b>TXS</b></td></tr>
+<tr align="center">
+<td><b>CLV</b></td><td><b>NOP</b></td><td><b>RTI</b></td>
+<td><b>TAX</b></td><td><b>TYA</b></td></tr>
+</table></center>
+<br><br>
+<h4>RELATIVE MODE</h4>
+
+This mode is used only by the conditional branch instructions. The
+ expression is converted to a signed offset from the location
+ following the branch instruction. The result must be in the
+ range from -128 through +127 to be legal. All of these
+ instructions occupy two bytes. They are:
+<br><br><center><table width="56%" cellspacing="4">
+<tr align="center">
+<td><b>BCC/BGE*</b></td><td><b>BEQ</b></td>
+<td><b>BNE</b></td><td><b>BVC</b></td></tr>
+<tr align="center">
+<td><b>BCS/BLT*</b></td><td><b>BMI</b></td>
+<td><b>BPL</b></td><td><b>BVS</b></td></tr>
+</table></center>
+<br><blockquote>
+* you may use either form for greater than/less than branches.
+</blockquote><br>
+<h4>OTHER MODES</h4>
+
+Usage of the other eleven modes is much more complex. The table in
+ the appendix shows which modes are defined for each of the remaining
+ opcodes. These instructions occupy one byte in the accumulator
+ mode, two bytes in any zero page modes, and three bytes in any of
+ the absolute modes. They are:
+<br><br><center><table width="70%" cellspacing="4">
+<tr align="center">
+<td><b>ADC</b></td><td><b>AND</b></td><td><b>ASL</b></td>
+<td><b>BIT</b></td><td><b>CMP</b></td></tr>
+<tr align="center">
+<td><b>CPX</b></td><td><b>CPY</b></td><td><b>DEC</b></td>
+<td><b>EOR</b></td><td><b>INC</b></td></tr>
+<tr align="center">
+<td><b>LDA</b></td><td><b>LDX</b></td><td><b>LDY</b></td>
+<td><b>LSR</b></td><td><b>ORA</b></td></tr>
+<tr align="center">
+<td><b>ROL</b></td><td><b>ROR</b></td><td><b>SBC</b></td>
+<td><b>STA</b></td><td><b>STY</b></td></tr>
+<tr align="center">
+<td><b>STX</b></td><td><b>JMP</b></td><td><b>JSR</b></td></tr>
+</table></center><br>
+You might notice especially that only four opcodes are usable in the
+ accumulator mode (<b>ASL, LSR, ROL, ROR</b>); that only two opcodes
+ use the "ZP,Y" mode (<b>LDX</b> and <b>STX</b>), and that only one
+ opcode uses the indirect absolute non-indexed mode (<b>JMP</b>).
+
+<br><br>
+<A HREF="index.htm">Back to Main Page</A> or 
+<A HREF="#adr">Back to Modes</A> or 
+<A HREF="synbug.htm">Next Section</A><br>
+</body>
+</html>

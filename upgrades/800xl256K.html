@@ -1,0 +1,168 @@
+<HTML>
+<HEAD>
+<TITLE>Atari 800XL 256K (130XE Compatible)</TITLE>
+</HEAD>
+<BODY>
+<LINK REV="made" HREF="mailto:clisowsk@mcs.kent.edu">
+<H2>
+<PRE>
+Subject: UPGRADE: 800XL -> 256K Memory (130XE Compatible)
+</PRE>
+</H2>
+<HR>
+<H3>
+<PRE>
+130XE-COMPATIBLE 800XL 256K UPGRADE
+ 
+    by Claus Buchholz
+ 
+ 
+    I designed the 256K upgrade described in my article, "The Quarter-Meg
+Atari" (BYTE, September, 1985), in December, 1984. Since this pre-dated the
+130XE, there was no precedent for extended memory on the XL's, I felt free
+to implement a system of eight 32K banks. The major reason was to keep the
+add-on circuit as simple as possible.
+ 
+    The 130XE, introduced in early 1985, set a different standard for
+bank-select memory. It uses 16K banks and makes them separately available
+to both the CPU and the video controller (ANTIC). The XE has 128K total
+memory. The 64K extended RAM is split into four 16K banks. A 256K 800XL has
+192K extended RAM, which requires 12 16K banks.
+ 
+    I have designed a new upgrade for the 800XL that implements such a
+scheme. Its similarity to the 130XE's scheme allows use of software for the
+XE on a 256K 800XL.
+ 
+    To select one of four banks, the XE uses two bits, #2 and #3, in the
+memory control register (port B of the 6520 PIA, addressed at $D301 or 54017
+decimal). Zeroing bit #4 makes the selected bank appear at addresses
+$4000-$7FFF (16384 to 32767 decimal), as seen by the CPU. Zeroing bit #5
+makes it appear there as seen by ANTIC.
+ 
+    In my upgrade, bits #2, #3, #5 and #6 select one of the twelve banks.
+Zeroing bit #4 makes the selected bank appear at $4000-$7FFF to both the CPU
+and ANTIC. So, any program for the XE that uses the extended RAM for CPU
+storage will work on an 800XL with this mod. Those programs won't use the
+additional 128K though. Programs that use the video banking feature of the
+XE might run on the modified XL, but the screen display will be wrong.
+ 
+    The procedure for this upgrade is basically the same as in the article,
+except for the following points. If your ANTIC (U7) part number is CO21697,
+use the circuit described by the first connection list below. If it is
+CO12296, include the circuit in the second list. The circuit requires five
+connections to the PIA (U23). So, pins 12 through 16 must be bent up and
+connected to the circuit. The rest of the procedure is the same. Notice that
+this circuit has one more chip than the article's circuit. This is the price
+of compatibility.
+ 
+    With the 256K dynamic RAMs in your XL, be sure to wait at least ten
+seconds after turning the computer off. Otherwise it may not coldstart
+properly when you turn it back on.
+ 
+    I ask one thing in return for this information, Please pass it around to
+all your interested friends. Put it in your club's library or on your
+favorite BBS. Encouraging software support of 256K will result in many
+interesting uses for it.
+ 
+Thank you and enjoy!
+ 
+ Disclaimer:
+ 
+    The Author and This BBS claim No responsibility for any type damages
+incurred by doing this modification.
+ 
+ MEMORY CONTROL REG. $D301 (54017)
+ 
+    XL MOD              130XE
+    Bit:                Bit:
+7 6 5 4 3 2 1 0     7 6 5 4 3 2 1 0
+D a b E c d B R     D V C x y B R
+ 
+D=0 Enables         D=0 Enables
+Diagnostics         Diagnostics
+ 
+B=0 Enables BASIC   B=0 Enables BASIC
+R=1 Enables OS      R=1 Enables OS
+ 
+E=0 Enables V=0 Enables Extended RAM
+Extended Ram for abcd is 4-bit Video
+Extended RAM Bank# Ranges from 4-15
+ 
+C=0 Enables Banks 12-15 are Extended Ram for Equivalent to XE's CPU.
+xy is 2 Bit Banks
+0-3 Extended Ram Bank Number. Ranges From 0-3.
+ 
+ PARTS LIST:
+ 
+8 41256 256K RAMs (200ns or less)
+1 74LS153 Dual 4-to-1 Mux. (IC2)
+1 74LS139 Dual 2-to-4 Decoder (IC3)
+1 33 ohm, 1/4 watt Resistor
+ 
+ ADDITIONAL PARTS FOR ANTIC #CO12296
+ 
+1 74LS158 Quad inv. 2-to-1 Mux. (IC4)
+1 74LS393 Dual 4-bit counter (IC5)
+ 
+LIST OF CONNECTIONS FOR THE CIRCUIT
+ 
+    Instead of a drawing of the upgrade circuit, below is a list of
+connections. Each entry in the list begins with the name of the signal
+followed by all the IC pins that connect together and share the signal.
+IC3-13 means pin 13 of IC3. The IC numbers appear in the parts list above.
+IC1 is the 74LS158 chip from socket U27 on the XL motherboard.
+DIP is the DIP header to be plugged into socket U27.
+U23-xx refers to the pins you bend up on the PIA chip at U23 on the
+motherboard.
+ 
+Vcc : DIP-16, IC1-16, IC2-16, IC3-16, IC3-13
+ 
+Vss : DIP-8, IC1-8, IC2-8, IC2-1, IC2-15, IC3-8
+ 
+*A7*: DIP-11, IC2-10, IC2-11
+A15 : DIP-10, IC2-13, IC3-3
+A6 : DIP-14, IC2-6, IC2-5
+A14 : DIP-13, IC2-3, IC3-2
+MUX : DIP-1, IC1-1, IC2-2
+A4 : DIP-2, IC1-2
+A12 : DIP-3, IC1-3
+RA4 : IC1-4, DIP-4
+A5 : DIP-5, IC1-5
+A13 : DIP-6, IC1-6
+RA5 : IC1-7, DIP-7
+-E : DIP-15, IC1-15
+RA7 : IC2-9, DIP-9
+RA6 : IC2-7, DIP-12
+PB2 : U23-12, IC2-4
+PB3 : U23-13, IC2-12
+PB4 : U23-14, IC3-1
+PB5 : U23-15, IC1-10
+PB6 : U23-16, IC1-11
+-Zd : IC1-9, IC3-14
+-O1a: IC3-5, IC3-15, IC2-14
+-O2b: IC3-10, One side of resistor
+RA8 : Other side of resistor, Pin 1 of all RAMs
+ 
+    If your U7 part number is CO12296, DO NOT connect signal *A7* above, and
+make the following additional connections. The connection to U7 is to a
+trace on the motherboard that runs from pin 8 of U7.
+ 
+Vcc : DIP-16, IC4-16, IC5-14, IC4-3
+Vss : DIP-8, IC4-8, IC4-2, IC4-15, IC5-7, IC5-2, IC5-12
+ 
+A7 : DIP-11, IC4-6
+-REF: U7-8, IC4-1
+REF : IC4-4, IC5-1
+A7' : IC4-7, IC2-10, IC2-11
+Q7 : IC5-8, IC4-5
+Q3 : IC5-6, IC5-13
+</PRE>
+</H3>
+<HR>
+
+<ADDRESS>
+<A HREF="http://trident.mcs.kent.edu/~clisowsk/info.html">Craig Lisowski</A>
+<A HREF="mailto:clisowsk@mcs.kent.edu">(clisowsk@mcs.kent.edu)</A>
+</ADDRESS>
+</BODY>
+</HTML>

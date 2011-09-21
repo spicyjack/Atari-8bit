@@ -1,0 +1,1836 @@
+         .OPT noLIST
+;Atari 8-bit Scorched Earth source code
+;build 0114, 2003-08-22
+;---------------------------------------------------
+;by Tomasz 'pecus' Pecko and Pawel 'pirx' Kalinowski
+;Warsaw 2000,2001,2002,2003
+;you can contact us at pecus@poczta.fm or pirx@ikp.pl
+;home page of this project is http://www.kocham.com/
+
+;this source code is compiled under OMC65 crossassembler
+;
+;!never put anything (comments) after LSR and ROL (bug of assembler)
+;Ha! B'Tronic fixed this bug and what is even more interesting
+;fixed also immanent Mac65 "Phase error" bug
+;Yes! No more meaningless "Phase error" messages!!!
+;
+;game source code is split into 5 parts:
+;program.s65 is the main game code (with many assorted routines)
+;grafproc.s65 - graphics routines like line or circle
+;textproc.s65 - text routines like list of weapons and shop
+;variables.s65 - all non-zero page variables and constans
+;display.s65 - display lists and text screen definitions
+
+;we were trying to use as much macro opcodes as possible
+;they are defined in SHORTSYS.S65 file together with many
+;atari constans. This way it shoud be relatively easy to
+;port this code to e.g. C64
+;
+;After those four years of working on this piece of code
+;we are sure it would be much wiser to write it in C or
+;Action!, but on the other hand it is so much fun to type 150 chars
+;where you want to have y=ax+b :)
+;
+;originally most variables were in Polish, comments were rare
+;but we wanted to release this piece of code to public
+;and due to being always short of time (to finish the game)
+;we decided it must go in 'English' to let other people work on it
+;
+;
+;---------------------------------------------------------
+;Noticed bugs (+ means bug is fixed)
+;001. when bullet goes straight down very fast it misses the tank
+;     it happens only when tank is standing on the bottom of
+;     the screen (no groud below)
+;002+ points after the round are not calculated correctly
+;003. if death's head explodes low, the lowest explosion wraps
+;     and appears on the top of the screen
+;004. when parachute is on and the tank dies (e.g. hit by a powerful
+;     weapon) the dead (invisible) tank falls on parachute
+;     (and uses one parachute more than necessary)
+;005. tank stands still on a one pixel spike - it should fall
+;     (possibly all that is necessary is adjust of WhereToSlideTable)
+;---------------------------------------------------------
+;To do
+;001. Start each round with a)worst tank or b)random tank
+;002.+Start each round with random angles (not always 45 degrees left)
+;003. Add colour of the given tank to the screen
+;     E.g. when a given tank is shooting it's colour could be behind
+;     tank name on the text screen
+;004. The game has no end!!! Add ending!!!
+;005. Add number of rounds to the options menu
+;006. Add sound effects (maybe sampled?)
+;007. There is no deffensive weapon handling (only parachute works,
+;     but also provisionally
+;008. No computer operated opponents - make a frame for AI!!!
+
+
+         .opt noobj ;zero page variables trick
+
+	*=$0080
+xdraw	.word 0	;variable X for plot
+ydraw   .word 0 ;variable Y for plot (like in Atari Basic - Y=0 in upper right corner of the screen)
+xbyte   .word 0
+ybyte   .word 0
+CharCode .byte 0
+fontind .word 0
+tanknr  .byte 0
+TankSequencePointer .byte 0
+oldplot .word 0
+xc	.word 0
+temp	.word 0	;temporary word for the most embeded loops only
+temp2 	.word 0 ;same as above
+tempXROLLER	.word 0 ;same as above for XROLLER routine
+                        ;(used also in result display routine)
+xtempDRAW	.word 0	;same as above for XDRAW routine
+ytempDRAW	.word 0 ;same as above for XDRAW routine
+;--------------temps used in circle routine
+xi	.word 0 	;X (word) in draw routine
+fx 	.byte 0		;circle drawing variables
+yi	.word 0		;Y (word) in draw routine
+fy	.byte 0
+xk	.word 0
+fs	.byte 0
+yc	.byte 0		;ycircle - temporary for circle
+dx	.word 0
+tempor2	.byte 0
+dy	.word 0
+tempor3	.word 0
+dd	.word 0
+di	.word 0
+dp	.word 0
+modify	.word 0
+
+;-------------------------------
+;constants
+screenheight=200
+screenwidth=320
+margin=17 ;mountain drawing Y variable margin
+display=$a010
+MaxPlayers = 6
+         .opt obj
+         .INCLUDE#SHORTSYS.S65
+         ;Game loading address
+         *=  $2000 ;$2000 might be too low for some memory hungry DOSes
+
+
+;-----------------------------------------------
+;Screen displays go first to avoid crossing 4kb barrier
+;-----------------------------------------------
+	.include#display.s65
+;----------------------------------------------
+	.include#variables.s65 ; OMC accepts only 8 char long file names!!!
+	                       ; Ha! It is not the issue anymore with the new
+	                       ; version of OMC thanks to B'Tronic!!!
+;--------------------------------------------------
+; Game Code
+;--------------------------------------------------
+START
+         ; Startup sequence
+
+        jsr Initialize
+
+        moveq.w OptionsDL,dlvecs
+       	lda dmactls
+       	and #$fc
+	ora #$02     ; normal screen width
+	sta dmactls
+
+	jsr Options  ;startup screen
+
+	;entering names of players
+        moveq.w NameDL,dlvecs
+       	lda dmactls
+       	and #$fc
+	ora #$01     ; narrow screen (32 chars)
+	sta dmactls
+
+	moveq.b 0,TankNr
+
+loop01
+	jsr EnterPlayerName
+	inc TankNr
+	lda TankNr
+	cmp NumberOfPlayers
+	bne loop01
+
+        moveq.w dl,dlvecs
+       	lda dmactls
+       	and #$fc
+	ora #$02     ; normal screen width
+	sta dmactls
+
+
+	jsr RandomizeSequence
+	; for the round #1 shooting sequence is random
+
+MainGameLoop
+
+        moveq.w dl,dlvecs
+       	lda dmactls
+       	and #$fc
+	ora #$02     ; normal screen width
+	sta dmactls
+
+	jsr GetRandomWind
+
+	jsr Round
+
+	jsr SortSequence
+
+	jsr DisplayResults
+	key
+	; here gains and looses should be displayed (dollars)
+	; finally we have changed our minds and money of players
+	; is displayed only in weapons shop
+
+	; Results are number of other deaths
+	; before the player dies itself
+
+	; add gains and substract looses
+	; gain is what player gets for lost energy of opponents
+	; energy lost by opponents is added during Round and
+	; little below in source multiplied by 2 to get "dollars".
+	; By analogy, loose is energy that given player looses during
+	; each Round.
+	; Important! If player has 10 energy and gets central hit
+	; from nuke that would take 90 energy point his loose
+	; is 90, not 10
+
+	ldx NumberOfPlayers
+	dex
+CalculateGains
+	; add gain * 2
+	asl gainL,x
+	rol gainH,x
+	clc
+	lda moneyL,x
+	adc gainL,x
+	sta moneyL,x
+	lda moneyH,x
+	adc gainH,x
+	sta moneyH,x
+	; substract loose
+	; if loose is greater than money then zero money
+	lda moneyH,x
+	cmp looseH,x
+	bcc zeromoney
+	bne substractloose
+	lda moneyL,x
+	cmp looseL,x
+	bcc zeromoney
+substractloose
+	sec
+	lda moneyL,x
+	sbc looseL,x
+	sta moneyL,x
+	lda moneyH,x
+	sbc looseH,x
+	sta moneyH,x
+	jmp skipzeroing
+zeromoney
+	lda #0
+	sta moneyL,x
+	sta moneyH,x
+
+skipzeroing
+	dex
+	bpl CalculateGains
+
+        moveq.w PurchaseDL,dlvecs
+       	lda dmactls
+       	and #$fc
+	ora #$02     ; normal screen width
+	sta dmactls
+
+
+;-------------------------------------------
+; call of the purchase screens for each tank
+	moveq.b 0,TankNr
+loop03
+	ldx TankNr
+	lda SkillTable,x
+	beq ManualPurchase
+	jsr PurchaseAI
+	jmp AfterManualPurchase
+
+ManualPurchase
+	jsr Purchase
+AfterManualPurchase
+
+	inc TankNr
+	lda TankNr
+	cmp NumberOfPlayers
+	bne loop03
+
+	inc CurrentRoundNr
+	jmp MainGameLoop
+
+;--------------------------------------------------
+Round ;
+;--------------------------------------------------
+; at the beginning of each Round we set energy
+; of all players to 100
+; the maximum shooting energy to 1000 (it is 10*energy)
+; the default shooting energy to 350
+; the default shooting angle to 45 degrees
+; of course gains an looses are zeroed
+
+	ldx #5
+SettingEnergies
+	lda #$00
+	sta gainL,x
+	sta gainH,x
+	sta looseL,x
+	sta looseH,x
+	lda #99
+	sta Energy,x
+        sta eXistenZ,x
+	sta LASTeXistenZ,x
+        ; anything in eXistenZ table means that this tank exist
+        ; in the given round
+	lda #232
+	sta MaxEnergyTableL,x
+	lda #3
+	sta MaxEnergyTableH,x
+	lda #94
+	sta EnergyTableL,x
+	lda #1
+	sta EnergyTableH,x
+	;lda #[255-45]
+	;it does not look good when all tanks have
+	;barrels pointing the same direction
+	;so it would be nice to have more or less random
+	;angles
+
+	jsr RandomizeAngle
+	sta AngleTable,x
+
+
+	dex
+	bpl SettingEnergies
+
+	moveq.b 0,CurrentResult
+
+;generating the new landscape
+	jsr PMoutofScreen ;let P/M disappear
+        jsr clearscreen	  ;let the screen be clean
+    	jsr placetanks    ;let the tanks be evenly places
+	jsr calculatemountains ;let mountains be nice for eye
+	jsr drawmountains ;draw them
+	jsr drawtanks     ;draw tanks at last
+	;
+
+;--------------------round screen is ready---------
+
+	;moveq.b 0,TankNr
+	moveq.b 0,TankSequencePointer
+
+MainRoundLoop
+	; here we must check if by a chance there is only one
+	; tank with energy greater than 0 left
+
+	ldy #0 	; number of tanks with energy greater than zero
+	ldx NumberOfPlayers
+	dex
+CheckingIfRoundIsFinished
+	lda eXistenZ,x
+	beq NoEnergy
+	iny
+NoEnergy
+	dex
+	bpl CheckingIfRoundIsFinished
+
+	cpy #2 ; is it less than 2 tanks have energy >0 ?
+	bcs DoNotFinishTheRound
+
+;points for the last living tank
+	ldx NumberOfPlayers
+	dex
+WhichTankWonLoop
+	lda eXistenZ,x
+	bne ThisOneWon
+	dex
+	bpl WhichTankWonLoop
+	;error here!!!
+	;stop
+	; somehow I believed program will be never here
+	; but it was a bad assumption
+	; gode goes here when there is such a situation
+	; (we've got a SITUATION here, it you know what I mean)
+	; there are two tanks left.
+	; one of them is killed by the second tank
+	; second tank explodes and kills the first one.
+	; and code lands here...
+	; looks like no one won!
+
+	rts
+
+ThisOneWon
+	lda CurrentResult
+	clc
+	adc ResultsTable,x
+	sta ResultsTable,x
+
+	rts  ; this Round is finished
+
+DoNotFinishTheRound
+	;ldx TankNr
+
+	ldx TankSequencePointer
+	lda TankSequence,x
+	sta TankNr
+	tax
+	lda Energy,x ;skip if no energy
+	lbeq NextPlayerShoots
+
+
+	moveq.b 1,color ;to display flying point
+
+	lda SkillTable,x
+	beq ManualShooting
+; artificial intelligence of tanks goes here!
+; in A there is a level of tank's intelligence
+; 1-moron, ..., 7-cyborg, 8-UNKNOWN (the best of all)
+; at the moment (2003-08-15) I have no idea how
+; to program better opponents, but moron is easy -
+; - shoots random direction and force
+
+	jsr ArtificialIntelligence
+	jsr DisplayingSymbols ;all digital values like force, angle, wind, etc.
+    	jsr PutTankNameOnScreen
+	; let's move the tank's barrel so it points the right
+	; direction
+	jsr MoveBarrelToNewPosition
+	jmp AfterManualShooting
+
+ManualShooting
+
+	jsr ReleaseKey
+	jsr BeforeFire
+
+
+AfterManualShooting
+
+	jsr Shoot
+	lda HitFlag ;0 if missed
+	beq missed
+	lda #0
+	sta FallDown1
+	sta FallDown2
+	jsr Explosion
+
+	;here we clear offensive text (after a shoot)
+	ldy TankNr
+	moveq.b 0,plot4x4color
+	jsr DisplayOffensiveTextNr
+
+AfterExplode
+	;temporary tanks removal (would fall down with soil)
+	move.b TankNr,tempor2
+	moveq.b 1,Erase
+	jsr drawtanks
+	move.b tempor2,TankNr
+	moveq.b 0,Erase
+	lda FallDown2
+	beq NoFallDown2
+	jsr SoilDown2
+	;jsr drawmountainspixel  ;it was test of SoilDown
+
+NoFallDown2
+	;here tanks are falling down
+	move.b tankNr,tempor2
+	moveq.b 0,TankNr
+
+TanksFallDown
+	jsr TankFalls
+	icl TankNr
+	cmp NumberOfPlayers
+	bne TanksFallDown
+	move.b tempor2,TankNr
+missed
+
+	;here we clear offensive text (after a shoot)
+	;shit -- it's second time, but it must be like this
+	ldy TankNr
+	moveq.b 0,plot4x4color
+	jsr DisplayOffensiveTextNr
+
+
+	jsr DecreaseWeaponAfterShoot
+NextPlayerShoots
+	moveq.b 1,Erase
+	jsr drawtanks
+
+	;before it shoots, the eXistenZ table must be
+	;updated accordingly to actual energy (was forgotten, sorry)
+
+
+	ldx #5
+SeteXistenZ
+	lda Energy,x
+	sta eXistenZ,x
+	sta L1
+
+
+	;DATA L1,L2
+	;RESULT WH*256+L1
+	;Multiplication 8bit*8bit,
+	;result 16bit
+	;this algiorithm is a little longer than in Ruszczyc 6502 book
+	;but it is faster
+
+	LDy #8
+	LDA #0
+	CLC
+LP0
+	ROR A
+	ROR L1
+	BCC B0
+	CLC
+	ADC #10 ; multiplication by 10
+B0	DEy
+	BNE LP0
+	ROR A
+	ROR L1
+	STA MaxEnergyTableH,x
+	lda L1
+	sta MaxEnergyTableL,x
+
+	dex
+	bpl SeteXistenZ
+
+	;was setup of maximum energy for players
+
+
+	moveq.b 0,Erase
+	jsr drawtanks
+
+	;inc TankNr
+	;lda TankNr
+	icl TankSequencePointer
+	cmp NumberOfPlayers
+	bne PlayersAgain
+	;move.b 0,TankNr
+	move.b 0,TankSequencePointer
+PlayersAgain
+
+; In LASTeXistenZ there are values of eXistenZ before shoot
+; from the next tank.
+; Now it must be checked if by a chance something that had
+; LASTeXistenZ>0 is not equal to 0 right now,
+; because it means this tank died during this round.
+; Most important thing is:
+; after each explosion of the tank these operations must be
+; performed from the beginning!
+; (it is made by another jump into the after explosion routines)
+; It is because exploding tank can destroy their neighbours,
+; additionally this tank just have had LASTeXistenZ set to 0,
+; otherwise it would explode again and again.
+; OK, text how to do it is ready, now comes coding .
+; Aaaah! - in main loop we have to set eXistenZ and LASTeXistenZ
+
+	ldx NumberOfPlayers
+	dex
+CheckingPlayersDeath
+	lda LASTeXistenZ,x
+	beq NoPlayerNoDeath
+	lda eXistenZ,x
+	beq PlayerXdeath
+NoPlayerNoDeath
+	dex
+	bpl CheckingPlayersDeath
+	; if processor is here it means there are no more explosions
+	jmp MainRoundLoop
+
+PlayerXdeath
+	; first we inform that this tank should not explode anymore:
+	; there is 0 in A, and Tank Number in X, so...
+
+        sta LASTeXistenZ,x
+	; save x somewhere
+	stx TankTempY
+
+	; display defensive text here (well, defensive
+	; is not the real meaning, it should be pre-death,
+	; but I am too lazy to change names of variables)
+
+	; in X there is a number of tank that died
+
+	lda CurrentResult
+	clc
+	adc ResultsTable,x
+	sta ResultsTable,x
+	inc CurrentResult
+
+RandomizeDeffensiveText
+	lda random
+	cmp NumberOfDeffensiveTexts
+	;this above is a sign of weakness
+	bcs RandomizeDeffensiveText
+
+	sta TextNumberDeff
+	ldy TankTempY
+	moveq.b 1,plot4x4color
+	jsr DisplayDeffensiveTextNr
+
+	PAUSE 75
+
+
+	; calculate position of the expolosion
+	ldx TankTempY
+	clc
+	lda xtankstableL,x
+	adc #4	; more or less in the middle of the tank
+	sta xdraw
+	lda xtankstableH,x
+	adc #0
+	sta xdraw+1
+	sec
+	lda ytankstable,x
+	sbc #4
+	sta ydraw
+	lda #0
+	sta ydraw+1   ; there is 0 left in A, so...
+
+
+	;cleanup of the soil fall down ranges (left and right)
+	sta RangeRight
+	sta RangeRight+1
+	sta FallDown1
+	sta FallDown2
+	moveq.w screenwidth,RangeLeft
+
+	; We are randomizing the weapon now.
+	; As we are jumping into the middle of the weapon
+	; routine we are preparing the number *2 -
+	; - to make it easier and because we are using only
+	; first 32 weapons we are doing this with just one AND
+
+	lda random
+        and #$3e  ;  range (0-31 number multiplied by 2)
+        jsr Explosion2
+
+	; jump to after explosion routines (soil fallout, etc.)
+	; After going through these routines we are back
+	; to checking if a tank exploded and maybe we have
+	; a deadly shot here again.
+
+        ;Deffensive text cleanup
+	;here we clear Deffensive text (after a shoot)
+	ldy TankTempY
+	moveq.b 0,plot4x4color
+	jsr DisplayDeffensiveTextNr
+
+
+
+        jmp AfterExplode
+
+;--------------------------------------------------
+Explosion
+;--------------------------------------------------
+	;cleanup of the soil fall down ranges (left and right)
+	moveq.w screenwidth,RangeLeft
+	lda #0
+	sta RangeRight
+	sta RangeRight+1
+
+	ldx TankNr
+	lda ActiveWeapon,x
+	clc
+	adc ActiveWeapon,x
+	;asl A
+	; a Jobel prize for anyone who tells me why
+	; this strange addition and not asl A ???
+Explosion2
+	clc
+	adc #<ExplosionRoutines
+	sta temp
+	lda #>ExplosionRoutines
+	adc #0
+	sta temp+1
+	ldy #0
+	lda (temp),y
+	tax
+	iny
+	; sorry, but what did I smoke when writing this
+	; routines??? It works, but why it is so complicated???
+	lda (temp),y
+	stx temp
+	sta temp+1
+	jsr JumpToWeapon
+	rts
+JumpToWeapon
+	jmp (temp)
+	rts
+ExplosionRoutines
+	.word babymissile
+	.word missile
+	.word babynuke
+	.word nuke
+	.word leapfrog
+	.word funkybomb
+	.word mirv
+	.word deathshead
+	.word VOID ;napalm
+	.word VOID ;hotnapalm
+	.word tracer
+	.word VOID ;smoketracer
+	.word babyroller
+	.word roller
+	.word heavyroller
+	.word VOID ;riotcharge
+	.word VOID ;riotblast
+	.word riotbomb
+	.word heavyriotbomb
+	.word babydigger
+	.word digger
+	.word heavydigger
+	.word babysandhog
+	.word sandhog
+	.word heavysandhog
+	.word dirtclod
+	.word dirtball
+	.word tonofdirt
+	.word VOID ;liquiddirt
+	.word dirtcharge
+	.word VOID ;earthdisrupter
+	.word VOID ;plasmablast
+	.word laser
+
+VOID
+	rts
+; ------------------------
+; ------------------------
+babymissile
+	inc FallDown2
+	moveq.b 10,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp xmissile
+; ------------------------
+missile ;
+	inc FallDown2
+	moveq.b 16,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp xmissile
+; ------------------------
+babynuke
+	inc FallDown2
+	moveq.b 24,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp xmissile
+; ------------------------
+nuke
+	inc FallDown2
+	moveq.b 30,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp xmissile
+; ------------------------
+leapfrog
+	inc FallDown2
+	moveq.b 16,ExplosionRadius
+	jsr CalculateExplosionRange
+	jsr xmissile
+
+	; soil must fall down now! there is no other way...
+	; hide tanks or they fall down with soil
+
+	lda TankNr
+	pha
+	moveq.b 1,Erase
+	jsr drawtanks
+	moveq.b 0,Erase
+	jsr SoilDown2
+	jsr drawtanks
+	pla
+	sta TankNr
+
+	; it looks like force is divided by 4 here BUT"
+	; in Flight routine force is multiplied by 2 and left
+	; so, we have Force divided by 2 here (not accurately)
+
+	lsr Force+1
+	ror Force
+	;lsr Force+1
+	;ror Force
+	lda LeapFrogAngle
+	sta Angle
+	jsr Flight
+	lda HitFlag
+	beq EndOfLeapping
+	jsr CalculateExplosionRange0
+	jsr xmissile
+
+	; soil must fall down now! there is no other way...
+	; hide tanks or they fall down with soil
+	lda TankNr
+	pha
+	moveq.b 1,Erase
+	jsr drawtanks
+	moveq.b 0,Erase
+	jsr SoilDown2
+	jsr drawtanks
+	pla
+	sta TankNr
+
+	; it looks like force is divided by 4 here BUT"
+	; in Flight routine force is multiplied by 2 and left
+	; so, we have Force divided by 2 here (not accurately)
+	;lsr Force+1
+	;ror Force
+	lsr Force+1
+	ror Force
+	lda LeapFrogAngle
+	sta Angle
+	jsr Flight
+	lda HitFlag
+	beq EndOfLeapping
+	jsr CalculateExplosionRange0
+	jmp xmissile
+EndOfLeapping
+	rts
+; ------------------------
+mirv ;  the whole mirv is performed by Flight routine
+	inc FallDown2
+	rts
+; ------------------------
+funkybomb ;
+	moveq.b 1,tracerflag
+	move.w xtraj+1,xtrajfb
+	move.w ytraj+1,ytrajfb
+	inc FallDown2
+	;central Explosion
+	moveq.b 20,ExplosionRadius
+	jsr CalculateExplosionRange0
+	jsr xmissile
+
+	lda TankNr
+	pha
+	moveq.b 1,Erase
+	jsr drawtanks
+	moveq.b 0,Erase
+
+	jsr SoilDown2
+	;
+	moveq.b 1,Erase
+	jsr drawtanks
+	moveq.b 0,Erase
+	pla
+	sta TankNr
+
+	moveq.b 5,FunkyBombCounter
+FunkyBombLoop
+	;force randomization (range: 256-511)
+	lda random
+	sta Force
+	lda #1
+	sta Force+1
+	;Angle randomization Range: (-8..+8)
+	lda random
+	lsr a
+	and #$0f ;00001111
+	bcc DoNotEor
+	eor #$ff
+DoNotEor
+	sta Angle
+
+	lda #0
+	sta xtraj
+	sta ytraj
+	move.w xtrajfb,xtraj+1
+	move.w ytrajfb,ytraj+1
+	jsr Flight
+
+	lda HitFlag
+	beq NoExplosionInFunkyBomb
+	jsr CalculateExplosionRange
+	jsr xmissile
+NoExplosionInFunkyBomb
+	dec FunkyBombCounter
+	bne FunkyBombLoop
+	moveq.b 0,tracerflag
+	rts
+; ------------------------
+deathshead
+	inc FallDown2
+	moveq.b 31,ExplosionRadius
+	jsr CalculateExplosionRange
+	jsr xmissile
+	sub.q 35,xdraw
+	jsr CalculateExplosionRange
+	jsr xmissile
+	add.q 70,xdraw
+	jsr CalculateExplosionRange
+	jsr xmissile
+	sub.q 35,xdraw
+	sub.q 35,ydraw
+	jsr CalculateExplosionRange
+	jsr xmissile
+	add.q 70,ydraw
+	jsr CalculateExplosionRange
+	jsr xmissile
+	rts
+; ------------------------
+tracer
+	rts
+; ------------------------
+babyroller
+	inc FallDown2
+	moveq.b 10,ExplosionRadius
+	jmp xroller
+; ------------------------
+roller ;
+	inc FallDown2
+	moveq.b 20,ExplosionRadius
+	jmp xroller
+; ------------------------
+heavyroller
+	inc FallDown2
+	moveq.b 30,ExplosionRadius
+	jmp xroller
+; ------------------------
+riotbomb
+	inc FallDown2
+	moveq.b 16,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp xriotbomb
+; ------------------------
+heavyriotbomb
+	inc FallDown2
+	moveq.b 28,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp xriotbomb
+; ------------------------
+babydigger
+	moveq.b 0,sandhogflag
+	inc FallDown2
+	moveq.b 13,DigLong
+	moveq.b 1,diggery  ; how many branches (-1)
+	jmp xdigger
+; ------------------------
+digger ;
+	moveq.b 0,sandhogflag
+	inc FallDown2
+	moveq.b 13,DigLong
+	moveq.b 3,diggery  ; how many branches (-1)
+	jmp xdigger
+; ------------------------
+heavydigger
+	moveq.b 0,sandhogflag
+	inc FallDown2
+	moveq.b 13,DigLong
+	moveq.b 7,diggery  ; how many branches  (-1)
+	jmp xdigger
+; ------------------------
+xdigger
+	move.w xdraw,digstartx
+	move.w ydraw,digstarty
+	ldx diggery
+WriteToBranches
+	lda xdraw
+	sta digtabxL,x
+	lda xdraw+1
+	sta digtabxH,x
+	lda ydraw
+	sta digtabyL,x
+	lda ydraw+1
+	sta digtabyH,x
+	dex
+	bpl WriteToBranches
+	jsr DiggerCharacter ; start character
+
+	add.q 4,xdraw
+	lda DigLong
+	; looks strange, but it is (DigLong+2)*4
+	clc
+	adc #$2
+	asl a
+	asl a
+	sta ExplosionRadius
+	jsr CalculateExplosionRange
+BranchNotFinished
+	ldx diggery
+CalculateBranches
+	txa
+	and #$01
+	bne DigRight
+diglewy	; even branches go left
+	sec
+	lda digtabxL,x
+	sbc #$04
+	sta digtabxL,x
+	lda digtabxH,x
+	sbc #$00
+	sta digtabxH,x
+	jmp DigRandomize
+DigRight ; odd go right (everytime 4 pixels)
+	clc
+	lda digtabxL,x
+	adc #$04
+	sta digtabxL,x
+	lda digtabxH,x
+	adc #$00
+	sta digtabxH,x
+DigRandomize
+	lda random
+	and #$87
+	bmi DigUp
+digwdol
+	and #$07
+	clc
+	adc digtabyL,x
+	sta digtabyL,x
+	lda digtabyH,x
+	adc #$00
+	sta digtabyH,x
+	jmp DigCalculateNext
+DigUp
+	and #$07
+	sta temp
+	sec
+	lda digtabyL,x
+	sbc temp
+	sta digtabyL,x
+	lda digtabyH,x
+	sbc #$00
+	sta digtabyH,x
+DigCalculateNext
+	dex
+	bpl CalculateBranches
+	; here we draw...
+	ldx diggery
+DigDrawing
+	lda digtabxL,x
+	sta xdraw
+	lda digtabxH,x
+	sta xdraw+1
+	lda digtabyL,x
+	sta ydraw
+	lda digtabyH,x
+	sta ydraw+1
+	phx
+	jsr DiggerCharacter
+	plx
+	dex
+	bpl DigDrawing
+	dcl DigLong
+	lbpl BranchNotFinished
+	rts
+DiggerCharacter
+	lda random
+	and #$06
+	clc
+	adc #$36
+	adc sandhogflag
+	sta CharCode
+	dcmp.q xdraw,[screenwidth-6]
+	bcs DoNotPutDig
+	jmp TypeChar
+DoNotPutDig
+	rts
+; ------------------------
+babysandhog
+	moveq.b 8,sandhogflag
+	inc FallDown2
+	moveq.b 13,DigLong
+	moveq.b 1,diggery  ; how many branches (-1)
+	jmp xdigger
+; ------------------------
+sandhog
+	moveq.b 8,sandhogflag
+	inc FallDown2
+	moveq.b 13,DigLong
+	moveq.b 3,diggery  ; how many branches (-1)
+	jmp xdigger
+; ------------------------
+heavysandhog
+	moveq.b 8,sandhogflag
+	inc FallDown2
+	moveq.b 13,DigLong
+	moveq.b 5,diggery  ; how many branches (-1)
+	jmp xdigger
+; ------------------------
+dirtclod
+	inc FallDown2
+	moveq.b 12,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp xdirt
+; ------------------------
+dirtball
+	inc FallDown2
+	moveq.b 22,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp xdirt
+; ------------------------
+tonofdirt
+	inc FallDown2
+	moveq.b 30,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp xdirt
+; ------------------------
+dirtcharge
+	inc FallDown2
+	moveq.b 60,ExplosionRadius
+	jsr CalculateExplosionRange
+	jmp ofdirt
+; ------------------------
+laser
+	ldx TankNr
+	lda AngleTable,x
+	tay
+	clc
+	lda xtankstableL,x
+	adc EndOfTheBarrelX,y	; correction of the end of the barrel point
+	sta xbyte
+	lda xtankstableH,x
+	adc #0
+	sta xbyte+1
+	sec
+	lda ytankstable,x
+	sbc EndOfTheBarrelY,y
+	sta ybyte
+	moveq.b 0,ybyte+1
+	moveq.w Drawplot,DrawJumpAddr
+	move.w xdraw,LaserCoordinate
+	move.w ydraw,LaserCoordinate+2
+	move.w xbyte,LaserCoordinate+4
+	move.w ybyte,LaserCoordinate+6
+
+	jsr draw
+	moveq.b 0,color
+	move.w LaserCoordinate,xdraw
+	move.w LaserCoordinate+2,ydraw
+	move.w LaserCoordinate+4,xbyte
+	move.w LaserCoordinate+6,ybyte
+	jsr draw
+	moveq.b 1,color
+	move.w LaserCoordinate,xdraw
+	move.w LaserCoordinate+2,ydraw
+	move.w LaserCoordinate+4,xbyte
+	move.w LaserCoordinate+6,ybyte
+	jsr draw
+	moveq.b 0,color
+	move.w LaserCoordinate,xdraw
+	move.w LaserCoordinate+2,ydraw
+	move.w LaserCoordinate+4,xbyte
+	move.w LaserCoordinate+6,ybyte
+	jsr draw
+	moveq.b 1,color
+	move.w LaserCoordinate,xdraw
+	move.w LaserCoordinate+2,ydraw
+	jsr plot
+	moveq.b 0,HitFlag
+	jsr CheckCollisionWithTank
+	lda HitFlag
+	beq LaserMisses
+	; here we hit a tank (X)
+	ldy #100
+	jsr DecreaseEnergyX
+LaserMisses
+	rts
+; ------------------------
+; ------------------------
+
+; -----------------
+xmissile ;
+; -----------------
+	lda #1
+	sta radius
+	sta color
+ExplosionLoop
+	jsr circle
+	inc ydraw
+	jsr circle
+	dec ydraw
+	inc radius
+	lda radius
+	cmp ExplosionRadius
+	bne ExplosionLoop
+	lda #0
+	sta color
+ExplosionLoop2
+	jsr circle
+	inc ydraw
+	jsr circle
+	dec ydraw
+	dec radius
+	lda radius
+	bne ExplosionLoop2
+	lda #1
+	sta color
+
+;check tanks' distance from the centre of the explosion
+
+	moveq.w DrawLen,DrawJumpAddr
+	;the above switches Draw to measuring length
+	;trick is easy - how many pixels does it take to draw
+	;a line from one point to another
+	;it must be somehow easier than regular Pitagoras
+	;calculation
+
+	ldx NumberOfPlayers
+DistanceCheckLoop
+	dex
+	lda eXistenZ,x
+	beq EndOfDistanceCheckLoop
+	;here the tank exist
+	lda XtankstableL,x
+	clc
+	adc #3  ;measure from middle of the tank
+	sta xbyte
+	lda XtankstableH,x
+	clc
+	adc #0  ;measure from middle of the tank
+	sta xbyte+1
+	lda Ytankstable,x
+	sec
+	sbc #2  ;measure from middle of the tank
+	sta ybyte
+	lda #0
+	sta ybyte+1
+	phx
+	jsr draw
+	plx
+	;if tank within range of the explosion?
+	lda LineLength+1
+	bne TankIsNotWithinTheRange
+	lda LineLength
+	cmp ExplosionRadius
+	bcs TankIsNotWithinTheRange
+	lda ExplosionRadius
+	sec
+	sbc LineLength
+	;multiply difference by 8
+	clc
+	adc #1
+	asl a
+	asl a
+	asl a
+	tay
+	jsr DecreaseEnergyX
+
+TankIsNotWithinTheRange
+EndOfDistanceCheckLoop
+	txa
+	bne DistanceCheckLoop
+	rts
+; -----------------
+xdirt ;
+; -----------------
+	lda #1
+	sta radius
+	sta color
+dirtLoop
+	jsr circle
+	inc ydraw
+	jsr circle
+	dec ydraw
+	inc radius
+	lda radius
+	cmp ExplosionRadius
+	bne dirtLoop
+	rts
+; -----------------
+xriotbomb ;
+; -----------------
+	lda #0
+	sta radius
+	sta color
+rbombLoop
+	jsr circle
+	inc radius
+	lda radius
+	cmp ExplosionRadius
+	bne rbombLoop
+	moveq.b 1,color
+	rts
+
+;--------------------------------------------------
+CalculateExplosionRange0
+;--------------------------------------------------
+
+	;the same as below, but without summing up
+	;(for the first or single explosion)
+
+	;zero soil fall out ranges
+	moveq.w screenwidth,RangeLeft
+	lda #0
+	sta RangeRight
+	sta RangeRight+1
+	moveq.b 10,ExplosionRadius
+;--------------------------------------------------
+CalculateExplosionRange
+;--------------------------------------------------
+;calculates total horizontal range of explosion by
+;"summing up" ranges of all separate explosions
+
+	add.w ExplosionRadius,xdraw,WeaponRangeRight
+	dcmp.q WeaponRangeRight,screenwidth-1
+	bcc NotOutOfTheScreenRight
+	moveq.w screenwidth-1,WeaponRangeRight
+
+NotOutOfTheScreenRight
+	sub.w ExplosionRadius,xdraw,WeaponRangeLeft
+	lda WeaponRangeLeft+1
+	bpl NotOutOfTheScreenLeft
+	lda #0
+	sta WeaponRangeLeft
+	sta WeaponRangeLeft+1
+NotOutOfTheScreenLeft
+
+	dcmp RangeLeft,WeaponRangeLeft
+	bcc CheckRangeRight
+	move.w WeaponRangeLeft,RangeLeft
+CheckRangeRight
+	dcmp RangeRight,WeaponRangeRight
+	bcs RangesChecked
+	move.w WeaponRangeRight,RangeRight
+RangesChecked
+
+	rts
+
+
+;--------------------------------------------------
+DecreaseWeaponAfterShoot
+;--------------------------------------------------
+	ldx TankNr
+	lda ActiveWeapon,x
+	jsr DecreaseWeapon
+	; and here we have amount of possessed ammo for given weapon
+
+	cmp #0
+	bne AmmunitionDecreased
+	lda #0			;if ammo for given weapon ends
+	sta ActiveWeapon,x	;then set to default weapon (baby missile)
+AmmunitionDecreased
+	lda #99
+	ldy #0
+	sta (temp),y		;baby missile - always 99 pieces
+
+	;there is a good value in temp after jsr DecreaseWeapon
+
+	rts
+
+
+;--------------------------------------------------
+DecreaseEnergyX
+;Decreases energy of player nr X
+;increases his financial loss
+;increases gain of tank TankNr
+;--------------------------------------------------
+	sty EnergyDecrease
+	; Loose increase
+	lda looseL,x
+	clc
+	adc EnergyDecrease
+	sta looseL,x
+	lda looseH,x
+	adc #$00
+	sta looseH,x
+	; Energy now, not less than 0
+	lda Energy,x
+	cmp EnergyDecrease
+	bcc ldahashzero
+	;sec
+	sbc EnergyDecrease
+	bpl NotNegativeEnergy
+ldahashzero
+	lda #0
+NotNegativeEnergy
+	sta Energy,x
+	;now increase the gain of the shooting tank
+	phx
+	ldx TankNr
+	clc
+	lda gainL,x
+	adc EnergyDecrease
+	sta gainL,x
+	lda gainH,x
+	adc #$00
+	sta gainH,x
+	plx
+	rts
+
+
+;--------------------------------------------------
+GetRandomWind
+;--------------------------------------------------
+	lda random
+	cmp MaxWind
+	bcs GetRandomWind	; if more than MaxWind then randomize again
+	sta Wind
+	moveq.b $00,Wind+1
+	; multiply Wind by 16 and take it as a decimal part (0.Wind)
+	asl.w Wind
+	asl.w Wind
+	asl.w Wind
+	asl.w Wind
+	lda random
+	and #$01
+	sta WindOrientation
+	rts
+
+
+;--------------------------------------------------
+PMoutofScreen
+;--------------------------------------------------
+	lda #$00	; let all P/M disappear
+	sta hposp0
+	sta hposp0+1
+	sta hposp0+2
+	sta hposp0+3
+	sta hposp0+4
+	sta hposp0+5
+	sta hposp0+6
+	sta hposp0+7
+	rts
+;--------------------------------------------------
+getkey ; waits for pressing a key and returns pressed value in A
+;--------------------------------------------------
+	lda SKSTAT
+	cmp #$ff
+	beq lopx01
+	cmp #$f7
+	bne getkey ; I guess it waits for RELEASING a key
+
+lopx01	lda SKSTAT
+	cmp #$ff
+	beq lopx01
+	cmp #$f7
+	beq lopx01
+
+	lda kbcode
+	and #$3f ;CTRL and SHIFT ellimination
+	rts
+;--------------------------------------------------
+getkeynowait ;
+;--------------------------------------------------
+	lda SKSTAT
+	cmp #$ff
+	beq getkeynowait
+	cmp #$f7
+	beq getkeynowait ; I guess it waits for RELEASING a key
+	lda kbcode
+	and #$3f ;CTRL and SHIFT ellimination
+	rts
+
+
+;--------------------------------------------------
+WeaponCleanup ;
+; cleaning of the weapon possesion tables
+; (99 of Baby Missles, all other weapons=0)
+;--------------------------------------------------
+	ldx #$3f
+	lda #$0
+loop05
+	sta TanksWeapon1,x
+	sta TanksWeapon2,x
+	sta TanksWeapon3,x
+	sta TanksWeapon4,x
+	sta TanksWeapon5,x
+	sta TanksWeapon6,x
+	dex
+	bne skip13
+	lda #99
+	bne loop05
+skip13	bpl loop05
+	rts
+
+
+;--------------------------------------------------
+Initialize
+;Initialization sequence
+;--------------------------------------------------
+        jsr GenerateOffensiveTextTables
+        jsr GenerateDeffensiveTextTables
+
+        moveq.b 0,Erase
+       	moveq.b 0,tracerflag
+
+        moveq.b 2,colpf2s
+        moveq.b 12,colpf3s
+        moveq.b >WeaponFont,chbas
+
+	;parameter for old plot (unPlot) max 5 points
+	ldx #4
+SetunPlots
+	lda #<display
+	sta oldplotL,x
+	lda #>display
+	sta oldplotH,x
+	lda #0
+	sta oldply,x
+	sta oldora,x
+	dex
+	bpl SetunPlots
+
+	;setting up P/M graphics
+	lda #>pmgraph
+	sta pmbase
+	lda dmactls
+	ora #$38     ; Players and Missiles single lined
+	sta dmactls
+	lda #$03    ; P/M on
+	sta pmctl
+	lda #$01
+	sta sizem	; there will be only M0, double width
+	sta sizep0	; P0-P3 widths
+	sta sizep0+1
+	sta sizep0+2
+	sta sizep0+3
+	lda #$10	; P/M priorities (bit 4 joins missiles)
+	sta GTIACTLS
+	jsr PMoutofScreen
+	lda #$50	; temporary colours of sprites under tanks
+	sta $2c0
+	lda #$30
+	sta $2c1
+	lda #$70
+	sta $2c2
+	lda #$90
+	sta $2c3
+	LDA #$B0
+	STA COLPF3S
+	moveq.b 0,hscrol
+
+
+        ;let the tanks be visible!
+        ldx #5
+        lda #1 ; tank is visible
+MakeTanksVisible
+        sta eXistenZ,x
+        dex
+        bpl MakeTanksVisible
+
+
+	ldx #0
+	txa
+ClearResults
+	sta ResultsTable,x
+	inx
+	cpx #MaxPlayers
+	bne ClearResults
+
+	moveq.b 1,CurrentRoundNr ;we start from round 1
+
+        rts
+;----------------------------------------------
+RandomizeSequence ;
+; in: NumberOfPlayers
+; out: TankSequence
+; how: get random number lower than NumberOfPlayers
+;      put it in the first slot.
+;      get another random number lower than NumberOfPlayers
+;      check if was previously saved in first slot
+;      if not then save it in second slot
+;      repeat untill NumberOfPlayers
+
+	ldx #0
+GetRandomAgain0
+	lda RANDOM
+	and #$07 ;NumberOfPlayers < 7
+	cmp NumberOfPlayers
+	bcs GetRandomAgain0
+	sta TankSequence,x
+	;now first slot is ready, nexts slots are handled
+	;in a more complicated way
+
+GetRandomAgainX
+	lda RANDOM
+	and #$07 ;NumberOfPlayers < 7
+	cmp NumberOfPlayers
+	bcs GetRandomAgainX
+
+	;now we have to check if the value was not used
+	;in previous slots
+
+	stx temp
+	ldy temp
+UsageLoop
+	cmp TankSequence,y
+	beq GetRandomAgainX ;apparently we have already used this value
+	dey
+	bpl UsageLoop
+
+	;well, looks like this value is new!
+	inx
+	sta TankSequence,x
+
+	stx temp
+	icl temp ;x+1
+
+	cmp NumberOfPlayers
+	bne GetRandomAgainX
+	rts
+
+;----------------------------------------------
+RandomizeAngle ;
+; routine returns in A
+; a valid angle for the tank's barrel.
+; X is not changed
+;----------------------------------------------
+
+	;valid angle values are [(255-90)..255] and [0..90]
+	;it means that values 91..165 must be elliminated...
+	;so, lets randomize someting between 0 and 180
+	;and substract this value from 90
+	lda RANDOM
+
+	cmp #180
+	bcs RandomizeAngle
+
+
+	sta temp
+	lda #90 ; CARRY=0 here
+	sbc temp
+
+	rts
+;----------------------------------------------
+RandomizeForce ;
+; routine returns in EnergyTable/L/H
+; valid force of shooting for TankNr
+; in X must be TankNr
+;----------------------------------------------
+;
+;start:
+; 	A=RANDOM
+; 	if A>MaxEnergyTableH then goto start
+; 	if A<MaxEnergyTableH then B=RANDOM:goto end
+; 	if A=MaxEnergyTableH then
+;		GetRandomL:
+;		B=RANDOM
+;		if B>MaxEnergyTableL then goto GetRandomL
+;	endif
+;
+; blah... very nice but we will go for a brute
+; force solution --> DCMP :)))
+; interesting how quick will it work
+
+	lda MaxEnergyTableL,x
+	sta temp
+	lda MaxEnergyTableH,x
+	sta temp+1
+GetRandomAgain
+	lda RANDOM
+	; sta COLBAK ;to check speed
+	sta temp2
+	lda RANDOM
+	sta temp2+1
+
+	DCMP temp,temp2
+	bcc GetRandomAgain
+
+	lda temp2
+	sta EnergyTableL,x
+	lda temp2+1
+	sta EnergyTableH,x
+
+	rts
+;----------------------------------------------
+MoveBarrelToNewPosition
+	; the new angle is in NewAngle
+	; the old in AngleTable,x
+
+	; which is greater? NewAngle or old angle?
+	; if NewAngle is greater then INC AngleTable,x
+	; if not, then say DEC AngleTable,x
+
+	jsr DrawTankNr
+
+	ldx TankNr
+	lda AngleTable,x
+	cmp NewAngle
+	beq BarrelPositionIsFine
+	bcc NewAngleGreater
+	;-----------------
+; NewAngle is smaller, so we must DEC AngleTable,x
+	DEC AngleTable,x
+	lda AngleTable,x
+	cmp #$ff	; if angle goes through 0 we clear the barrel
+	bne NotThrough90DegreesLeftAI
+    	moveq.b $2e,CharCode
+	jsr drawtankNrX
+NotThrough90DegreesLeftAI
+	cmp #[255-91]
+	lbne MoveBarrelToNewPosition
+	lda #90
+	sta AngleTable,x
+	jmp MoveBarrelToNewPosition
+	;-----------------
+NewAngleGreater
+	INC AngleTable,x
+	lda AngleTable,x
+	bne NotThrough90DegreesRightAI
+	moveq.b $30,CharCode ; if angle goes through 0 we clear the barrel
+	jsr drawtankNrX
+NotThrough90DegreesRightAI
+	cmp #91
+	lbne MoveBarrelToNewPosition
+	lda #[255-90]
+	sta AngleTable,x
+	jmp MoveBarrelToNewPosition
+
+
+BarrelPositionIsFine
+	RTS
+;----------------------------------------------
+ArtificialIntelligence ;
+; A - skill of the TankNr
+; returns shoot energy and angle in
+; EnergyTable/L/H and AngleTable
+;----------------------------------------------
+	asl A
+	tax
+	lda AIRoutines,x
+	sta temp
+	lda AIRoutines+1,x
+	sta temp+1
+
+	jmp (temp)
+;----------------
+AIRoutines
+	.word Moron
+	.word Moron ;Shooter
+	.word Moron ;Poolshark
+	.word Moron ;Toosser
+	.word Moron ;Chooser
+	.word Moron ;Spoiler
+	.word Moron ;Cyborg
+	.word Moron ;Unknown
+
+;----------------------------------------------
+Moron
+	ldx TankNr
+	jsr RandomizeAngle
+	sta NewAngle
+
+	jsr RandomizeForce
+	rts
+
+;----------------------------------------------
+SortSequence ;
+;----------------------------------------------
+; here we try to get a sequence of tanks for two
+; purposes:
+; 1. to make up shooting sequence for the next round (from down to top)
+; 2. to display game results more nicely (from top to down)
+;
+; I think I will go for a stupid bubble sort...
+; it is easy to test :)
+;
+; Results are in ResultsTable, in SortedTable we want to
+; have numbers of tanks from the worst to the best.
+; in other words, if ResultsTable=(5,4,65,23,3,6)
+; the SortedTable=(4,1,0,5,3,2)
+; let's assume initially the TankSequence=(0,1,2,3,4,5)
+
+	ldx #0
+SequenceStart
+	txa
+	sta TankSequence,x
+	inx
+	cpx #MaxPlayers
+	bne SequenceStart
+
+; we will need a TempResults (TR) table to fiddle with
+	ldx #0
+movetotemp
+	lda ResultsTable,x
+	sta TempResults,x
+	inx
+	cpx NumberOfPlayers
+	bne movetotemp
+
+; i=0:sortflag=0
+;loop:
+; if TR(i) < TX(i+1) then i=i+1: here quit if i=numberofplayers
+;        or goto loop:
+;  else
+;    temp=TR(i): 	tempo=TankSequence(i)
+;    TR(i)=TR(i+1):	TankSequence(i)=TankSequence(i+1)
+;    TR(i+1)=temp:	TankSequence(i+1)=tempo
+;    i=i+1
+;    sortflag=sortflag+1
+;   go loop:
+; if sortflag=0 then finished, else repeat...
+;
+; or something like this :)
+	ldx NumberOfPlayers
+	dex
+	stx temp+1 ; for checking end of the loop only
+
+Bubble
+	ldx #0 ;i=x
+	stx temp2 ; sortflag=temp2
+
+BubbleBobble
+	lda TempResults,x
+	cmp TempResults+1,x
+	beq nextishigher ; this is to block hangs when 2 same values meet
+	bcc nextishigher
+	;here we must swap values
+	;because next is smaller than previous
+	sta temp
+	lda TempResults+1,x
+	sta TempResults,x
+	lda temp
+	sta TempResults+1,x
+	;
+	lda TankSequence,x
+	sta temp
+	lda TankSequence+1,x
+	sta TankSequence,x
+	lda temp
+	sta TankSequence+1,x
+	inc temp2
+nextishigher
+	inx
+	cpx temp+1 ;cpx ^NumberOfPlayers-1
+	bne BubbleBobble
+
+	lda temp2
+
+	bne Bubble
+
+	rts
+;----------------------------------------------
+	.include#textproc.s65
+;----------------------------------------------
+	.include#grafproc.s65
+;----------------------------------------------
+font4x4
+	.INCBIN#font4x4s.bmp
+;----------------------------------------------
+OffensiveTexts
+	.incbin#talk1.txt
+OffensiveTextsEnd
+;----------------------------------------------
+DeffensiveTexts
+	.incbin#talk2.txt
+DeffensiveTextsEnd
+TankFont
+       .INCBIN#tanks.fd
+TankFontend
+	.if TankFontEnd>$8800
+		.error memory conflict
+		;this is to warn if code and P/M graphics
+		;overlap!
+	.endif
+;----------------------------------------------
+; Player/missile memory
+	*= $8800
+pmgraph
+
+;----------------------------------------------
+	*= $9400
+WeaponFont
+	.INCBIN#weapons.fd
+;----------------------------------------------
+
+         ; The End
+
+
+         *=  $02E0
+         .WORD START
+
+	.OPT noLIST

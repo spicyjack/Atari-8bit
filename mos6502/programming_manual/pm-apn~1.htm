@@ -1,0 +1,2882 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<title>Programming Manual - Appendixes</title>
+</head>
+<body background="pmpics/strip.gif" bgcolor="white" text="black">
+<ul>
+<TT>
+<pre>
+<A NAME="a">
+<div align="center">
+
+
+
+
+<b>APPENDIX A</b>
+
+
+INSTRUCTION LIST
+
+
+ALPHABETIC BY MNEMONIC
+
+
+
+DEFINITION OF
+
+
+INSTRUCTION GROUPS
+
+
+
+
+
+
+
+
+
+
+
+
+A-1</div>
+<hr>
+<A NAME="aa">
+
+
+     <b>MCS6501-MCS6505 MICROPROCESSOR INSTRUCTION SET - ALPHABETIC SEQUENCE</b>
+<small>
+     <b>ADC</b>   Add Memory to Accumulator with Carry        <b>JSR</b>   Jump to New Location Saving Return Address
+     <b>AND</b>   "AND" Memory with Accumulator
+     <b>ASL</b>   Shift Left One Bit (Memory or Accumulator)  <b>LDA</b>   Load Accumulator with Memory
+     <b>   </b>                                               <b>LDX</b>   Load Index X with Memory
+     <b>BCC</b>   Branch on Carry Clear                       <b>LDY</b>   Load Index Y with Memory
+     <b>BCS</b>   Branch on Carry Set                         <b>LSR</b>   Shift Right One Bit (Memory or Accumulator)
+     <b>BEQ</b>   Branch on Result Zero
+     <b>BIT</b>   Test Bits in Memory with Accumulator        <b>NOP</b>   No Operation
+     <b>BMI</b>   Branch on Result Minus
+     <b>BNE</b>   Branch on Result not Zero                   <b>ORA</b>   "OR" Memory with Accumulator
+     <b>BPL</b>   Branch on Result Plus                       <b>PHA</b>   Push Accumulator on Stack
+     <b>BRK</b>   Force Break                                 <b>PHP</b>   Push Processor Status on Stack
+     <b>BVC</b>   Branch on Overflow Clear                    <b>PLA</b>   Pull Accumulator from Stack
+     <b>BVS</b>   Branch on Overflow Set                      <b>PLP</b>   Pull Processor Status from Stack
+     <b>CLC</b>   Clear Carry Flag                            <b>ROL</b>   Rotate One Bit Left (Memory or Accumulator)
+     <b>CLD</b>   Clear Decimal Mode                          <b>ROR</b>   Rotate One Bit Right (Memory or Accu)
+     <b>CLI</b>   Clear Interrupt Disable Bit                 <b>RTI</b>   Return from Interrupt
+     <b>CLV</b>   Clear Overflow Flag                         <b>RTS</b>   Return from Subroutine
+     <b>CMP</b>   Compare Memory and Accumulator
+     <b>CPX</b>   Compare Memory and Index X                  <b>SBC</b>   Subtract Memory from Accu with Borrow
+     <b>CPY</b>   Compare Memory and Index Y                  <b>SEC</b>   Set Carry Flag
+     <b>   </b>                                               <b>SED</b>   Set Decimal Mode
+     <b>DEC</b>   Decrement Memory by One                     <b>SEI</b>   Interrupt Disable Status
+     <b>DEX</b>   Decrement Index X by One                    <b>STA</b>   Store Accumulator in Memory
+     <b>DEY</b>   Decrement Index Y by One                    <b>STX</b>   Store Index X in Memory
+     <b>   </b>                                               <b>STY</b>   Store Index Y in Memory
+     <b>EOR</b>   "Exclusive Or" Memory with Accumulator
+     <b>   </b>                                               <b>TAX</b>   Transfer Accumulator to Index X
+     <b>INC</b>   Increment Memory by One                     <b>TAY</b>   Transfer Accumulator to Index Y
+     <b>INX</b>   Increment Index X by One                    <b>TSX</b>   Transfer Stack Pointer to Index X
+     <b>INY</b>   Increment Index Y by One                    <b>TXA</b>   Transfer Index X to Accumulator
+     <b>   </b>                                               <b>TXS</b>   Transfer Index X to Stack Pointer
+     <b>JMP</b>   Jump to New Location                        <b>TYA</b>   Transfer Index Y to Accumulator
+</small>
+
+<div align="center">A-2</div>
+<hr>
+<A NAME="a1">
+
+
+     <i>A.1 INTRODUCTION</i>
+
+          The microprocessor instruction set is divided into three basic groups.
+     The first group has the greatest addressing flexibility and consists of
+     the most general purpose instructions such as Load, Add, Store, etc.
+     The second group includes the Read, Modify, Write instructions such as
+     Shift, Increment, Decrement and the Register X movement instructions.  The
+     third group contains all the remaining instructions, including all stack
+     operations, the register T, compares for X and Y and instructions which do
+     not fit naturally into Group One or Group Two.
+          There are eight Group One instructions, eight Group Two instructions,
+     and all of the 39 remaining instructions are Group Three instructions.
+          The three groups are obtained by organizing the OP CODE pattern to
+     give maximum addressing flexibility (16 addressing combinations) to Group
+     One,to give eight combinations to Group Two instructions and the Group
+     Three instructions are basically individually decoded.
+<A NAME="a2">
+
+     <i>A.2 GROUP ONE INSTRUCTIONS</i>
+
+          These instructions are:  Add With Carry (ADC), (AND), Compare (CMP),
+     Exclusive Or (EOR), Load A (LDA), Or (ORA), Subtract With Carry (SBC), and
+     Store A (STA).  Each of these instructions has a potential for 16 addressing
+     modes.  However, in the MCS6501 through MCS6505, only eight of the available
+     modes have been used.
+          Addressing modes for Group One are:  Immediate, Zero Page, Zero Page
+     Indexed by X, Absolute, Absolute Indexed by X, Absolute Indexed by Y,
+     Indexed Indirect, Indirect Indexed.  The unused eight addressing modes are
+     to be used in future versions of the MCS650X product family to allow
+     addressing of additional on-chip registers, of on-chip I/O ports, and to
+     allow two byte word processing.
+
+
+<div align="center">A-3</div>
+<hr>
+<A NAME="a3">
+
+
+     <i>A.3 GROUP TWO INSTRUCTIONS</i>
+
+          Group Two instructions are primarily Read, Modify, Write instructions.
+     There are really two subcategories within the Group Two instructions.
+     The components of the first group are shift and rotate instructions and
+     are:  Shift Right (LSR), Shift Left (ASL), Rotate Left (ROL), and Rotate
+     Right (ROR).
+          The second subgroup includes the Increment (INC) and Decrement (DEC)
+     instructions and the two index register X instructions, Load X (LDX) and
+     Store X (STX).  These instructions would normally have eight addressing
+     modes available to them because of the bit pattern.  However, to allow
+     for upward expansion, only the following addressing modes have been de-
+     fined:  Zero Page, Zero Page Indexed by X, Absolute, Absolute Indexed
+     by X, and a special Accumulator (or Register) mode.  The four shift in-
+     structions all have register A operations; the incremented or decremented
+     Load X and Store X instructions also have accumulator modes although the
+     Increment and Decrement Accumulator has been reserved for other purposes.
+     Load X from A has been assigned its own mnemonic, TAX.  Also included in
+     this group are the special functions of Decrement X which is one of the
+     special cases of Store X.  Included also in this group in the X decodes
+     are the TXS and TSX instructions.
+          All Group One instructions have all addressing modes available to
+     each instruction.  In the case of Group Two instructions, another address-
+     ing mode has been added; that of the accumulator and the other special de-
+     codes have also been implemented in this basic group.  However, the primary
+     function of Group Two instructions is to perform some memory operation using
+     the appropriate index.
+          It should be noted for documentation purposes that the X instructions
+     have a special mode of addressing in which register Y is used for all in-
+     dexing operations; thus, instead of Zero Page Indexed by X, X instructions
+     have Zero Page Indexed by Y, and instead of having Absolute Indexed by X,
+     X instructions have Absolute Indexed by Y.
+
+
+<div align="center">A-4</div>
+<hr>
+<A NAME="a4">
+
+
+     <i>A.4 GROUP THREE INSTRUCTIONS</i>
+
+     There are really two major classifications of Group Three in-
+     structions; the modify Y register instructions, Load Y (LDY), Store Y
+     (STY), Compare Y (CPY), and Compare X (CPX), instructions actually
+     occupy about half of the OP CODE space for the Group Three instructions.
+     Increment X (INX) and Increment Y (INY) are special subsets of the Compare X
+     and Compare Y instructions and all of the branch instructions are in the
+     Group Three instructions.
+          Instructions in this group consist of all of the branches:  BCC, BCS,
+     BEQ, BMI, BNE, BPL, BPC and BPS.  All of the flag operations are also de-
+     voted to one addressing mode; they are:  CLC, SEC, CLD, SED, CLI, SEI and
+     CLV.  All of the push and pull instructions and stack operation instructions
+     are Group Three instructions.  These include:  BRK, JSR, PHA, PHP, PLA and
+     PLP.  The JMP and BIT instructions are also included in this group.  There
+     is no common addressing mode available to members of this group.  Load Y,
+     Store Y, BIT, Compare X and Compare Y have Zero Page and Absolute, and all
+     of the Y and X instructions allow Zero Page Indexed operations and Immediate.
+
+
+<div align="center">A-5
+<hr>
+<A NAME="b">
+
+
+
+
+
+
+<b>APPENDIX B</b>
+
+
+INSTRUCTION LIST
+
+
+ALPHABETIC BY MNEMONIC
+
+
+WITH OP CODES, EXECUTION CYCLES
+
+
+AND MEMORY REQUIREMENTS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+B-1</div>
+<hr>
+
+
+     The following notation applies to this summary:
+
+                A     Accumulator
+                X, Y  Index Registers
+                M     Memory
+                P     Processor Status Register
+                S     Stack Pointer
+                x     Change
+                -     No Change
+                +     Add
+                ^     Logical AND
+                -     Subtract
+                v     Logical Exclusive Or
+                ^     Transfer from Stack
+                v     Transfer to Stack
+                ->    Transfer to
+                <-    Transfer to
+                V     Logical OR
+                PC    Program Counter
+                PCH   Program Counter High
+                PCL   Program Counter Low
+                OPER  OPERAND
+                #     IMMEDIATE ADDRESSING MODE
+
+
+     Note:  At the top of each table is located in parentheses a
+            reference number (Ref: xx) which directs the user to
+            that Section in the MCS6500 Microcomputer Family
+            Programming Manual in which the instruction is defined
+            and discussed.
+
+
+<div align="center">B-2</div>
+</pre>
+<hr>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>ADC</b></font></td>
+        <td align="center" width="55%">ADC <i> Add memory to accumulator with carry</i></td>
+        <td align="right" width="10%"><font size="5"><b>ADC</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A + M + C -> A, C</td>
+        <td><a href="ProMan.html#221">(Ref: 2.2.1)</a></td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>x</td><td>-</td><td>-</td><td>x</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td>
+    </tr>
+    <tr><td>Immediate<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X<br>Absolute, Y<br>(Indirect, X)<br>(Indirect), Y</td>
+        <td>ADC #Oper<br>ADC Oper<br>ADC Oper, X<br>ADC Oper<br>ADC Oper, X<br>ADC Oper, Y<br>ADC (Oper, X)<br>ADC (Oper), Y</td>
+        <td>69<br>65<br>75<br>6D<br>7D<br>79<br>61<br>71</td>
+        <td>2<br>2<br>2<br>3<br>3<br>3<br>2<br>2</td>
+        <td>2<br>3<br>4<br>4<br>4*<br>4*<br>6<br>5*</td></tr>
+</table>
+* Add 1 if page boundary is crossed.
+
+<br><br><br><br>
+
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>AND</b></font></td>
+        <td align="center" width="55%">AND <i> Memory with Accumulator)</i></td>
+        <td align="right" width="10%"><font size="5"><b>AND</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A ^ M -> A</td>
+        <td><a href="ProMan.html#2241">(Ref: 2.2.3.0)</a></td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td>
+    </tr>
+    <tr><td>Immediate<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X<br>Absolute, Y<br>(Indirect, X)<br>(Indirect), Y</td>
+        <td>AND # Oper<br>AND Oper<br>AND Oper, X<br>AND Oper<br>AND Oper, X<br>AND Oper, Y<br>AND (Oper, X)<br>AND (Oper), Y</td>
+        <td>29<br>25<br>35<br>2D<br>3D<br>39<br>21<br>31</td>
+        <td>2<br>2<br>2<br>3<br>3<br>3<br>2<br>2</td>
+        <td>2<br>3<br>4<br>4<br>4*<br>4*<br>6<br>5</td></tr>
+</table>
+* Add 1 if page boundary is crossed.
+
+<br><br><br><br>
+
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>ASL</b></font></td>
+        <td align="center" width="55%">ASL <i> Shift Left One Bit (Memory or Accumulator)</i></td>
+        <td align="right" width="10%"><font size="5"><b>ASL</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: C <- 7 6 5 4 3 2 1 0 <- 0</td>
+        <td><a href="ProMan.html#102">(Ref: 10.2)</a></td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td>
+    </tr>
+    <tr><td>Accumulator<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X</td>
+        <td>ASL A<br>ASL Oper<br>ASL Oper, X<br>ASL Oper<br>ASL Oper, X</td>
+        <td>0A<br>06<br>16<br>0E<br>1E</td>
+        <td>1<br>2<br>2<br>3<br>3</td>
+        <td>2<br>5<br>6<br>6<br>7</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BCC</b></font></td>
+        <td align="center" width="55%">BCC <i> Branch on Carry Clear</i></td>
+        <td align="right" width="10%"><font size="5"><b>BCC</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Branch on C = 0</td>
+        <td><a href="ProMan.html#4123">(Ref: 4.1.1.3)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td>
+    </tr>
+    <tr><td>Relative</td><td>BCC Oper</td><td>90</td><td>2</td><td>2*</td></tr>
+</table>
+* Add 1 if branch occurs to same page.<br>
+* Add 2 if branch occurs to same page.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BCS</b></font></td>
+        <td align="center" width="55%">BCS <i> Branch on Carry Set</i></td>
+        <td align="right" width="10%"><font size="5"><b>BCS</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Branch on C = 1</td>
+        <td><a href="ProMan.html#4124">(Ref: 4.1.1.4)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Relative</td><td>BCS Oper</td><td>B0</td><td>2</td><td>2*</td></tr>
+</table>
+* Add 1 if branch occurs to same page.<br>
+* Add 2 if branch occurs to same page.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BEQ</b></font></td>
+        <td align="center" width="55%">BEQ <i> Branch on Result Zero</i></td>
+        <td align="right" width="10%"><font size="5"><b>BEQ</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Branch on Z = 1</td>
+        <td><a href="ProMan.html#4125">(Ref: 4.1.1.5)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td>
+    </tr>
+    <tr><td>Relative</td><td>BEQ Oper</td><td>F0</td><td>2</td><td>2*</td></tr>
+</table>
+* Add 1 if branch occurs to same page.<br>
+* Add 2 if branch occurs to same page.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BIT</b></font></td>
+        <td align="center" width="55%">BIT <i> Test bits in memory with accumulator</i></td>
+        <td align="right" width="10%"><font size="5"><b>BIT</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: a ^ M, M7 -> N, M6 ->V</td>
+        <td><a href="ProMan.html#4221">(Ref: 4.2.1.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>M7</td><td>X</td><td>-</td><td>-</td><td>-</td><td>M6</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+Bit 6 and bit 7 are transferred to the status register.<br>
+If the result of A ^ M is zero then Z = 1, otherwise Z = 0
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Zero Page<br>Absolute</td><td>BIT Oper<br>BIT Oper</td>
+        <td>24<br>2C</td><td>2<br>3</td><td>3<br>4</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BMI</b></font></td>
+        <td align="center" width="55%">BMI <i> Branch on result minus</i></td>
+        <td align="right" width="10%"><font size="5"><b>BMI</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Branch on N = 1</td>
+        <td><a href="ProMan.html#4121">(Ref: 4.1.1.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Relative</td><td>BMI Oper</td><td>30</td><td>2</td><td>2*</td></tr>
+</table>
+* Add 1 if branch occurs to same page.<br>
+* Add 2 if branch occurs to same page.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BNE</b></font></td>
+        <td align="center" width="55%">BNE <i> Branch on result not zero</i></td>
+        <td align="right" width="10%"><font size="5"><b>BNE</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Branch on Z = 0</td>
+        <td><a href="ProMan.html#4126">(Ref: 4.1.1.6)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Relative</td><td>BNE Oper</td><td>D0</td><td>2</td><td>2*</td></tr>
+</table>
+* Add 1 if branch occurs to same page.<br>
+* Add 2 if branch occurs to same page.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BPL</b></font></td>
+        <td align="center" width="55%">BPL <i> Branch on result plus</i></td>
+        <td align="right" width="10%"><font size="5"><b>BPL</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Branch on N = 0</td>
+        <td><a href="ProMan.html#4122">(Ref: 4.1.1.2)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Relative</td><td>BPL Oper</td><td>10</td><td>2</td><td>2*</td></tr>
+</table>
+* Add 1 if branch occurs to same page.<br>
+* Add 2 if branch occurs to same page.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BRK</b></font></td>
+        <td align="center" width="55%">BRK <i> Force Break</i></td>
+        <td align="right" width="10%"><font size="5"><b>BRK</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Forced Interrupt PC + 2 v P v</td>
+        <td><a href="ProMan.html#911">(Ref: 9.11)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>BRK</td><td>00</td><td>1</td><td>7</td></tr>
+</table>
+1. A BRK command cannot be masked by setting I.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BVC</b></font></td>
+        <td align="center" width="55%">BVC <i> Branch on overflow clear</i></td>
+        <td align="right" width="10%"><font size="5"><b>BVC</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Branch on V = 0</td>
+        <td><a href="ProMan.html#4128">(Ref: 4.1.1.8)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Relative</td><td>BVC Oper</td><td>50</td><td>2</td><td>2*</td></tr>
+</table>
+* Add 1 if branch occurs to same page.<br>
+* Add 2 if branch occurs to same page.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>BVS</b></font></td>
+        <td align="center" width="55%">BVS <i> Branch on overflow set</i></td>
+        <td align="right" width="10%"><font size="5"><b>BVS</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Branch on V = 1</td>
+        <td><a href="ProMan.html#4127">(Ref: 4.1.1.7)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Relative</td><td>BVS Oper</td><td>70</td><td>2</td><td>2*</td></tr>
+</table>
+* Add 1 if branch occurs to same page.<br>
+* Add 2 if branch occurs to same page.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>CLC</b></font></td>
+        <td align="center" width="55%">CLC <i> Clear carry flag</i></td>
+        <td align="right" width="10%"><font size="5"><b>CLC</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: 0 -> C</td>
+        <td><a href="ProMan.html#302">(Ref: 3.0.2)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>0</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>CLC</td><td>18</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>CLD</b></font></td>
+        <td align="center" width="55%">CLD <i> Clear decimal mode</i></td>
+        <td align="right" width="10%"><font size="5"><b>CLD</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: 0 -> D</td>
+        <td><a href="ProMan.html#332">(Ref: 3.3.2)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>0</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>CLD</td><td>D8</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>CLI</b></font></td>
+        <td align="center" width="55%">CLI <i> Clear interrupt disable bit</i></td>
+        <td align="right" width="10%"><font size="5"><b>CLI</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: 0 -> I</td>
+        <td><a href="ProMan.html#322">(Ref: 3.2.2)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>0</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>CLI</td><td>58</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>CLV</b></font></td>
+        <td align="center" width="55%">CLV <i> Clear overflow flag</i></td>
+        <td align="right" width="10%"><font size="5"><b>CLV</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: 0 -> V</td>
+        <td><a href="ProMan.html#361">(Ref: 3.6.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>0</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>CLV</td><td>B8</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>CMP</b></font></td>
+        <td align="center" width="55%">CMP <i> Compare memory and accumulator</i></td>
+        <td align="right" width="10%"><font size="5"><b>CMP</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A - M</td>
+        <td><a href="ProMan.html#421">(Ref: 4.2.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Immediate<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X><br>Absolute, Y<br>(Indirect,X)<br>(Indirect), Y</td>
+        <td>CMP #Oper<br>CMP Oper<br>CMP Oper, X<br>CMP Oper<br>CMP Oper, X<br>CMP Oper, Y<br>CMP (Oper, X)<br>CMP (Oper), Y</td>
+        <td>C9<br>C5<br>D5<br>CD<br>DD<br>D9<br>C1<br>D1</td>
+        <td>2<br>2<br>2<br>3<br>3<br>3<br>2<br>2</td>
+        <td>2<br>3<br>4<br>4<br>4*<br>4*<br>6<br>5*</td></tr>
+</table>
+* Add 1 if page boundary is crossed.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>CPX</b></font></td>
+        <td align="center" width="55%">CPX <i> Compare Memory and Index X</i></td>
+        <td align="right" width="10%"><font size="5"><b>CPX</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: X - M</td>
+        <td><a href="ProMan.html#78">(Ref: 7.8)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Immediate<br>Zero Page<br>Absolute</td>
+        <td>CPX #Oper<br>CPX Oper<br>CPX Oper</td>
+        <td>E0<br>E4<br>EC</td>
+        <td>2<br>2<br>3</td>
+        <td>2<br>3<br>4</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>CPY</b></font></td>
+        <td align="center" width="55%">CPY <i> Compare Memory and Index Y</i></td>
+        <td align="right" width="10%"><font size="5"><b>CPY</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Y - M</td>
+        <td><a href="ProMan.html#79">(Ref: 7.9)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Immediate<br>Zero Page<br>Absolute</td>
+        <td>CPY #Oper<br>CPY Oper<br>CPY Oper</td>
+        <td>C0<br>C4<br>CC</td>
+        <td>2<br>2<br>3</td>
+        <td>2<br>3<br>4</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>DEC</b></font></td>
+        <td align="center" width="55%">DEC <i> Decrement memory by one</i></td>
+        <td align="right" width="10%"><font size="5"><b>DEC</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: M - 1 -> M</td>
+        <td><a href="ProMan.html#107">(Ref: 10.7)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X</td>
+        <td>DEC Oper<br>DEC Oper, X<br>DEC Oper<DEC Oper, X</td>
+        <td>C6<br>D6<br>CE<br>DE</td>
+        <td>2<br>2<br>3<br>3</td>
+        <td>5<br>6<br>6<br>7</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>DEX</b></font></td>
+        <td align="center" width="55%">DEX <i> Decrement index X by one</i></td>
+        <td align="right" width="10%"><font size="5"><b>DEX</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: X - 1 -> X</td>
+        <td><a href="ProMan.html#76">(Ref: 7.6)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>DEX</td><td>CA</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>DEY</b></font></td>
+        <td align="center" width="55%">DEY <i> Decrement index Y by one</i></td>
+        <td align="right" width="10%"><font size="5"><b>DEY</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Y - 1 -> Y</td>
+        <td><a href="ProMan.html#77">(Ref: 7.7)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>DEY</td><td>88</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>EOR</b></font></td>
+        <td align="center" width="55%">EOR <i> "Exclusive-Or" memory with accumulator</i></td>
+        <td align="right" width="10%"><font size="5"><b>EOR</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A v M -> A</td>
+        <td><a href="ProMan.html#2243">(Ref: 2.2.3.2)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Immediate<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X<br>Absolute, Y<br>(Indirect, X)<br>(Indirect), Y</td>
+        <td>EOR # Oper<br>EOR Oper<br>EOR Oper, X<br>EOR Oper<br>EOR Oper, X<br>EOR Oper, Y<br>EOR (Oper, X)<br>EOR (Oper), Y</td>
+        <td>49<br>45<br>55<br>4D<br>5D<br>59<br>41<br>51</td>
+        <td>2<br>2<br>2<br>3<br>3<br>3<br>2<br>2</td>
+        <td>2<br>3<br>4<br>4<br>4*<br>4*<br>6<br>5*</td></tr>
+</table>
+* Add 1 if page boundary is crossed
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>INC</b></font></td>
+        <td align="center" width="55%">INC <i> Increment memory by one</i></td>
+        <td align="right" width="10%"><font size="5"><b>INC</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: M + -> M</td>
+        <td><a href="ProMan.html#106">(Ref: 10.6)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X</td>
+        <td>INC Oper<br>INC Oper, X<br>INC Oper<br>INC Oper, X</td>
+        <td>E6<br>F6<br>EE<br>FE</td>
+        <td>2<br>2<br>3<br>3</td>
+        <td>5<br>6<br>6<br>7</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>INX</b></font></td>
+        <td align="center" width="55%">INX <i> Increment Index X by one</i></td>
+        <td align="right" width="10%"><font size="5"><b>INX</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: X + -> X</td>
+        <td><a href="ProMan.html#74">(Ref: 7.4)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>INX</td><td>E8</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>INY</b></font></td>
+        <td align="center" width="55%">INY <i> Increment Index Y by one</i></td>
+        <td align="right" width="10%"><font size="5"><b>INY</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Y + -> Y</td>
+        <td><a href="ProMan.html#75">(Ref: 7.5)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>INY</td><td>C8</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>JMP</b></font></td>
+        <td align="center" width="55%">JMP <i> Jump to new location</i></td>
+        <td align="right" width="10%"><font size="5"><b>JMP</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: (PC + 1) -> PCL<br>(PC + 1) -> PCH</td>
+        <td><a href="ProMan.html#402">(Ref: 4.0.2)<br><a href="ProMan.html#981">(Ref: 9.8.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Absolute<br>Indirect</td>
+        <td>JMP Oper<br>JMP (Oper)</td>
+        <td>4C<br>6C</td>
+        <td>3<br>3</td>
+        <td>3<br>5</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>JSR</b></font></td>
+        <td align="center" width="55%">JSR <i> Jump to new location saving return address</i></td>
+        <td align="right" width="10%"><font size="5"><b>JSR</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: PC + 2 v , (PC + 1) -> PCL<br>(PC + 1) -> PCH</td>
+        <td><a href="ProMan.html#81">(Ref: 8.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Absolute</td><td>JSR Oper</td><td>20</td><td>3</td><td>6</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>LDA</b></font></td>
+        <td align="center" width="55%">LDA <i> Load accumulator with memory</i></td>
+        <td align="right" width="10%"><font size="5"><b>LDA</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: M -> A</td>
+        <td><a href="ProMan.html#211">(Ref: 2.1.1)</a></td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Immediate<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X<br>Absolute, Y<br>(Indirect, X)<br>(Indirect), Y</td>
+        <td>LDA #Oper<br>LDA Oper<br>LDA Oper, X<br>LDA Oper<br>LDA Oper, X<br>LDA Oper, Y<br>LDA (Oper, X)<br>LDA (Oper), Y</td>
+        <td>A9<br>A5<br>B5<br>AD<br>BD<br>B9<br>A1<br>B1</td>
+        <td>2<br>2<br>2<br>3<br>3<br>3<br>2<br>2</td>
+        <td>2<br>3<br>4<br>4<br>4*<br>4*<br>6<br>5*</td></tr>
+</table>
+* Add 1 if page boundary is crossed
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>LDX</b></font></td>
+        <td align="center" width="55%">LDX <i> Load index X with memory</i></td>
+        <td align="right" width="10%"><font size="5"><b>LDX</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: M -> X</td>
+        <td><a href="ProMan.html#70">(Ref: 7.0)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Immediate<br>Zero Page<br>Zero Page, Y<br>Absolute<br>Absolute, Y</td>
+        <td>LDX #Oper<br>LDX Oper<br>LDX Oper, Y<br>LDX Oper<br>LDX Oper, Y</td>
+        <td>A2<br>A6<br>B6<br>AE<br>BE</td>
+        <td>2<br>2<br>2<br>3<br>3</td>
+        <td>2<br>3<br>4<br>4<br>4*</td></tr>
+</table>
+* Add 1 if page boundary is crossed
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>LDY</b></font></td>
+        <td align="center" width="55%">LDY <i> Load index Y with memory</i></td>
+        <td align="right" width="10%"><font size="5"><b>LDY</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: M -> Y</td>
+        <td><a href="ProMan.html#71">(Ref: 7.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td>
+    </tr>
+    <tr><td>Immediate<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X</td>
+        <td>LDY #Oper<br>LDY Oper<br>LDY Oper, X<br>LDY Oper<br>LDY Oper, X</td>
+        <td>A0<br>A4<br>B4<br>AC<br>BC</td>
+        <td>2<br>2<br>2<br>3<br>3</td>
+        <td>2<br>3<br>4<br>4<br>4*</td></tr>
+</table>
+* Add 1 if page boundary is crossed
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>LSR</b></font></td>
+        <td align="center" width="55%">LSR <i> Shift right one bit (memory or accumulator)</i></td>
+        <td align="right" width="10%"><font size="5"><b>LSR</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: 0 -> byte ->C</td>
+        <td><a href="ProMan.html#101">(Ref: 10.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>0</td><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Accumulator<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X</td>
+        <td>LSR A<br>LSR Oper<br>LSR Oper, X<br>LSR Oper<br>LSR Oper, X</td>
+        <td>4A<br>46<br>56<br>4E<br>5E</td>
+        <td>1<br>2<br>2<br>3<br>3</td>
+        <td>2<br>5<br>6<br>6<br>7</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>NOP</b></font></td>
+        <td align="center" width="55%">NOP <i> No operation</i></td>
+        <td align="right" width="10%"><font size="5"><b>NOP</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: No Operation (2 cycles)</td>
+        <td></td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>NOP</td><td>EA</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>ORA</b></font></td>
+        <td align="center" width="55%">ORA <i> "OR" memory with accumulator</i></td>
+        <td align="right" width="10%"><font size="5"><b>ORA</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A v M -> A</td>
+        <td><a href="ProMan.html#2242">(Ref: 2.2.3.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Immediate<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X<br>Absolute, Y<br>(Indirect, X)<br>(Indirect), Y</td>
+        <td>ORA #Oper<br>ORA Oper<br>ORA Oper, X<br>ORA Oper<br>ORA Oper, X<br>ORA Oper, Y<br>ORA (Oper, X)<br>ORA (Oper), Y</td>
+        <td>09<br>05<br>15<br>0D<br>1D<br>19<br>01<br>11</td>
+        <td>2<br>2<br>2<br>3<br>3<br>3<br>2<br>2</td>
+        <td>2<br>3<br>4<br>4<br>4*<br>4*<br>6<br>5</td></tr>
+</table>
+* Add 1 on page crossing
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>PHA</b></font></td>
+        <td align="center" width="55%">PHA <i> Push accumulator on stack</i></td>
+        <td align="right" width="10%"><font size="5"><b>PHA</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A v</td>
+        <td><a href="ProMan.html#85">(Ref: 8.5)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>PHA</td><td>48</td><td>1</td><td>3</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>PHP</b></font></td>
+        <td align="center" width="55%">PHP <i> Push processor status on stack</i></td>
+        <td align="right" width="10%"><font size="5"><b>PHP</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: P v</td>
+        <td><a href="ProMan.html#811">(Ref: 8.11)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>PHP</td><td>08</td><td>1</td><td>3</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>PLA</b></font></td>
+        <td align="center" width="55%">PLA <i> Pull accumulator from stack</i></td>
+        <td align="right" width="10%"><font size="5"><b>PLA</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A ^</td>
+        <td><a href="ProMan.html#86">(Ref: 8.6)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>PLA</td><td>68</td><td>1</td><td>4</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>PLP</b></font></td>
+        <td align="center" width="55%">PLP <i> Pull processor status from stack</i></td>
+        <td align="right" width="10%"><font size="5"><b>PLP</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: P ^</td>
+        <td><a href="ProMan.html#812">(Ref: 8.12)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr>From Stack</tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>PLP</td><td>28</td><td>1</td><td>4</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>ROL</b></font></td>
+        <td align="center" width="55%">ROL <i> Rotate one bit left (memory or accumulator)</i></td>
+        <td align="right" width="10%"><font size="5"><b>ROL</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: <u>|-<- byte <- C <-|</u></td>
+        <td><a href="ProMan.html#103">(Ref: 10.3)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td>
+    </tr>
+    <tr><td>Accumulator<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X</td>
+        <td>ROL A<br>ROL Oper<br>ROL Oper, X<br>ROL Oper<br>ROL Oper, X</td>
+        <td>2A<br>26<br>36<br>2E<br>3E</td>
+        <td>1<br>2<br>2<br>3<br>3</td>
+        <td>2<br>5<br>6<br>6<br>7</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>ROR</b></font></td>
+        <td align="center" width="55%">ROR <i> Rotate one bit right (memory or accumulator)</i></td>
+        <td align="right" width="10%"><font size="5"><b>ROR</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: <u>|-> C -> byte ->-|</u></td>
+        <td><a href="ProMan.html#104">(Ref: 10.4)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td>
+    </tr>
+    <tr><td>Accumulator<br>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X</td>
+        <td>ROR A<br>ROR Oper<br>ROR Oper, X<br>ROR Oper<br>ROR Oper, X</td>
+        <td>2A<br>26<br>36<br>2E<br>3E</td>
+        <td>1<br>2<br>2<br>3<br>3</td>
+        <td>2<br>5<br>6<br>6<br>7</td></tr>
+</table>
+Note: ROR instruction will be available on MCS650X microprocessors after June, 1976.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>RTI</b></font></td>
+        <td align="center" width="55%">RTI <i> Return from interrupt</i></td>
+        <td align="right" width="10%"><font size="5"><b>RTI</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: P ^ PC^</td>
+        <td><a href="ProMan.html#96">(Ref: 9.6)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr>From Stack</tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>RTI</td><td>40</td><td>1</td><td>6</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>RTS</b></font></td>
+        <td align="center" width="55%">RTS <i> Return from subroutine</i></td>
+        <td align="right" width="10%"><font size="5"><b>RTS</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: PC^, PC + 1 -> PC</td>
+        <td><a href="ProMan.html#82">(Ref: 8.2)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>RTS</td><td>60</td><td>1</td><td>6</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>SBC</b></font></td>
+        <td align="center" width="55%">SBC <i> Subtract memory from accumulator with borrow</i></td>
+        <td align="right" width="10%"><font size="5"><b>SBC</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A - M - -C -> A<br>Note: -C = Borrow</td>
+        <td><a href="ProMan.html#222">(Ref: 2.2.2)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>x</td><td>-</td><td>-</td><td>x</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td>
+    </tr>
+    <tr><td>Immediate<br>Zero Page<br>Zero Page, X><br>Absolute<br>Absolute, X<br>Absolute, Y<br>(Indirect, X)<br>(Indirect), Y</td>
+        <td>SBC #Oper<br>SBC Oper<br>SBC Oper, X<br>SBC Oper<br>SBC Oper, X<br>SBC Oper, Y<br>SBC (Oper, X)<br>SBC (Oper), Y</td>
+        <td>E9<br>E5<br>F5<br>ED<br>FD<br>F9<br>E1<br>F1</td>
+        <td>2<br>2<br>2<br>3<br>3<br>3<br>2<br>2</td>
+        <td>2<br>3<br>4<br>4<br>4*<br>4*<br>6<br>5*</td></tr>
+</table>
+* Add 1 when page boundary is crossed.
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>SEC</b></font></td>
+        <td align="center" width="55%">SEC <i> Set carry flag</i></td>
+        <td align="right" width="10%"><font size="5"><b>SEC</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: 1 -> C</td>
+        <td><a href="ProMan.html#301">(Ref: 3.0.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>SEC</td><td>38</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>SED</b></font></td>
+        <td align="center" width="55%">SED <i> Set decimal mode</i></td>
+        <td align="right" width="10%"><font size="5"><b>SED</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: 1 -> D</td>
+        <td><a href="ProMan.html#331">(Ref: 3.3.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>1</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>SED</td><td>F8</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>SEI</b></font></td>
+        <td align="center" width="55%">SEI <i> Set interrupt disable status</i></td>
+        <td align="right" width="10%"><font size="5"><b>SEI</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: 1 -> I</td>
+        <td><a href="ProMan.html#321">(Ref: 3.2.1)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>1</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>SEI</td><td>78</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>STA</b></font></td>
+        <td align="center" width="55%">STA <i> Store accumulator in memory</i></td>
+        <td align="right" width="10%"><font size="5"><b>STA</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A -> M</td>
+        <td><a href="ProMan.html#212">(Ref: 2.1.2)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Zero Page<br>Zero Page, X<br>Absolute<br>Absolute, X<br>Absolute, Y<br>(Indirect, X)<br>(Indirect), Y</td>
+        <td>STA Oper<br>STA Oper, X<br>STA Oper<br>STA Oper, X<br>STA Oper, Y<br>STA (Oper, X)<br>STA (Oper), Y</td>
+        <td>85<br>95<br>8D<br>9D<br>99<br>81<br>91</td>
+        <td>2<br>2<br>3<br>3<br>3<br>2<br>2</td>
+        <td>3<br>4<br>4<br>5<br>5<br>6<br>6</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>STX</b></font></td>
+        <td align="center" width="55%">STX <i> Store index X in memory</i></td>
+        <td align="right" width="10%"><font size="5"><b>STX</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: X -> M</td>
+        <td><a href="ProMan.html#72">(Ref: 7.2)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Zero Page<br>Zero Page, Y<br>Absolute</td>
+        <td>STX Oper<br>STX Oper, Y<br>STX Oper</td>
+        <td>86<br>96<br>8E</td><td>2<br>2<br>3</td><td>3<br>4<br>4</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>STY</b></font></td>
+        <td align="center" width="55%">STY <i> Store index Y in memory</i></td>
+        <td align="right" width="10%"><font size="5"><b>STY</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Y -> M</td>
+        <td><a href="ProMan.html#73">(Ref: 7.3)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Zero Page<br>Zero Page, X<br>Absolute</td>
+        <td>STY Oper<br>STY Oper, X<br>STY Oper</td>
+        <td>84<br>94<br>8C</td><td>2<br>2<br>3</td><td>3<br>4<br>4</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>TAX</b></font></td>
+        <td align="center" width="55%">TAX <i> Transfer accumulator to index X</i></td>
+        <td align="right" width="10%"><font size="5"><b>TAX</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A -> X</td>
+        <td><a href="ProMan.html#711">(Ref: 7.11)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>TAX</td><td>AA</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>TAY</b></font></td>
+        <td align="center" width="55%">TAY <i> Transfer accumulator to index Y</i></td>
+        <td align="right" width="10%"><font size="5"><b>TAY</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: A -> Y</td>
+        <td><a href="ProMan.html#713">(Ref: 7.13)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>TAY</td><td>A8</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>TYA</b></font></td>
+        <td align="center" width="55%">TYA <i> Transfer index Y to accumulator</i></td>
+        <td align="right" width="10%"><font size="5"><b>TYA</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: Y -> A</td>
+        <td><a href="ProMan.html#714">(Ref: 7.14)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>TYA</td><td>98</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>TSX</b></font></td>
+        <td align="center" width="55%">TSX <i> Transfer stack pointer to index X</i></td>
+        <td align="right" width="10%"><font size="5"><b>TSX</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: S -> X</td>
+        <td><a href="ProMan.html#89">(Ref: 8.9)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>TSX</td><td>BA</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>TXA</b></font></td>
+        <td align="center" width="55%">TXA <i> Transfer index X to accumulator</i></td>
+        <td align="right" width="10%"><font size="5"><b>TXA</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: X -> A</td>
+        <td><a href="ProMan.html#712">(Ref: 7.12)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>x</td><td>x</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>TXA</td><td>8A</td><td>1</td><td>2</td></tr>
+</table>
+
+<br><br><br><br>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td width="10%"><font size="5"><b>TXS</b></font></td>
+        <td align="center" width="55%">TXS <i> Transfer index X to stack pointer</i></td>
+        <td align="right" width="10%"><font size="5"><b>TXS</b></font></td>
+    </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="6" width="75%">
+    <tr><td>Operation: X -> S</td>
+        <td><a href="ProMan.html#88">(Ref: 8.8)</td>
+        <td align="right" width="45">
+          <table border="0" cellpadding="0" cellspacing="3">
+            <tr><td>N</td><td>Z</td><td>C</td><td>I</td><td>D</td><td>V</td></tr>
+            <tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+          </table>
+        </div></td>
+    </tr>
+</table>
+<table border="1" cellpadding="6" cellspacing="0" width="75%">
+    <tr><td>Addressing<br>Mode</td><td>Assembly Language<br>Form</td>
+        <td>OP<br>Code</td><td>No.<br>Bytes</td><td>No.<br>Cycles</td></tr>
+    <tr><td>Implied</td><td>TXS</td><td>9A</td><td>1</td><td>2</td></tr>
+</table>
+</center></div>
+
+
+<hr>
+<pre>
+<A NAME="c">
+<div align="center">
+
+
+
+
+<b>APPENDIX C</b>
+
+
+INSTRUCTION ADDRESSING
+
+
+MODES AND
+
+
+RELATED EXECUTION TIMES
+
+
+
+
+
+
+C-1</div>
+<hr>
+
+
+<small>
+       <b>INSTRUCTION ADDRESSING MODES AND RELATED EXECUTION TIMES (in clock cycles)</b>
+
+                                               A                                             A
+                                               b                                             b
+                                               s                                             s
+                                               o                                             o
+                                               l                                             l
+                                               u                                             u
+           A        Z  Z                       t         A        Z  Z                       t
+           c        e  r     A  A        (I (I e         c        e  r     A  A        (I (I e
+           c  I  Z  r  r     b  b        n  n            c  I  Z  r  r     b  b        n  n
+           u  m  e  o  o  A  s  s     R  d  d  I         u  m  e  o  o  A  s  s     R  d  d  I
+           m  m  r        b  o  o  I  e  i  i  n         m  m  r        b  o  o  I  e  i  i  n
+           u  e  o  P  P  s  l  l  m  l  r  r  d         u  e  o  P  P  s  l  l  m  l  r  r  d
+           l  d     a  a  o  u  u  p  a  e  e  i         l  d     a  a  o  u  u  p  a  e  e  i
+           a  i  P  g  g  l  t  t  l  t  c  c  r         a  i  P  g  g  l  t  t  l  t  c  c  r
+           t  a  a  e  e  u  e  e  i  i  t, t) e         t  a  a  e  e  u  e  e  i  i  t, t) e
+           o  t  g        t        e  v        c         o  t  g        t        e  v        c
+           <u>r  e  e  X  Y  e  X  Y  d  e  X) ,Y t</u>         <u>r  e  e  X  Y  e  X  Y  d  e  X) ,Y t</u>
+
+     <b>ADC</b>  .  2  3  4  .  4  4* 4* .  .  6  5* 6    <b>JSR</b>  .  .  .  .  .  6  .  .  .  .  .  .  .
+     <b>AND</b>  .  2  3  4  .  4  4* 4* .  .  6  5* .    <b>LDA</b>  .  2  3  4  .  4  4* 4* .  .  6  5* .
+     <b>ASL</b>  2  .  5  6  .  6  7  .  .  .  .  .  .    <b>LDX</b>  .  2  3  .  4  4  .  4* .  .  .  .  .
+     <b>BCC</b>  .  .  .  .  .  .  .  .  .  2**.  .  .    <b>LDY</b>  .  2  3  4  .  4  4* .  .  .  .  .  .
+     <b>BCS</b>  .  .  .  .  .  .  .  .  .  2**.  .  .    <b>LSR</b>  2  5  6  .  6  7  .  .  .  .  .  .  .
+     <b>BEQ</b>  .  .  .  .  .  .  .  .  .  2**.  .  .    <b>NOP</b>  .  .  .  .  .  .  .  .  2  .  .  .  .
+     <b>BIT</b>  .  .  3  .  .  4  .  .  .  .  .  .  .    <b>ORA</b>  .  2  3  4  .  4  4* 4* .  .  6  5* .
+     <b>BMI</b>  .  .  .  .  .  .  .  .  .  2**.  .  .    <b>PHA</b>  .  .  .  .  .  .  .  .  3  .  .  .  .
+     <b>BNE</b>  .  .  .  .  .  .  .  .  .  2**.  .  .    <b>PHP</b>  .  .  .  .  .  .  .  .  3  .  .  .  .
+     <b>BPL</b>  .  .  .  .  .  .  .  .  .  2**.  .  .    <b>PLA</b>  .  .  .  .  .  .  .  .  4  .  .  .  .
+     <b>BRK</b>  .  .  .  .  .  .  .  .  .  .  .  .  .    <b>PLP</b>  .  .  .  .  .  .  .  .  4  .  .  .  .
+     <b>BVC</b>  .  .  .  .  .  .  .  .  .  2**.  .  .    <b>ROL</b>  2  .  5  6  .  6  7  .  .  .  .  .  .
+     <b>BVS</b>  .  .  .  .  .  .  .  .  .  2**.  .  .    <b>ROR</b>  2  .  5  6  .  6  7  .  .  .  .  .  .
+     <b>CLC</b>  .  .  .  .  .  .  .  .  2  .  .  .  .    <b>RTI</b>  .  .  .  .  .  .  .  .  6  .  .  .  .
+     <b>CLD</b>  .  .  .  .  .  .  .  .  2  .  .  .  .    <b>RTS</b>  .  .  .  .  .  .  .  .  6  .  .  .  .
+     <b>CLI</b>  .  .  .  .  .  .  .  .  2  .  .  .  .    <b>SBC</b>  .  2  3  4  .  4  4* 4* .  .  6  5* .
+     <b>EOR</b>  .  2  3  4  .  4  4* 4* .  .  6  5  .    <b>TAY</b>  .  .  .  .  .  .  .  .  2  .  .  .  .
+     <b>INC</b>  .  .  5  6  .  6  7  .  .  .  .  .  .    <b>TSX</b>  .  .  .  .  .  .  .  .  2  .  .  .  .
+     <b>INX</b>  .  .  .  .  .  .  .  .  2  .  .  .  .    <b>TXA</b>  .  .  .  .  .  .  .  .  2  .  .  .  .
+     <b>INY</b>  .  .  .  .  .  .  .  .  2  .  .  .  .    <b>TXS</b>  .  .  .  .  .  .  .  .  2  .  .  .  .
+     <b>JMP</b>  .  .  .  .  .  3  .  .  .  .  .  .  5    <b>TYA</b>  .  .  .  .  .  .  .  .  2  .  .  .  .
+
+     *  Add one cycle if indexing across page boundary
+     ** Add one cycle if branch taken, Add one additional if branching operation crosses page boundary
+</small>
+ 
+<div align="center">C-2
+
+<hr>
+<A NAME="d">
+<PRE>
+
+
+
+
+
+
+
+
+
+<b>APPENDIX D</B>
+
+
+OPERATION INSTRUCTION LISTING
+
+
+
+HEXADECIMAL SEQUENCE
+
+
+
+
+
+
+
+
+
+
+
+
+
+D-1</div>
+<hr>
+
+
+   00 - BRK                         20 - JSR
+   01 - ORA - (Indirect,X)          21 - AND - (Indirect,X)
+   02 - Future Expansion            22 - Future Expansion
+   03 - Future Expansion            23 - Future Expansion
+   04 - Future Expansion            24 - BIT - Zero Page
+   05 - ORA - Zero Page             25 - AND - Zero Page
+   06 - ASL - Zero Page             26 - ROL - Zero Page
+   07 - Future Expansion            27 - Future Expansion
+   08 - PHP                         28 - PLP
+   09 - OPA - Immediate             29 - AND - Immediate
+   0A - ASL - Accumulator           2A - ROL - Accumulator
+   0B - Future                      2B - Future Expansion
+   0C - Future Expansion            2C - BIT - Absolute
+   0D - OPA - Absolute              2D - AND - Absolute
+   0E - ASL - Absolute              2E - ROL - Absolute
+   0F - Future Expansion            2F - Future Expansion
+   10 - BPL                         30 - BMI
+   11 - OPA - (Indirect),Y          31 - AND - (Indirect),Y
+   12 - Future Expansion            32 - Future Expansion
+   13 - Future Expansion            33 - Future Expansion
+   14 - Future Expansion            34 - Future Expansion
+   15 - ORA - Zero Page,X           35 - AND - Zero Page,X
+   16 - ASL - Zero Page,X           36 - ROL - Zero Page,X
+   17 - Future Expansion            37 - Future Expansion
+   18 - CLC                         38 - SEC
+   19 - ORA - Absolute,Y            39 - AND - Absolute,Y
+   lA - Future Expansion            3A - Future Expansion
+   lB - Future Expansion            3B - Future Expansion
+   lC - Future Expansion            3C - Future Expansion
+   lD - ORA - Absolute,X            3D - AND - Absolute,X
+   lE - ASL - Absolute,X            3E - ROL - Absolute,X
+   lF - Future Expansion            3F - Future Expansion
+
+
+<div align="center">D-2</div>
+<hr>
+
+
+   40 - RTI                         60 - RTS
+   41 - EOR - (Indirect,X)          61 - ADC - (Indirect,X)
+   42 - Future Expansion            62 - Future Expansion
+   43 - Future Expansion            63 - Future Expansion
+   44 - Future Expansion            64 - Future Expansion
+   45 - EOR - Zero Page             65 - ADC - Zero Page
+   46 - LSR - Zero Page             66 - ROR - Zero Page
+   47 - Future Expansion            67 - Future Expansion
+   48 - PHA                         68 - PIA
+   49 - EOR - Immediate             69 - ADC - Immediate
+   4A - LSR - Accumulator           6A - ROR - Accumulator
+   4B - Future Expansion            68 - Future Expansion
+   4C - JMP - Absolute              6C - JMP - Indirect
+   4D - EOR - Absolute              6D - ADC - Absolute
+   4E - LSR - Absolute              6E - ROR - Absolute
+   4F - Future Expansion            6F - Future Expansion
+   50 - BVC                         70 - BVS
+   51 - EOR - (Indirect),Y          71 - ADC - (Indirect),Y
+   52 - Future Expansion            72 - Future Expansion
+   53 - Future Expansion            73 - Future Expansion
+   54 - Future Expansion            74 - Future Expansion
+   55 - EOR - Zero Page,X           75 - ADC - Zero Page,X
+   56 - LSR - Zero Page,X           76 - ROR - Zero Page,X
+   57 - Future Expansion            77 - Future Expansion
+   58 - CLI                         78 - SEI
+   59 - EOR - Absolute,Y            79 - ADC - Absolute,Y
+   5A - Future Expansion            7A - Future Expansion
+   5B - Future Expansion            78 - Future Expansion
+   5C - Future Expansion            7C - Future Expansion
+   5D - EOR - Absolute,X            7D - ADC - Absolute,X
+   5E - LSR - Absolute,X            7E - ROR - Absolute,X
+   5F - Future Expansion            7F - Future Expansion
+
+
+
+<div align="center">D-3</div>
+<hr>
+
+
+   80 - Future Expansion            A0 - LDY - Immediate
+   81 - STA - (Indirect,X)           Al - LDA - (Indirect,X)
+   82 - Future Expansion            A2 - LDX - Immediate
+   83 - Future Expansion            A3 - Future Expansion
+   84 - STY - Zero Page             A4 - LDY - Zero Page
+   85 - STA - Zero Page             A5 - LDA - Zero Page
+   86 - STX - Zero Page             A6 - LDX - Zero Page
+   87 - Future Expansion            A7 - Future Expansion
+   88 - DEY                         A8 - TAY
+   89 - Future Expansion            A9 - LDA - Immediate
+   8A - TXA                         A0 - TAX
+   8B - Future Expansion            AD - Future Expansion
+   8C - STY - Absolute              AC - LDY - Absolute
+   8D - STA - Absolute              AD - LDA - Absolute
+   8E - STX - Absolute              AE - LDX - Absolute
+   8F - Future Expansion            AF - Future Expansion
+   98 - BCC                         B0 - BCS
+   91 - STA - (Indirect),Y          B1 - LDA - (Indirect),Y
+   92 - Future Expansion            B2 - Future Expansion
+   93 - Future Expansion            B3 - Future Expansion
+   94 - STY - Zero Page,X           B4 - LDY - Zero Page,X
+   95 - STA - Zero Page,X           B5 - LDA - Zero Page,X
+   96 - STX - Zero Page,Y           B6 - LDX - Zero Page,Y
+   97 - Future Expansion            B7 - Future Expansion
+   98 - TYA                         B8 - CLV
+   99 - STA - Absolute,Y            B9 - LDA - Absolute,Y
+   9A - TXS                         BA - TSX
+   98 - Future Expansion            BB - Future Expansion
+   9C - Future Expansion            BC - LDY - Absolute,X
+   9D - STA - Absolute,X            BD - LDA - Absolute,X
+   9E - Future Expansion            BE - LDX - Absolute,Y
+   9F - Future Expansion            BF - Future Expansion
+
+
+<div align="center">D-4</div>
+<hr>
+
+
+   C0 - CPY - Immediate             E0 - CPX - Immediate
+   Cl - CMP - (Indirect,X)          El - SBC - (Indirect,X)
+   C2 - Future Expansion            E2 - Future Expansion
+   C3 - Future Expansion            E3 - Future Expansion
+   C4 - CPY - Zero Page             E4 - CPX - Zero Page
+   C5 - CMP - Zero Page             E5 - SBC - Zero Page
+   C6 - DEC - Zero Page             E6 - INC - Zero Page
+   C7 - Future Expansion            E7 - Future Expansion
+   CS - INY                         E5 - INX
+   C9 - CMP - Immediate             E9 - SBC - Immediate
+   CA - DEX                         EA - NOP
+   CB - Future Expansion            EB - Future Expansion
+   CC - CPY - Absolute              EC - CPX - Absolute
+   CD - CMP - Absolute              ED - SBC - Absolute
+   CE - DEC - Absolute              EE - INC - Absolute
+   CF - Future Expansion            EF - Future Expansion
+   D0 - BNE                         F0 - BEQ
+   Dl - CMP - (Indirect),Y          Fl - SBC - (Indirect),Y
+   D2 - Future Expansion            F2 - Future Expansion
+   D3 - Future Expansion            F3 - Future Expansion
+   D4 - Future Expansion            F4 - Future Expansion
+   D5 - CMP - Zero Page,X           F5 - SBC - Zero Page,X
+   D6 - DEC - Zero Page,X           F6 - INC - Zero Page,X
+   D7 - Future Expansion            F7 - Future Expansion
+   D8 - CLD                         F8 - SED
+   D9 - CMP - Absolute,Y            F9 - SBC - Absolute,Y
+   DA - Future Expansion            FA - Future Expansion
+   DB - Future Expansion            FB - Future Expansion
+   DC - Future Expansion            FC - Future Expansion
+   DD - CMP - Absolute,X            FD - SBC - Absolute,X
+   DE - DEC - Absolute,X            FE - INC - Absolute,X
+   DF - Future Expansion            FF - Future Expansion
+
+
+<div align="center">D-5
+
+<hr>
+<A NAME="e">
+
+
+
+
+
+
+
+
+
+
+<B>APPENDIX E</B>
+
+
+SUMMARY OF ADDRESSING MODES
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E-1</div><hr>
+<a name="A">
+
+
+          This appendix is to serve the user in providing a reference
+     for the MCS650X addressing modes.  Each mode of address is shown
+     with a symbolic illustration of the bus Status at each cycle
+     during the instruction fetch and execution.  The example number
+     as found in the text is provided for reference purposes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<A NAME="e1">
+
+     <i>E.l IMPLIED ADDRESSING</i>
+
+
+
+     <u>Example 5.3</u>:  <u>Illustration of implied addressing</u>
+
+     Clock
+     <u>Cycle</u>    <u>Address Bus</u>    <u>Program Counter</u>    <u>Data Bus</u>     <u>Comments</u>
+
+       1        PC              PC + 1          OP CODE      Fetch OP CODE
+
+       2        PC + 1          PC + I          New          Ignore New
+                                                OP CODE      OP CODE;
+                                                             Decode Old
+                                                             OP CODE
+
+       3        PC + 1          PC + 2          New          Fetch New
+                                                OP CODE      OP CODE;
+                                                             Execute Old
+                                                             OP CODE
+
+
+
+<div align="center">E-2</div>
+<hr>
+<A NAME="e2">
+
+
+     <i>E. 2 IMMEDIATE ADDRESSING</i>
+
+
+     <u>Example 5.4</u>:  <u>Illustration of immediate addressing</u>
+
+     Clock
+     <u>Cycle</u>    <u>Address Bus</u>    <u>Program Counter</u>    <u>Data Bus</u>     <u>Comments</u>
+
+       1        PC               PC + 1         OP CODE      Fetch OP CODE
+
+       2        PC + 1           PC + 2         Data         Fetch Data,
+                                                             Decode OP CODE
+
+       3        PC + 2           PC + 3         New          Fetch New
+                                                OP CODE      OP CODE,
+                                                             Execute Old
+                                                             OP CODE
+
+
+
+
+
+
+
+
+
+<A NAME="e3">
+
+     <i>E.3 ABSOLUTE ADDRESSING</i>
+
+
+
+     <u>Example 5.5</u>:  <u>Illustration of absolute addressing</u>
+
+     Clock
+     <u>Cycle</u>    <u>Address Bus</u>    <u>Program Counter</u>    <u>Data Bus</u>     <u>Comments</u>
+
+       1       PC                PC + 1         OP CODE      Fetch OP CODE
+
+       2       PC + 1            PC + 2         ADL          Fetch AOL,
+                                                             Decode OP CODE
+
+       3       PC + 2            PC + 3         ADH          Fetch AOH,
+                                                             Retail AOL
+
+       4       AOH, AOL          PC + 3         Data         Fetch Data
+
+       5       PC + 3            PC + 4         New          Fetch New
+                                                OP CODE      OP CODE,
+                                                             Execute Old
+                                                             OP CODE
+
+
+<div align="center">E-3</div>
+<hr>
+<A NAME="e4">
+
+
+     <i>E.4 ZERO PAGE ADDRESSING</i>
+
+
+     <u>Example 5.6</u>: <u>Illustration of zero page addressing</u>
+
+     Clock
+     <u>Cycle</u>    <u>Address Bus</u>   <u>Program Counter</u>     <u>Data Bus</u>     <u>Comments</u>
+
+       1       PC               PC + 1          OP CODE      Fetch OP CODE
+
+       2       PC + 1           PC + 2          ADL          Fetch ADL, De-
+                                                             code OP CODE
+
+       3       00, AOL          PC + 2          Data         Fetch Data
+
+       4       PC + 2           PC + 3          New          Fetch New
+                                                OP CODE      OP CODE, Exe-
+                                                             cute Old
+                                                             OP CODE
+
+
+
+
+
+
+
+<A NAME="e5">
+
+     <i>E.5 RELATIVE ADDRESSING - (Branch Positive, no crossing of page boundaries)</i>
+
+     <u>Example 5.8</u>:  <u>Illustration of relative addressing--branch positive</u>
+                   <u>taken, no crossing of page boundaries</u>
+
+                                         External          Internal
+     <u>Cycle</u>    <u>Address Bus</u>    <u>Data Bus</u>    <u>Operation</u>         <u>Operation</u>
+
+       1        0100         OP CODE     Fetch             Finish Previous Oper-
+                                         OP CODE           ation, Increment Pro-
+                                                           gram Counter to 101
+
+       2        0101         +50         Fetch             Interpret Instruction,
+                                         Offset            Increment Progran
+                                                           Counter to 102
+
+       3        0102         Next        Fetch Next        Check Flags, Add Rela-
+                             OP CODE     OP CODE           tive to PCL, Increment
+                                                           Program Counter to 103
+
+       4        0152         Next        Fetch Next        Transfer Results to
+                             OP CODE     OP CODE           PCL, Increment Program
+                                                           Counter to 153
+
+
+
+<div align="center">E-4</div>
+<hr>
+<A NAME="e6">
+
+
+     <i>E.6 ABSOLUTE INDEXED ADDRESSING - (with page crossing)
+         <small>Step 5 is deleted and the data in step 4 is valid when no page crossing occurs.</small></i>
+
+
+     <u>Example 6.7</u>: <u>Absolute Indexed; With Page Crossing</u>
+
+             Address  Data          External         Internal
+     <u>Cycle</u>   <u>Bus    </u>  <u>Bus </u>          <u>Operation</u>        <u>Operation</u>
+
+       1     0100     OP CODE       Fetch OP CODE    Finish Previous
+                                                     Operation Increment
+                                                     PC to 101
+
+       2     0101     BAL           Fetch BAL        Interpret Instruction
+                                                     Increment PC to 102
+
+       3     0102     BAB           Fetch BAH        Add BAL + Index
+                                                     Increment PC to 103
+
+       4     BAH,BAL  Data          Fetch Data       Add BAH + Carry
+              +X      (Ignore)      (Data is
+                                    ignored)
+
+       5     BAH+1,   Data          Fetch Data
+              BAL+X
+
+       6     0103     Next OP       Fetch Next       Finish Operation
+                      CODE          OP CODE
+
+
+<div align="center">E-5</div>
+<hr>
+<A NAME="e7">
+
+
+     <i>E.7 ZERO PAGE INDEXED ADDRESSING</i>
+
+
+
+     <u>Example 6.8</u>:  <u>Illustration of Zero Page Indexing</u>
+
+              Address     Data          External          Internal
+     <u>Cycle</u>    <u>Bus    </u>     <u>Bus </u>          <u>Operation</u>         <u>Operation</u>
+
+       1      0100        OP CODE       Fetch OP CODE     Finish Previous
+                                                          Operation
+
+       2      0101        BAL           Fetch Base        Interpret Instruct-
+                                        Address Low       ion
+                                         (BAL)
+
+       3      D0,BAL      Data          Fetch             Add: BAL + X
+                          (Dis-         Discarded
+                          carded        Data
+
+       4      00,BAL      Data          Fetch Data
+
+       5      0102        Next OP       Fetch Next OP     Finish Operation
+                          CODE          CODE
+
+
+<div align="center">E-6</div>
+<hr>
+<A NAME="e8">
+
+
+     <i>E.8 INDEXED INDIRECT ADDRESSING</i>
+
+
+     <u>Example 6.10</u>:  <u>Illustration of Indexed Indirect Addressing</u>
+
+             Address Data         External              Internal
+     <u>Cycle</u>   <u>Bus    </u> <u>Bus </u>         <u>Operation</u>             <u>Operation</u>
+
+       1     0100    OP CODE      Fetch OP CODE         Finish Previous
+                                                        Operation
+
+       2     0101    BAL          Fetch BAL             Interpret In-
+                                                        struction
+
+       3     00,BAL  DATA (Dis-   Fetch Discard-        Add BAL + X
+                     carded)      ed DATA
+
+       4     00,BAL  AOL          Fetch ADL             Add 1 to BAL + X
+
+       5     00,BAL  Fetch ADH    Hold ADL
+             + x + l
+
+       6     ADH,ADL DATA         Fetch DATA
+
+       7     0102    Next OP      Fetch Next OP         Finish Operation
+                                   CODE
+
+
+<div align="center">E-7</div>
+<hr>
+<A NAME="e9">
+
+
+     <i>E.9 INDIRECT IVDEXED ADDRESSING (with page crossing)
+         <small>Step 6 is deleted and the data in step 5 is valid when no page crossing occurs.</small></i>
+
+
+     <u>Example 6.12</u>:  <u>Indirect Indexed Addressing (With Page Crossing)</u>
+
+              Address Data             External            Internal
+     <u>Cycle</u>    <u>Bus    </u> <u>Bus </u>             <u>Operation</u>           <u>Operation</u>
+
+       1      0100    OP CODE          Load OP CODE        Finish Previous
+                                                           Operation
+
+       2      0101    IAL              Fetch IAL           Interpret In-
+                                                            struction
+
+       3      00,IAL  BAL              Fetch BAL           Add 1 to IAL
+
+       4      00,IAL  BAH              Fetch BAH           Add BAL to Y
+               +1
+
+       5      BAH,BAL DATA(Dis-        Fetch DATA          Add 1 to BAH
+               + Y     carded)          (Discarded)
+
+       6      BAH + 1 DATA             Fetch Data
+              BAL + Y
+
+       7      0102    Next OP          Fetch Next OP       Finish This
+                       CODE             CODE                Operation
+
+
+<div align="center">E-8
+
+<hr>
+<A NAME="#f">
+
+
+
+
+
+
+<B>APPENDIX F</B>
+
+
+MCS650X
+
+
+PROGRAMMING
+
+
+MODEL
+
+
+
+
+
+
+
+
+F-1</div>
+<hr>
+
+
+<div align="center"><img src="pmpics/pmf2.gif" width="627" height="546">
+
+
+F-2
+
+<hr>
+<A NAME="g">
+
+
+
+
+
+
+
+
+
+<b>APPENDIX G</b>
+
+
+DISCUSSION - INDIRECT ADDRESSING
+
+
+
+
+
+
+
+
+
+
+
+
+G-1</div>
+<hr>
+
+
+          The MCS650X microprocessors have a special form of addressing known
+     as Indirect.  The writeup on Indirect addressing describes the basic
+     operation of Indirect.
+          It is the intent of this discussion to acquaint the user with some
+     of the uses and applications of Indirect addressing.
+          The Indirect address is really an address that would have been coded
+     in line as in the case of Absolute except for the fact that the address
+     is not known at the time the user writes the program.  As has been in-
+     dicated several times in the basic body of the documentation, it is sig-
+     nificantly more efficient with the organization of the MGS65OX to assign
+     addresses and implement them if the addressing structure is known.  How-
+     ever, that is not always possible to do.  For instance, in order to mini-
+     mize the coding of a subroutine or general purpose Set of coding, it is
+     often desirable to work with a range of addressing that is not possible
+     to cover in a normal index, or in the case of subroutine where it is neces-
+     sary for the addresses to be variable depending on which part of the whole
+     program called the address.
+          It is probably this discussion which best amplifies the need for
+     calculated addresses.  It should be fairly obvious to the user that a
+     general purpose subroutine cannot contain the address of the operations.
+     Therefore, instead of having the instruction LDA followed by the value
+     that the programmer wants to load, in a subroutine it may be desirable to
+     do a Load A from a calculated or specified address.
+          The use of the Indirect Addressing Mode is to give the user a loca-
+     tion in Page Zero in which can be put the calculated address.  Then the
+     subroutine instruction can call this calculated address using the form
+     Load A from an address pointed to by the next byte in program sequence.
+     The word "indirect" technically comes from the fact that instead of taking
+     the address which is immediately following the instruction, the next value
+     in program sequence is a pointer to the address.
+          The Indirect pointer will be referred to from now on as IAL, because
+     it is a Zero Page address and, therefore, is a low order byte.  The in-
+     direct instructions are written in the form "Load A" followed by IAL.
+
+
+<div align="center">G-2</div>
+<hr>
+
+
+     IAL points to an address which had been previously stored into Page Zero.
+          This gives the user the flexibility of addressing anywhere in memory
+     with a calculated address.  However, the real value of Indirect is not in
+     just having Indirect but having the ability to have Indirect modified.
+     This is the reason for which indirect indexed instruction is implemented
+     rather than straight indirect.  An example of the indirect indexed in sub-
+     routining is covered in <a href="proman.html#65">Section 6.5</a>, but it should be noted that the in-
+     direct indexed instruction should be used whenever the user does not know
+     the exact address at tine of compilation.  Although there nay be other in-
+     teresting and esoteric uses of the indirect index instruction, this is the
+     most common one.
+
+
+
+
+          The second form of indirect is very powerful for certain types of
+     applications.  <a href="proman.html#110">Chapter 11</a> shows the use of tables which have pointers and
+     the advantage of running down one table of pointers until a match is found
+     and then using the same index to address a second table to perform an opera-
+     tion.  This is the classical stack processor type of architecture but it
+     requires a special discipline at the tine a program is originally defined.
+     Both the indirects require a concept of memory management that is not
+     obvious to the novice programmer.
+          The concept of indexed indirect is that memory has to be viewed as
+     a series of tables, in which access to one set of tables is accomplished
+     by indexing through a list of pointers.  One set of tables might be searched
+     to perform some type of testing or operation.  Then the sane index is then
+     used to process another set of pointers.  This concept is only applicable
+     to operations in which a variety of inputs are being serviced.  A classical
+     application is when several remote devices are being managed by the same
+     control program.  An example might be having three teletypes tied on to
+     a device, each teletype is being manually controlled and can be under con-
+     trol of the user program.  In this type of message handling environment,
+     the control program for the teletypes does nothing more than collect strings
+     of data from the input device and then performs operations on the string
+
+
+<div align="center">G-3</div>
+<hr>
+
+
+     upon seeing a control signal, usually a carriage return in this case of
+     the teletype.  Because any one of the teletypes can he causing any one of
+     the series of operations, this program does not lend itself well to the
+     concept of absolute addressing.  In fact, most of the subroutines which
+     deal with the individual processing should be written address independent.
+     This normally allows the addition of more devices without paying any penal-
+     ty in terms of programming.  Therefore, this is a subroutine or nonabsolute
+     type of operation in which the indirect indexed would not apply because
+     each of the various operations use a function of position.  In other words,
+     one can assign a series of tables that point at the teletype itself; an-
+     other set that points at an outgoing message stream and another set that
+     points to a series of tables which keep the Status of the device.  Each
+     of these pointers is considered to be an individual address at the be-
+     ginning of a string.  Each string is a variable length.  The teletype
+     strings may consist of a three character message followed by a character
+     return or a 40 character message followed by a character return.  In the
+     MCS650x, this system will be implemented by means of developing a series
+     of indirect pointers.  Each teletype will have an indirect pointer.  Its
+     I/O port has another indirect pointer that points at the put-away string,
+     another one that points at the teletype message output string, another one
+     that points at its status table.  If all of the teletypes work this way,
+     it can be seen that the coding to put data into the input message table
+     is the same for all the teletypes and is totally independent of the
+     teletype in which data is being stored.
+          The index register X serves as a control for the tables so that if all
+     tables were sequentially organized, X would point at the proper value for
+     each operation.  A s4mple operation might be:  read teletype three, trans-
+     fer the data to teletype three input register, update teletype three counter,
+     check to see that teletype three is still active, and decide whether or
+     not to return to signal teletype three back.  The coding to perform each
+     of these operations would be exactly the same as coding for teletype two,
+     if the tables were organized such that X was an index register for the
+     pointers.
+          This is the type of string manipulation application for which indexed
+
+
+<div align="center">G-4</div>
+<hr>
+
+
+     indirect was designed and only when a program can be organized for this
+     technique is the indirect used to its maximum potential.  The advantages
+     for organizing for this type of approach when the problem requires string
+     manipulation is significant; the comprehensive I/O program is roughly
+     one half the memory and one fourth the execution time of several other
+     microprocessors which do not have this indexed indirect feature.
+
+
+<div align="center">G-5
+<hr>
+<A NAME="h">
+
+
+
+
+
+
+
+
+<b>APPENDIX H</b>
+
+
+REVIEW OF BINARY
+
+
+AND
+
+
+BINARY CODED DECIMAL
+
+
+ARITHMETIC
+
+
+
+
+
+
+
+
+H-1</div>
+<hr>
+
+
+
+
+
+          The number 1789 is assumed by most people to mean one thousand, seven
+     hundred eighty-nine, or 1 x 10<sup>3</sup> + 7 x 10<sup>2</sup> + 8 x 10<sup>1</sup> + 9 x 10<sup>0</sup>.  However,
+     until the number base is defined, it might mean
+
+                      l x 16<sup>3</sup> + 7 x 16<sup>2</sup> + 8 x 16<sup>1</sup> + 9 x 16<sup>0</sup>
+
+     which is hexadecimal and the form used in the microprocessor.
+          In order to distinguish between numbers on different bases, mathema-
+     ticians usually write 1789<sub>10</sub> or just 1789 for base 10, or decimal, and
+     l789<sub>16</sub> for base 16 for hexadecimal.  Because very few computers or I/O de-
+     vices allow subscripting, all hexadecimal numbers are preceded by a $
+     notation.  Then 1789 means base 10 and $1789 means base 16.  Why hexadeci-
+     mal?  This is a convenient way of representing 2 digits in 8 bits.
+          The MCS650X is a byte-oriented microprocessor which means most opera-
+     tions have 8-bit operations.
+          There are 2 ways to look at 8 bits.  The first is as 8 individual
+     bits in which 00001000 means that bit 3 (bit 7 to 0 representation) is on
+     and all other bits are off or as an 8-bit binary number in which case the
+     value is
+
+     0x 2<sup>7</sup> + 0 x 2<sup>6</sup> + 0 x 2<sup>5</sup> + 0 x 2<sup>4</sup> + l x 2<sup>3</sup> + 0 x 2<sup>2</sup> + 0 x 2<sup>1</sup> + 0 x 2<sup>0</sup> = 8
+     or $08.
+          For logic analysis purposes, each bit is unique, but for arithmetic
+     purposes, the 8 bits are treated as a binary number.
+
+
+<div align="center">H-2</div>
+<hr>
+
+
+     <u>Binary Arithmetic Rules</u>:
+
+                  0 + 0 = 0
+                  0 + 1 = 1
+                  1 + 0 = 1
+                  1 + 1 = 0 with a carry
+
+          Carry occurs when the resulting number is too long for the base.  In
+     decimal,	8 +  4 = 2 + 10.
+     In hexadecimal, $8 + $4 = $C (see hexadecimal details), so that 8 + 4 has
+     a carry in base 10 but not in base 16.
+          Using these rules to add 8 + 2 in binary gives the following:
+
+          00001000     8        1 x 2<sup>3</sup>
+          <u>00000010    +2</u>        <u>1 x 2<sup>1</sup></u>
+          00001010    10        1 x 2<sup>3</sup> + 1 x 2<sup>1</sup>
+
+          Therefore, any number from 0 - 255 may be represented in 8 bits, and
+     binary addition performed using the basic binary add equation,
+     Rj = (A<sub>j</sub> v B<sub>j</sub> v C<sub>j-1</sub>), where, as defined previously, V is notation for
+     Exclusive-Or.
+          In most applications, it is also necessary to subtract.  Subtract
+     operations either require a different hardware implementation or a new way
+     representing numbers.
+          A combination of this is to implement a simple inverter in each bit.
+     This would make
+          00001100    12
+
+          11110011   -12
+
+     However, when subtracting 12 from 12, the result should also be 0.
+
+          00001100   +12
+          <u>11110011   -12</u>
+          11111111     0
+
+     However, if a carry is added to the complemented number:
+
+                 1    Carry
+          00001100    12
+          <u>11110011   -12</u>
+          00000000 =   0
+
+     If, instead of representing -12 as the complement of 12, it is represented
+     as the complement plus carry, the following is obtained:
+
+
+<div align="center">H-3</div>
+<hr>
+
+                     <u>  </u>
+          11110011 = 12
+          <u>       1</u> = Carry
+          11110100 = -12
+          <u>00001100</u>   <u>+12</u>
+          00000000 =   0
+
+     This representation is called <u>two's complement</u> and represents the way that
+     negative numbers are kept in the microcomputer.  Below are examples of
+     negative numbers represented in two's complement form.
+
+          -0 = 00000000
+          -1 = 11111111
+          -2 = 11111110
+          -3 = 11111101
+          -4 = 11111100
+          -5 = 11111011
+          -6 = 11111010
+          -7 = 11111001
+          -8 = 11111000
+          -9 = 11110111
+
+
+
+          Hexadecimal is the representation of numbers to the base 16.  The fol-
+     lowing table shows the advantages of Hex:
+
+                        <u>Hexadecimal</u>     <u>Binary</u>     <u>Decimal</u>
+
+                             0          0000         00
+                             1          0001         01
+                             2          0010         02
+                             3          0011         03
+                             4          0100         04
+                             5          0101         05
+                             6          0110         06
+                             7          0111         07
+                             B          1000         08
+                             9          1001         09
+                             A          1010         10
+                             B          1011         11
+                             C          1100         12
+                             D          1101         13
+                             E          1110         14
+                             F          1111         15
+
+
+<div align="center">H-4</div>
+<hr>
+
+
+          Because 16 is a multiple of 2, hexadecimal is a convenient shorthand
+     for representation of 4 binary digits or bits.  The rules on arithmetic
+     also hold.
+
+                               <u>Binary</u>       <u>Hex</u>
+
+                              0100 1111      4F
+                            + <u>0110 0010</u>    + <u>62</u>
+                              1011 0001      B1
+
+          To take advantage of this shorthand, all addresses in this manual are
+     shown in hexadecimal notation.  It should be noted that the reader should
+     learn to operate i  Hex as soon as possible.  Continual translation back
+     to decimal is both time consuming and error prone.  Working in Hex and
+     binary will quickly force learning of hexadecimal manipulation and the famil-
+     iarity with working with this convenient representation.
+
+
+
+          Although many microcomputer applications can successfully be accom-
+     plished with binary operations, some applications are best performed in
+     decimal.  Although the use of 1 decimal character per byte would be a
+     legitimate way to solve this problem, this is am inefficient use of the cap-
+     ability of the 8-bit byte.
+          The microprocessor allows the use of packed BCD representation.  This
+     representation is, in 4-bit form:
+
+                                     0 = 0000
+                                     1 = 0001
+                                     2 = 0010
+                                     3 = 0011
+                                     4 = 0100
+                                     5 = 0101
+                                     6 = 0110
+                                     7 = 0111
+                                     8 = 1000
+                                     9 = 1001
+
+          In BCD, the number 79 is represented:
+
+                                <u>Binary</u>    <u>BCD</u>   <u>Hex</u>
+
+                               01111001 =  79 =  79
+
+
+
+<div align="center">H-5</div>
+<hr>
+
+
+          The microprocessor automatically takes this into account and corrects
+     for the fact that
+
+                       Decimal	BCD     Hex
+
+                          79   = 01111001    79 = 01111001
+                         +<u>12</u>   = <u>00010010</u>    <u>12</u> = <u>00010010</u>
+                          91   = 10010001    88 = 10001011
+
+          The only difference between Hex and BCD representation is that the
+     microprocessor automatically adjusts for the fact that BCD does not allow
+     for Hex values A - F during add and subtract operations.
+
+
+
+          The offset which follows a branch instruction is in signed two's
+     complement form which means that
+
+                                 $+50 = +80 = 01010000
+                             and $-50 = -80 = <u>10110000</u>
+                                      Proof = 00000000
+
+          The sign for this operation is in bit 7 where an 0 equals positive and
+     a 1 equals negative.
+          This bit is correct for the two9s complement representation but also
+     flags the microprocessor whether to carry or borrow from the address high
+     byte.
+          The following 4 examples represent the combinations of offsets which
+     might occur (all notations are in hexadecimal):
+
+     <u>Example H.4.l</u>:  <u>Forward reference, no page crossing</u>
+
+                              0105                  BNE
+
+                              0106                  +55
+
+                              0107             Next OP CODE
+
+
+          To calculate next instruction if the branch is taken
+
+                            Offset       +55    01010101
+                            Address Low
+                              for next
+                              OP CODE     <u>07</u>    <u>00000111</u>
+                                          5C    01011100
+
+     with no carry, giving 015C as the result.
+
+
+ <div align="center">H-6</div>
+<hr>
+
+
+     <u>Example H.4.2</u>:  <u>Backward reference, no page crossing</u>
+
+                               015A       BNE
+
+                               015B       -55
+
+                               015C       Next OP CODE
+
+
+          To calculate if branch is taken,
+
+                      Offset            -55 = AB = 10101011
+                    + Address Low for
+                        Next OP CODE    <u>+5C</u> = <u>5C</u> = <u>01011100</u>
+                                         07   07   00000111
+
+          The carry is expected because of the negative offset and is ignored,
+     thus giving 0107 as the result.
+
+
+     <u>Example H.4.3</u>:  <u>Backward reference if page boundary crossed</u>
+
+                                 0105     BNE
+
+                                 0106     -55
+
+                                 0107     Next OP CODE
+
+
+          To calculate if branch is taken, first calculate a low byte
+
+                      Offset            -55 = AB = 10101011
+                      Address Low for
+                        Next OP CODE     <u>07</u> = <u>07</u> = <u>00000111</u>
+                                         B2 = B2 = 10110010
+
+          There is no carry from a negative offset; therefore, a carry must be
+     made:
+
+                                   -1 =  -1 = FF = 11111111
+                    + Address High    =  <u>01</u> = <u>D1</u> = <u>00000001</u>
+                                         00   00   00000000
+
+     This gives 00 B2 as a result.
+
+
+     Example H.4.4: Forward reference across page boundary
+
+                                00B0     BNE
+                                00B1     +55
+                                00B2     Next OP CODE
+
+          To calculate next instruction if branch is taken,
+
+
+<div align="center">H-7</div>
+<hr>
+
+
+                                  Offset       55 = 01010101
+                                  Address Low
+                                    for Next
+                                    OP CODE    <u>B2</u> = <u>10110010</u>
+                                               07   00000111
+
+          with carry on positive number.
+
+                                           +1   1 = 00000001
+                                 Address High  <u>00</u> = <u>00000000</u>
+                                                1 = 00000001
+
+          which gives 0107.
+
+
+
+
+
+
+
+<div align="center">H-8</div>
+<hr>
+</pre>
+</TT>
+</ul>
+</body>
+</html>

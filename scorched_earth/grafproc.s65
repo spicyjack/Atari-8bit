@@ -1,0 +1,3006 @@
+ .opt NOLIST
+ .IF *>0	;this is a trick that prevents compiling this file alone
+
+
+xroller ;
+	; now collisions are detected with modified draw routine
+	; therefore YDRAW value must be taken from mountaintable
+	ldy #0
+	moveq.w mountaintable,tempXROLLER
+
+	add.w xdraw,tempXROLLER
+	lda (tempXROLLER),y
+	sta ydraw
+
+	lda vx+3
+	; if horizontal velocity is negative then change the direction
+	bpl PositiveVelocity
+	lda goleft
+	ora #$01
+	sta goleft
+PositiveVelocity
+        ; first we look for the left slope
+        ; then righ slope and set the flag
+        ; $FF - we are in a hole (flighting in missile direction)
+        ; 1 - right, 2 - left
+        moveq.b $ff,HowMuchToFall
+        move.b ydraw,HeightRol
+	moveq.w mountaintable,tempXROLLER
+
+	add.w xdraw,tempXROLLER
+SeekLeft
+	sub.q 1,tempXROLLER
+	lda (tempXROLLER),y    ;fukk! beware of Y value
+	cmp HeightRol
+	bne HowMuchToFallLeft
+	lda tempXROLLER
+	cmp #<mountaintable
+	bne SeekLeft
+	lda tempXROLLER+1
+	cmp #>mountaintable
+	beq GoRightNow
+HowMuchToFallLeft
+	bcs GoRightNow
+	moveq.b 1,HowMuchToFall
+GoRightNow
+	moveq.w mountaintable,tempXROLLER
+	add.w xdraw,tempXROLLER
+SeekRight
+	add.q 1,tempXROLLER
+	lda (tempXROLLER),y
+	cmp HeightRol
+	bne HowMuchToFallRight
+	lda tempXROLLER
+	cmp #<[mountaintable+screenwidth]
+	bne SeekRight
+	lda tempXROLLER+1
+	cmp #>[mountaintable+screenwidth]
+	beq HowMuchToFallKnown
+HowMuchToFallRight
+	; check if up or down
+	bcs HowMuchToFallKnown
+	lda HowMuchToFall
+	bpl ItIsLeftAlready
+	moveq.b 2,HowMuchToFall
+	bne HowMuchToFallKnown
+ItIsLeftAlready
+	moveq.b $ff,HowMuchToFall
+HowMuchToFallKnown
+        lda HowMuchToFall
+        bpl Rollin
+        lda #1
+        clc
+        adc goleft
+        sta HowMuchToFall
+Rollin
+	add.q mountaintable,xdraw,tempXROLLER
+        ldy #0
+        lda (tempXROLLER),y
+	sta HeightRol ; relative point
+
+RollinContinues
+        wait
+        wait
+        ; new point is set
+        add.q mountaintable,xdraw,tempXROLLER
+        ldy #0
+        lda (tempXROLLER),y
+        sta ydraw
+        beq ExplodeNow
+        cmp HeightRol
+        beq UpNotYet
+        bcc ExplodeNow
+UpNotYet
+        sec ;clc
+        sta HeightRol
+        sbc #1
+        sta ydraw
+        ;check tank collision prior to PLOT
+        sty HitFlag
+
+        move.w xdraw,xtraj+1
+        move.w ydraw,ytraj+1
+        jsr CheckCollisionWithTank
+
+        lda HitFlag
+        bne ExplodeNow
+        jsr unPlot
+	; let's go the right direction
+        lda HowMuchToFall
+        cmp #1
+        beq HowMuchToFallRight2
+        sub.q 1,xdraw
+        lda xdraw
+        bne RollinContinues
+        lda xdraw+1
+        lbne RollinContinues
+        beq ExplodeNow
+HowMuchToFallRight2
+        add.q 1,xdraw
+	dcmp xdraw,screenwidth
+        lbne RollinContinues
+ExplodeNow
+	move.w xdraw,xcircle  ; we must store somewhere [BAD]
+	move.b ydraw,ycircle  ; xdraw and ydraw [BAD]
+	moveq.w 0,xdraw
+	moveq.b screenheight-1,ydraw
+	jsr unPlot
+	move.w xcircle,xdraw	;[bad]
+	move.b ycircle,ydraw	;[bad]
+
+	; finally a little explosion
+	jsr CalculateExplosionRange
+	jmp xmissile
+	rts
+; --------------------------------------------------
+ofdirt ;
+; --------------------------------------------------
+; makes dirt on xdraw,ydraw position and of ExplosionRadius height
+	move.w xdraw,xcircle
+	move.b ydraw,ycircle
+	lda #1
+; current dirt width
+	sta magic
+	sta color
+NextRow
+	wait
+	ldy magic
+NextLine
+	lda random
+	and #$01
+	beq DoNotPlot
+	sty magic+1
+	jsr plot
+	ldy magic+1
+DoNotPlot
+	add.q 1,xdraw
+	dey
+	bne NextLine
+	dec ydraw   		; 1 line up
+	lda ydraw
+	cmp #$ff
+	beq EndOfTheDirt	;if horizontal Counter wraps
+	inc magic		; width+2
+	inc magic
+	lda magic
+	sta magic+1 		; just for a second
+	lsr magic+1
+	sec
+	lda xcircle
+	sbc magic+1
+	sta xdraw
+	lda xcircle+1
+	sbc #0
+	sta xdraw+1   ; new starting coordinate in a given row
+	dec ExplosionRadius
+	bne NextRow
+EndOfTheDirt
+	move.w xcircle,xdraw
+	move.b ycircle,ydraw
+	rts
+
+;--------------------------------------------------
+draw ;
+;--------------------------------------------------
+;fxxxing good draw :]
+;creditz to Mr Jankowski / MIM U.W.
+; (xi,yi)-----(xk,yk)
+;20 DX=XK-XI
+;30 DY=YK-YI
+;40 DP=2*DY
+;50 DD=2*(DY-DX)
+;60 DI=2*DY-DX
+;70 REPEAT
+;80   IF DI>=0
+;90     DI=DI+DD
+;100     YI=YI+1
+;110   ELSE
+;120     DI=DI+DP
+;130   ENDIF
+;140   plot XI,YI
+;150   XI=XI+1
+;160 UNTIL XI=XK
+
+
+	; begin: xdraw,ydraw - end: xbyte,ybyte
+	; let's store starting coordinates
+	; will be needed, because everything is calculated relatively
+	moveq.w 0,LineLength
+	move.w xdraw,xtempDRAW
+	move.w ydraw,ytempDRAW
+
+	; if line goes our of the screen we are not drawing it, but...
+
+	dcmp.q xdraw,screenwidth
+	bcs DrawOutOfTheScreen
+	dcmp.q xbyte,screenwidth
+	bcs DrawOutOfTheScreen
+	dcmp.q ydraw,screenheight
+	bcs DrawOutOfTheScreen
+	dcmp.q ybyte,screenheight
+	bcc DrawOnTheScreen
+DrawOutOfTheScreen
+	;jsr DrawJumpPad
+	rts
+DrawOnTheScreen
+	; constant parameters
+	; XI=0 ,YI=0
+	lda #0
+	sta XI
+	sta XI+1
+	sta YI
+	sta YI+1
+
+	; setting the direction controll bits
+	dcmp ydraw,ybyte
+	bcc LineDown
+	; here one line up
+	; we are setting bit 0
+	moveq.b 1,HowToDraw  ;here we can because it's first operation
+	; we are subctracting Yend from Ybegin (reverse order)
+	; DY=YI-YK
+	sub.w ybyte,ydraw,DY
+	jmp CheckDirectionX
+LineDown
+	; one line down here
+	; we are setting bit 0
+	moveq.b 0,HowToDraw  ;here we can because it's first operation
+	; substract Ybegin from Yend (normal order)
+	; DY=YK-YI
+	sub.w ydraw,ybyte,DY
+CheckDirectionX
+	dcmp xdraw,xbyte
+	bcc LineRight
+	; here goes line to the left
+	; we set bit 1
+
+	lda HowToDraw
+	ora #$02
+	sta HowToDraw
+	; substract Xend from Xbegin (reverse)
+	; DX=XI-XK
+	sub.w xbyte,xdraw,DX
+	jmp CheckDirectionFactor
+LineRight
+	; here goes one line to the right
+	; we clear bit 0
+	; we can do nothing because the bit is cleared!
+
+	;lda HowToDraw
+	;and #$FD
+	;sta HowToDraw
+
+	; substracting Xbegin from Xend (normal way)
+	; DX=XK-XI
+	sub.w xdraw,xbyte,DX
+CheckDirectionFactor
+	; sprawdzamy wspolczynnik kierunkowy
+	; here we are checking Direction Factor
+	; I do not know if we are using proper English word
+	; but the meaning is 'a' in y=ax+b
+
+	; lda DX
+	; we already have DX in A
+	dcmp DX,DY
+
+	bcc SwapXY
+	; 'a' factor is fire, so we copy parameters
+	; XK=DX
+	move.w DX,XK
+	; i kasowanie bitu 2
+	; and bit 2 clear
+	; (is not needed because already cleared)
+	;lda HowToDraw
+	;and #$FB
+	;sta HowToDraw
+	jmp LineParametersReady
+SwapXY
+	; not this half of a quarter! - parameters must be swapped
+	; XK=DY
+	; DY=DX
+	; DX=XK  - because DY is there so DY and DX are swapped
+	; YK ... not used
+	move.w DY,XK
+	move.w DX,DY
+	move.w XK,DX
+
+	; and let's set bit 2
+	lda HowToDraw
+	ora #$04
+	sta HowToDraw
+LineParametersReady
+	; let's check if length is not zero
+	lda DX
+	ora DX+1
+	ora DY
+	ora DY+1
+	lbeq EndOfDraw
+
+	; here we have DX,DY,XK and we know which operations
+	; are to be performed with these factors when doing PLOT
+	; (accordingly to given bits of 'HowToDraw')
+	; Now we must calculate DP, DD and DI
+	; DP=2*DY
+	; DD=2*(DY-DX)
+	; DI=2*DY-DX
+
+	move.w DY,DP
+	asl.w DP
+
+	sub.w DX,DY,DD
+	asl.w DD
+
+	move.w DY,DI
+	asl.w DI
+	sub.w DX,DI
+
+DrawLoop
+	; REPEAT
+	;   IF DI>=0
+	lda DI+1
+	bmi DINegative
+	;     DI=DI+DD
+	;     YI=YI+1
+	add.w DD,DI
+	add.q 1,YI
+	jmp drplot
+DINegative
+	;   ELSE
+	;     DI=DI+DP
+	add.w DP,DI
+
+drplot
+	; Our plot that checks how to calculate pixels.
+	; In xtempDRAW and ycircle there are begin coordinates
+	; of our line
+	; First we check the 'a' factor (like in y=ax+b)
+	; If necessary we swap XI and YI
+	; (as we can not change XI and YI we move XI to temp2
+	;  and YI to temp)
+
+
+	lda HowToDraw
+	and #$04
+	bne SwappedXY
+	move.w XI,temp
+	move.w YI,temp2
+	jmp CheckPlotY
+SwappedXY
+	move.w XI,temp2
+	move.w YI,temp
+CheckPlotY
+	lda HowToDraw
+	and #01
+	bne LineGoesUp
+	; here we know that line goes down and we are not changing Y
+	add.w ytempDRAW,temp2,ydraw	; YI
+	jmp CheckPlotX
+LineGoesUp
+	; line goes up here - we are reversing Y
+	sub.w temp2,ytempDRAW,ydraw	; YI
+CheckPlotX
+	lda HowToDraw
+	and #02
+	bne LineGoesLeft
+	; here we know that line goes right and we are not changing X
+	add.w xtempDRAW,temp,xdraw	; XI
+	jmp PutPixelinDraw
+LineGoesLeft
+	; line goes left - we are reversing X
+	sub.w temp,xtempDRAW,xdraw	; XI
+PutPixelinDraw
+	jsr DrawJumpPad
+; end of the special PLOT for DRAW
+
+	; XI=XI+1
+	; UNTIL XI=XK
+	add.q 1,XI
+	dcmp XI,XK
+	lbne DrawLoop
+
+EndOfDraw
+	move.w xtempDRAW,xdraw
+	move.b ytempDRAW,ydraw
+	rts
+
+DrawJumpPad
+	jmp (DrawJumpAddr)
+Drawplot
+	jmp plot
+DrawLen
+	add.q 1,LineLength
+	rts
+DrawCheck
+	lda tracerflag
+	beq notrace
+	jsr plot
+
+notrace
+	lda HitFlag
+	bne StopHitChecking
+
+CheckCollisionDraw
+	; checking collision!
+	lda ydraw+1
+	bne StopHitChecking
+
+	jsr CheckCollisionWithTank
+	lda HitFlag
+	bne StopHitChecking
+
+	move.w xdraw,temp
+	;add.q mountaintable,temp --- it does not work!!!!!!!! and should? OMC ???
+	clc
+	lda temp
+	adc #<mountaintable
+	sta temp
+	lda temp+1
+	adc #>mountaintable
+	sta temp+1
+
+	ldy #0
+	lda ydraw
+	cmp (temp),y
+	bcc StopHitChecking
+
+
+ 	moveq.b 1,HitFlag
+	move.w xdraw,XHit
+	move.w ydraw,YHit
+
+
+StopHitChecking
+	rts
+
+;--------------------------------------------------
+circle ;
+;--------------------------------------------------
+;fxxxing good circle drawing :] Turbo Basic source
+; R=30
+; XC=0:YC=R
+; FX=0:FY=8*R:FS=4*R+3
+; WHILE FX<FY
+;   splot8    //splot8 are eight plotz around the circle
+;   XC=XC+1
+;   FX=FX+8
+;   IF FS>0
+;     FS=FS-FX-4
+;   ELSE
+;     YC=YC-1
+;     FY=FY-8
+;     FS=FS-FX-4+FY
+;   ENDIF
+; WEND
+; splot8
+
+	move.w xdraw,xcircle
+	move.b ydraw,ycircle
+
+	moveq.w 0,xc
+	move.b radius,yc
+	moveq.b 0,fx
+	move.b radius,fy
+	asl FY
+	asl FY
+	move.b FY,FS
+	asl FY
+	clc
+	lda FS
+	adc #3
+	sta FS
+
+circleloop
+	lda FX
+	cmp FY
+	bcs endcircleloop
+	jsr splot8
+	inc XC
+
+	clc
+	lda FX
+	adc #8
+	sta FX
+
+	lda FS
+	beq else01
+	bmi else01
+		sec
+		sbc FX
+		sbc #4
+		sta FS
+	jmp endif01
+else01
+	dec YC
+	sec
+	lda FY
+	sbc #8
+	sta FY
+
+	lda FS
+	sec
+	sbc FX
+	sbc #4
+	clc
+	adc FY
+	sta FS
+endif01
+	jmp circleloop
+endcircleloop
+
+	jsr splot8
+
+	move.w xcircle,xdraw
+	move.b ycircle,ydraw
+	rts
+;----
+splot8
+; plot xcircle+XC,ycircle+YC
+; plot xcircle+XC,ycircle-YC
+; plot xcircle-XC,ycircle-YC
+; plot xcircle-XC,ycircle+YC
+
+; plot xcircle+YC,ycircle+XC
+; plot xcircle+YC,ycircle-XC
+; plot xcircle-YC,ycircle-XC
+; plot xcircle-YC,ycircle+XC
+
+	clc
+	lda xcircle
+	adc XC
+	sta xdraw
+	lda xcircle+1
+	adc #0
+	sta xdraw+1
+	;clc
+	lda ycircle
+	adc YC
+	sta ydraw
+	sta tempcir
+	jsr plot
+
+	sec
+	lda ycircle
+	sbc YC
+	sta ydraw
+	jsr plot
+
+	sec
+	lda xcircle
+	sbc XC
+	sta xdraw
+	lda xcircle+1
+	sbc #0
+	sta xdraw+1
+	jsr plot
+
+	lda tempcir
+	sta ydraw
+	jsr plot
+;---
+	clc
+	lda xcircle
+	adc yC
+	sta xdraw
+	lda xcircle+1
+	adc #0
+	sta xdraw+1
+	;clc
+	lda ycircle
+	adc xC
+	sta ydraw
+	sta tempcir
+	jsr plot
+
+	sec
+	lda ycircle
+	sbc xC
+	sta ydraw
+	jsr plot
+
+	sec
+	lda xcircle
+	sbc yC
+	sta xdraw
+	lda xcircle+1
+	sbc #0
+	sta xdraw+1
+	jsr plot
+
+	lda tempcir
+	sta ydraw
+	jsr plot
+
+	RTS
+
+
+;--------------------------------------------------
+ReleaseKey
+;--------------------------------------------------
+	lda SKSTAT
+	cmp #$ff
+	beq KeyIsReleased
+	cmp #$f7
+	bne ReleaseKey
+KeyIsReleased
+	rts
+
+
+
+
+
+
+
+
+;--------------------------------------------------
+BeforeFire ;TankNr (byte)
+;--------------------------------------------------
+;this nice routine makes the whole shooting
+;preparation: aiming and displaying
+;angle and shooting force values
+;
+
+;first, get current parameters (angle+force)
+;for an active tank and display them
+;(these values are taken from the previous round)
+
+
+
+	ldx TankNr
+
+	;Checking the maximal force
+	lda MaxEnergyTableH,x
+	cmp EnergyTableH,x
+	bne ContinueToCheckMaxForce2
+	lda MaxEnergyTableL,x
+	cmp EnergyTableL,x
+ContinueToCheckMaxForce2
+	bcs skip15
+
+	lda MaxEnergyTableH,x
+	sta EnergyTableH,x
+	lda MaxEnergyTableL,x
+	sta EnergyTableL,x
+
+skip15
+	jsr DisplayingSymbols ;all digital values like force, angle, wind, etc.
+    	jsr PutTankNameOnScreen
+
+    	jsr DrawTankNr
+
+	wait	; best after drawing a tank
+	;wait
+
+
+;keyboard reading
+; KBCODE keeps code of last keybi
+; SKSTAT 	$ff - nothing pressed
+;		$FB - any key
+;		$f7 - shift
+;		$f3 - shift+key
+
+notpressed
+	lda SKSTAT
+	cmp #$ff
+	beq notpressed
+	cmp #$f7
+	beq notpressed
+
+
+	lda kbcode
+	and #$Bf
+	cmp #$8e
+	beq CTRLPressedUp
+	cmp #$8f
+	lbeq CTRLPressedDown
+	cmp #$ac
+	lbeq CTRLPressedTAB
+
+	and #$3f ;CTRL and SHIFT ellimination
+
+	cmp #$e
+	beq pressedUp
+	cmp #$f
+	beq pressedDown
+	cmp #$6
+	lbeq pressedLeft
+	cmp #$7
+	lbeq pressedRight
+	cmp #$21
+	lbeq pressedSpace
+	cmp #$2c
+	lbeq pressedTAB
+
+
+	jmp notpressed
+;
+pressedUp
+	;force increaseeee!
+	ldx TankNr
+	inc EnergyTableL,x
+	bne CheckingMaxForce
+	inc EnergyTableH,x
+CheckingMaxForce
+	lda MaxEnergyTableH,x
+	cmp EnergyTableH,x
+	bne FurtherCheckMaxForce
+	lda MaxEnergyTableL,x
+	cmp EnergyTableL,x
+FurtherCheckMaxForce
+	lbcs BeforeFire
+
+	lda MaxEnergyTableH,x
+	sta EnergyTableH,x
+	lda MaxEnergyTableL,x
+	sta EnergyTableL,x
+
+	jmp BeforeFire
+
+CTRLPressedUp
+	ldx TankNr
+	lda EnergyTableL,x
+	clc
+	adc #10
+	sta EnergyTableL,x
+	bcc CheckingMaxForce
+	inc EnergyTableH,x
+	jmp CheckingMaxForce
+
+
+pressedDown
+	ldx TankNr
+	dec EnergyTableL,x
+	lda EnergyTableL,x
+	cmp #$ff
+	bne skip04
+	dec EnergyTableH,x
+	bpl skip04
+ForceGoesZero
+	lda #0
+	sta EnergyTableH,x
+	sta EnergyTableL,x
+skip04
+	jmp BeforeFire
+
+CTRLPressedDown
+	ldx TankNr
+	sec
+	lda EnergyTableL,x
+	sbc #10
+	sta EnergyTableL,x
+	lbcs BeforeFire
+	dec EnergyTableH,x
+	bmi ForceGoesZero
+	jmp BeforeFire
+
+pressedLeft
+	ldx TankNr
+	dec AngleTable,x
+	lda AngleTable,x
+	cmp #$ff	; if angle goes through 0 we clear the barrel
+	bne NotThrough90DegreesLeft
+    	moveq.b $2e,CharCode
+	jsr drawtankNrX
+NotThrough90DegreesLeft
+	cmp #[255-91]
+	lbne BeforeFire
+	lda #90
+	sta AngleTable,x
+	jmp BeforeFire
+
+pressedRight
+	ldx TankNr
+	INC AngleTable,x
+	lda AngleTable,x
+	bne NotThrough90DegreesRight
+	moveq.b $30,CharCode ; if angle goes through 0 we clear the barrel
+	jsr drawtankNrX
+NotThrough90DegreesRight
+	cmp #91
+	lbne BeforeFire
+	lda #[255-90]
+	sta AngleTable,x
+	jmp BeforeFire
+
+pressedTAB
+	ldx TankNr
+	inc ActiveWeapon,x
+	lda ActiveWeapon,x
+	cmp #$30 ; number of offensive weapons
+	bne skip14
+	lda #0
+	sta ActiveWeapon,x
+skip14
+	lda ActiveWeapon,x
+	jsr HowManyBullets ; and we have qty of owned shells. Ufff....
+ 	beq pressedTAB
+ 	jsr ReleaseKey
+	jmp BeforeFire
+
+CTRLpressedTAB
+	ldx TankNr
+	dec ActiveWeapon,x
+	bpl skip14CT
+	lda #$2f ; the last possible offensive weapon
+	sta ActiveWeapon,x
+skip14CT
+	lda ActiveWeapon,x
+	jsr HowManyBullets ; and we have qty of owned shells. Ufff....
+ 	beq CTRLpressedTAB
+ 	jsr ReleaseKey
+	jmp BeforeFire
+
+
+pressedSpace
+	;=================================
+	;we shoot here!!!
+	RTS
+
+
+;--------------------------------------------------
+Shoot ;TankNr (byte)
+;--------------------------------------------------
+;it looks like this routine is too big -
+;- more and more functions were being added...
+;good idea would be to rewrite it completely
+;with much more separate blocks, but you know -
+;- do not touch it if it works...
+
+;
+;the latest addition to this routine is
+;displaying offensive texts!
+
+
+
+RandomizeOffensiveText
+	lda random
+	cmp NumberOfOffensiveTexts
+	bcs RandomizeOffensiveText
+
+	sta TextNumberOff
+	ldy TankNr
+	moveq.b 1,plot4x4color
+	jsr DisplayOffensiveTextNr
+
+
+
+
+
+	ldx TankNr
+	lda ActiveWeapon,x
+	cmp #$20	; laser
+	bne NotStrongShoot
+	moveq.b 0,color
+	lda #7
+	sta Force
+	sta Force+1
+	bne AfterStrongShoot
+NotStrongShoot
+	lda EnergyTableL,x
+	sta Force
+	lda EnergyTableH,x
+	sta Force+1
+AfterStrongShoot
+	lda #$0
+	sta Force+2
+	lda AngleTable,x
+	sta Angle
+
+
+	lda #0
+	sta xtraj
+	sta ytraj
+
+	; Shoots tank nr X !!! :)
+	;ldx TankNr
+	lda xtankstableL,x
+	sta xtraj+1
+	lda xtankstableH,x
+	sta xtraj+2
+	lda ytankstable,x
+	sta ytraj+1
+	lda #$00
+	sta ytraj+2
+
+	; correction of the starting coordinates of bullet
+	; to start where the tank's barrel ends
+	; (without it bullet would go from the left lower corner of the tank)
+	ldy Angle
+	clc
+	lda xtraj+1
+	adc EndOfTheBarrelX,y   ; correction of X
+	;adc #4
+	sta xtraj+1
+	lda xtraj+2
+	adc #0
+	sta xtraj+2
+	sec
+	lda ytraj+1
+	sbc EndOfTheBarrelY,y   ; correction of Y
+	;sbc #7
+	sta ytraj+1
+	lda ytraj+2
+	sbc #0
+	sta ytraj+2
+
+	ldy #100
+
+	jsr Flight
+	moveq.b 1,color
+	;jsr ReleaseKey
+	rts
+
+
+;--------------------------------------------------
+DecreaseWeapon
+; in: A <-- Weapon number, TankNr
+; decreases 1 bullet from a weapon(A) of tank(TankNr)
+;--------------------------------------------------
+	jsr HowManyBullets
+	sec
+	sbc #1
+	sta (temp),y ; we have good values after HowManyBullets
+	rts
+
+;--------------------------------------------------
+HowManyBullets
+; in: A <-- Weapon number, TankNr
+; out: A <-- How many bullets in the weapon
+;Ile broni nr w akumulatorze ma czolg TankNr, Result w A
+; how many bullets weapon(a) of tank(TankNr) has
+;--------------------------------------------------
+
+	pha
+	moveq.b 0,temp+1
+	ldx TankNr
+	stx temp
+		; times 64 (because this is the length of the table with weapons)
+	ldy #5	; Rotate 6 times
+Rotate06
+	asl.w temp
+	dey
+	bpl Rotate06
+
+	add.q TanksWeapon1,temp
+
+	pla
+	tay ;ldy #$35	; parachute
+	lda (temp),y  ; and we have number of bullets in A
+
+	rts
+
+;--------------------------------------------------
+TankFalls ;
+;--------------------------------------------------
+	lda #0
+	sta PreviousFall
+	sta EndOfTheFallFlag
+	sta Parachute
+
+	; let's check if the given tank has got the parachute
+	lda #$35	; parachute
+	jsr HowManyBullets
+	beq TankFallsX
+	inc Parachute
+TankFallsX
+	; coordinates of the first pixel under the tank
+	ldx TankNr
+	lda XtankstableL,x
+	sta xdraw
+	lda XtankstableH,x
+	sta xdraw+1
+	lda Ytankstable,x
+	clc
+	adc #1 ; in this point the comment helped us! For the very first
+	       ; time in our lives! Tada! It opens a new chapter!!!
+	sta ydraw
+	;
+	lda #08
+	sta mask2  ; Loop Counter
+ByteBelowTank
+	jsr point
+	beq EmptyPoint2
+	sec
+	bcs ROLPoint2
+EmptyPoint2
+	clc
+ROLPoint2
+	rol mask1
+	add.q 1,xdraw
+	dec mask2
+	bne ByteBelowTank
+	ldx mask1
+	lda WhereToSlideTable,x
+	sta IfFallDown  ; taking directions of falling down from the table
+	bne ItStillFalls
+	; Tank falling down already finished, but it is not sure that
+	; the horizontal coordinate is even.
+	; If it is odd then it must be corrected because otherwise
+	; P/M graphics background would not look OK
+	ldx TankNr
+	lda XtanksTableL,x
+	and #$01
+	lbeq EndOfFall ; if it is even then it is the end
+	; and if not, we push it one pixel the way it was falling before
+	lda PreviousFall
+	sta IfFallDown
+	inc EndOfTheFallFlag ; because after this correction is shouldn't fall anymore
+
+; we have 3 bits: 0 - go down, 1 - go right, 2 - go left
+;---
+ItStillFalls
+	lda Parachute
+	and #1
+	bne ParachutePresent
+	; decreasing energy - if the vertical fall, substract 2
+	; and if at an angle then substract 1
+	ldy #1	; how much energy to substract
+	lda IfFallDown
+	and #1
+	beq NoFallingDown
+	ldx TankNr
+	jsr DecreaseEnergyX
+	lda IfFallDown
+	and #6
+	bne FallDiagonally
+	ldx TankNr
+	jsr DecreaseEnergyX
+FallDiagonally
+NoFallingDown
+ParachutePresent
+	; we must set flag meaning that the tank was falling down
+	; because later maybe the number of parachutes will decrease
+	; (if there were parachutes and they were ON)
+
+	lda Parachute
+	ora #2	; we set bit nr 1 (nr 0 means that parachute is present)
+	sta Parachute
+
+	; storing last direction of falling
+	; (it is not necessarily the direction from the previous
+	; iteraction, so we must check directional bits before storing)
+	lda IfFallDown
+	and #$06
+	beq FallStraightDown
+	sta PreviousFall
+FallStraightDown
+	lda Parachute
+	and #01
+	beq RapidFalling
+	wait
+RapidFalling
+
+	; we finish falling down if the tank reached the edge of the screen
+	; but if it falls straight down or the other way than the edge,
+	; then continue falling!
+	ldx TankNr
+	lda XtanksTableL,x
+	bne NotLeftEdge
+	lda XtanksTableH,x
+	bne NotLeftEdge
+	lda IfFallDown
+	and #$04	; check if it does not fall left
+	lbne EndOfFall 	; if so then maybe we finish
+NotLeftEdge
+	clc
+	lda XtanksTableL,x
+	adc #$08	; we'll check right side of the char
+	sta temp
+	lda XtanksTableH,x
+	adc #0
+	sta temp+1
+	dcmp.q temp,screenwidth
+	bne NotRightEdge
+	lda IfFallDown
+	and #$02	; check if it does not fall right
+	lbne EndOfFall 	; if so then maybe we finish
+NotRightEdge
+	; clear previous position
+	moveq.b 1,Erase
+	jsr DrawTankNr
+	; and the parachute (if present)
+	lda Parachute
+	and #01
+	beq DoNotClearParachute
+	; here we clear the parachute
+	ldx TankNr
+	lda #$34
+	sta CharCode
+	lda Ytankstable,x
+	sec
+	sbc #8
+	sta ydraw
+	lda XtanksTableL,x
+	sta xdraw
+	lda XtanksTableH,x
+	sta xdraw+1
+	jsr TypeChar
+DoNotClearParachute
+	moveq.b 0,Erase
+	ldx TankNr
+	lsr IfFallDown	; bit nr 0 (down)
+	bcc DoesNotFallDown
+	; tank is falling down
+	lda Ytankstable,x
+	clc
+	adc #1
+	sta Ytankstable,x
+DoesNotFallDown
+	lsr IfFallDown	; bit nr 1 (right)
+	bcc DoesNotFallLeft
+	; tank is falling left
+	clc
+	lda XtankstableL,x
+	adc #1
+	sta XtankstableL,x
+	lda XtankstableH,x
+	adc #0
+	sta XtankstableH,x
+DoesNotFallLeft
+	lsr IfFallDown	; bit nr 2 (left)
+	bcc DoesNotFallRight
+	; tank is falling right
+	sec
+	lda XtankstableL,x
+	sbc #1
+	sta XtankstableL,x
+	lda XtankstableH,x
+	sbc #0
+	sta XtankstableH,x
+DoesNotFallRight
+	jsr DrawTankNr
+
+	; checking is parachute present and if so, draw it
+	lda Parachute
+	and #01
+	beq DoNotDrawParachute
+
+	; here we draw parachute
+	ldx TankNr
+	lda #$34
+	sta CharCode
+	lda Ytankstable,x
+	sec
+	sbc #8
+	sta ydraw
+	lda XtanksTableL,x
+	sta xdraw
+	lda XtanksTableH,x
+	sta xdraw+1
+	jsr TypeChar
+DoNotDrawParachute
+	lda EndOfTheFallFlag
+	lbeq TankFallsX
+
+EndOfFall
+	jsr DrawTankNr
+
+	; if tank was falling down having parachute,
+	; we must deduct one parachute
+	lda Parachute
+	cmp #$03 ; was falling down and the parachute
+	bne ThereWasNoParachute
+	; first we clear parachute on the screen
+	moveq.b 1,Erase
+	ldx TankNr
+	lda #$34
+	sta CharCode
+	lda Ytankstable,x
+	sec
+	sbc #8
+	sta ydraw
+	lda XtanksTableL,x
+	sta xdraw
+	lda XtanksTableH,x
+	sta xdraw+1
+	jsr TypeChar
+	moveq.b 0,Erase
+	; now we can deduct one parachute from the list of weapons
+
+	lda #$35	; parachute
+	jsr DecreaseWeapon
+ThereWasNoParachute
+        rts
+
+;--------------------------------------------------
+Flight ;Force(byte.byte), Angle(byte), Wind(.byte) 128=0, 255=maxright, 0=maxleft
+;--------------------------------------------------
+
+;g=-0.1
+;vx=Force*sin(Angle)
+;vy=Force*cos(Angle)
+;
+;:begin
+;ytraj=ytray-vy
+;vy=vy-g
+;xtraj=xtraj+vx - without Wind
+;vx=vx+Wind (Wind is a small fraction)
+;plot xtraj,ytraj - there is clearing in plot
+;goto begin
+
+	move.w ytraj+1,Ytrajold+1
+	move.w xtraj+1,Xtrajold+1
+	moveq.w DrawCheck,DrawJumpAddr
+
+	lda #0		;vx calculation
+	sta Result
+	sta Result+1
+	sta Result+2
+	sta HitFlag
+	sta xdraw
+	sta xdraw+1
+	sta ydraw
+	sta ydraw+1
+
+
+	asl.w Force	;Force=Force*4 ... *2
+	;asl.w Force
+
+	;sin(Angle)
+	ldx Angle
+	stx LeapFrogAngle ; we will need it later
+
+	;Angle works like this:
+	;0 'degrees' is sraight up
+	;90 'degrees' is horizontally right
+	;255 is straight up (same as 0)
+	;255-90 (165) horizontally left
+
+	bpl FlightRight
+
+			;and if the highest bit is set then
+			;Flight to LEFT
+			;calculate Angle with this formula:
+			;Angle=90-(Angle-165)
+
+	sec
+	txa
+	sbc #165	;(Angle-165)
+	sta temp	;dirty trick with selfmodifying code [REMOVED]
+	lda #90		;
+	sbc temp	;90-(Angle-165)
+			;and we have rady angle here ... and we go LEFT!
+	tax
+	sta Angle
+	moveq.b 1,goleft
+			; and now we contine as if nothing happened
+			; (but we have goleft set to 1!!!)
+	bne dontzerogoleft
+
+FlightRight
+	moveq.b 0,goleft
+
+dontzerogoleft
+
+	lda sintable,x 	;sin(Angle)
+	sta Multiplee	;sin(Angle)*Force
+	move.w Force,Multiplier
+	lda #$0
+	sta Multiplier+2
+	ldx #8
+MultiplyLoop
+	ror Multiplee
+	bcc DoNotAdd
+	clc
+	lda Multiplier
+	adc Result
+	sta Result
+	lda Multiplier+1
+	adc Result+1
+	sta Result+1
+	lda Multiplier+2
+	adc Result+2
+	sta Result+2
+DoNotAdd
+	;clc ;carry always cleared here (anyway we hope so :)
+	rol Multiplier
+	rol Multiplier+1
+	rol Multiplier+2
+	dex
+	bne MultiplyLoop
+	; here in Result there is a number xxxx.yyy = sin(Angle)*Force
+
+	lda Result	;vx=sin(Angle)*Force
+	sta vx
+	lda Result+1
+	sta vx+1
+	lda Result+2
+	sta vx+2
+	moveq.b 0,vx+3
+
+
+;======vy
+	lda #0		;cos(Angle)
+	sta Result
+	sta Result+1
+	sta Result+2
+
+;--
+	ldx Angle
+	lda costable,x
+
+	sta Multiplee	;cos(Angle)*Force
+	move.w Force,Multiplier
+	lda #$0
+	sta Multiplier+2
+	ldx #8
+MultiplyLoopY
+	ror Multiplee
+	bcc DoNotAddY
+	clc
+	lda Multiplier
+	adc Result
+	sta Result
+	lda Multiplier+1
+	adc Result+1
+	sta Result+1
+	lda Multiplier+2
+	adc Result+2
+	sta Result+2
+DoNotAddY
+	;clc ;carry always cleared here (anyway we hope so :)
+	rol Multiplier
+	rol Multiplier+1
+	rol Multiplier+2
+	dex
+	bne MultiplyLoopY
+	; here in Result there is a number xxxx.yyy=cos(Angle)*Force
+
+	lda Result	;vy=cos(Angle)*Force
+	sta vy
+	lda Result+1
+	sta vy+1
+	lda Result+2
+	sta vy+2
+	moveq.b 0,vy+3
+
+Loopi
+	;ytraj=ytraj-vy (skipping least significant byte of vy)
+	sec
+	lda ytraj
+	sbc vy+1
+	sta ytraj
+	lda ytraj+1
+	sbc vy+2
+	sta ytraj+1
+	lda ytraj+2
+	sbc vy+3
+	sta ytraj+2
+
+	;vy=vy-g (again without least significant byte of vy)
+	sec
+	lda vy+1
+	sbc gravity
+	sta vy+1
+	lda vy+2
+	sbc #0
+	sta vy+2
+	lda vy+3
+	sbc #0
+	sta vy+3
+	bpl StillUp
+	; where we know that the bullet starts to fall down
+	; we check if it is MIRV and if so, jump to MIRV routine
+	ldx TankNr
+        lda ActiveWeapon,x
+	cmp #6	; MIRV
+	lbeq MIRVdownLoop
+StillUp
+	lda goleft
+	bne FlightLeft
+
+	clc	;xtraj=xtraj+vx (skipping least significant byte of vx)
+	lda xtraj	;here of course Fight to right
+	adc vx+1
+	sta xtraj
+	lda xtraj+1
+	adc vx+2
+	sta xtraj+1
+	lda xtraj+2
+	adc vx+3
+	sta xtraj+2
+	jmp skip07 ;skipping substracting for Flight to left
+
+FlightLeft
+	sec	;xtraj=xtraj-vx (skipping least significant byte of vx)
+	lda xtraj	;here of course Fight to left
+	sbc vx+1
+	sta xtraj
+	lda xtraj+1
+	sbc vx+2
+	sta xtraj+1
+	lda xtraj+2
+	sbc vx+3
+	sta xtraj+2
+
+
+skip07
+	;vx=vx-Wind (also without least significan byte of vx)
+
+	lda goleft
+	bne FlightsLeft ;blow on bullet flighting left
+	lda WindOrientation
+	bne WindToLeft
+	beq LWindToLeft
+FlightsLeft
+	lda WindOrientation
+	beq LWindToRight
+LWindToLeft
+
+	; here Wind to right, bullet goes right as well, so vx=vx+Wind
+	; here Wind to left, bullet goes left as well, so vx=vx+Wind
+	clc
+	lda vx
+	adc Wind
+	sta vx
+	lda vx+1
+	adc Wind+1
+	sta vx+1
+	lda vx+2
+	adc #0
+	sta vx+2
+	lda vx+3
+	adc #0
+	sta vx+3
+	Jmp skip08
+WindToLeft
+LWindToRight
+
+	;Wind to left, bullet right, so vx=vx-Wind
+	;Wind to right, bullet left, so vx=vx-Wind
+	sec
+	lda vx
+	sbc Wind
+	sta vx
+	lda vx+1
+	sbc Wind+1
+	sta vx+1
+	lda vx+2
+	sbc #0
+	sta vx+2
+	lda vx+3
+	sbc #0
+	sta vx+3
+skip08
+	move.w xtrajold+1,xdraw
+	move.w ytrajold+1,ydraw
+	move.w xtraj+1,xbyte
+	move.w ytraj+1,ybyte
+	jsr draw
+	;key
+	move.w xtraj+1,XtrajOld+1
+	move.w ytraj+1,YtrajOld+1
+
+	lda tracerflag
+	bne nowait
+	lda color
+	beq nowait
+	;wait
+	;this is where program slows down the flight of a missile
+	;possibly it is too slow to wait till next frame...
+	;we will see.
+	;---2003-08-01 yes, it is too slow!!! shorter delay
+	;              must be here like few sta wsync's
+	; half a frame would be the best...
+	ldx #70
+DelayLoop
+	sta wsync
+	dex
+	bne DelayLoop
+
+nowait
+	lda HitFlag
+	bne Hit
+
+	dcmp.q ytraj+1,screenheight
+	bcc YTrayLowerThanScreenHeight
+	lda ytraj+2
+	bpl EndOfFlight
+
+YTrayLowerThanScreenHeight
+
+SkipCollisionCheck
+
+	move.w xtraj+1,xdraw
+	move.w ytraj+1,ydraw
+
+	lda tracerflag
+	bne NoUnPlot
+
+	jsr UnPlot
+
+	jsr PlotPointer
+nounPlot
+	jmp Loopi
+
+Hit
+	move.w XHit,xdraw
+	move.w YHit,ydraw
+
+	jsr unPlot
+EndOfFlight
+       	moveq.w LineOdd+40,PositionPointer
+	move.w xdraw,xcircle  ; we must store for a little while
+	move.b ydraw,ycircle  ; xdraw and ydraw
+	moveq.w 0,xdraw
+	moveq.b screenheight-1,ydraw
+	jsr unPlot
+	move.w xcircle,xdraw
+	move.b ycircle,ydraw
+
+    	rts
+
+; -------------------------------------------------
+MIRVdownLoop
+; MIRV loop - here mirv bullets fall down
+; -------------------------------------------------
+; copy Flight parameters to the table
+	ldx #4
+MIRVcopyParameters
+	lda xtraj
+	sta xtraj00,x
+	lda xtraj+1
+	sta xtraj01,x
+	lda xtraj+2
+	sta xtraj02,x
+	lda vx
+	sta vx00,x
+	lda vx+1
+	sta vx01,x
+	lda vx+2
+	sta vx02,x
+	lda vx+3
+	sta vx03,x
+	lda #0
+	sta MirvDown,x
+	dex
+	bpl MIRVcopyParameters
+; modification (to make bullets "split away" and go different directions)
+; bullet indexed 0 is in the middle
+
+; bullet 1
+	clc
+	lda vx+1
+	adc #100
+	sta vx01+1
+	lda vx+2
+	adc #0
+	sta vx02+1
+	lda vx+3
+	adc #0
+	sta vx03+1
+; bullet 2
+	sec
+	lda vx+1
+	sbc #100
+	sta vx01+2
+	lda vx+2
+	sbc #0
+	sta vx02+2
+	lda vx+3
+	sbc #0
+	sta vx03+2
+; bullet 3
+	clc
+	lda vx+1
+	adc #200
+	sta vx01+3
+	lda vx+2
+	adc #0
+	sta vx02+3
+	lda vx+3
+	adc #0
+	sta vx03+3
+; bullet 4
+	sec
+	lda vx+1
+	sbc #200
+	sta vx01+4
+	lda vx+2
+	sbc #0
+	sta vx02+4
+	lda vx+3
+	sbc #0
+	sta vx03+4
+
+	; clearing ranges of soil down registers
+	moveq.w screenwidth,RangeLeft
+	lda #0
+	sta RangeRight
+	sta RangeRight+1
+
+	ldx #$FF	; it will turn 0 in a moment anyway
+	stx MirvMissileCounter
+mrLoopi
+	inc MirvMissileCounter
+	lda MirvMissileCounter
+	cmp #5
+	bne mrLoopix
+	moveq.b 0,MirvMissileCounter
+mrLoopix
+	ldx MirvMissileCounter
+	; Y changes only for bullet number 0
+	; because rest of the bullets have the same Y (height)
+
+	bne MIRVdoNotChangeY
+	; Y is the same for all falling bullets
+	;ytraj=ytraj-vy (skipping least significant byte of vy)
+	sec
+	lda ytraj
+	sbc vy+1
+	sta ytraj
+	lda ytraj+1
+	sbc vy+2
+	sta ytraj+1
+	lda ytraj+2
+	sbc vy+3
+	sta ytraj+2
+
+	;vy=vy-g (also without least significan byte of vy)
+	sec
+	lda vy+1
+	sbc gravity
+	sta vy+1
+	lda vy+2
+	sbc #0
+	sta vy+2
+	lda vy+3
+	sbc #0
+	sta vy+3
+
+	; 3 waits for 5 bullets (will be faster)
+	wait
+	;wait
+	wait
+
+MIRVdoNotChangeY
+
+	lda MirvDown,x	; if bullet is already down we go with the next one
+	lbne MIRVnextBullet
+	lda goleft
+	bne mrFlightLeft
+
+	clc	;xtraj=xtraj+vx (skipping the least significant byte of vx)
+	lda xtraj00,x	;and here of course Flight to the right
+	adc vx01,x
+	sta xtraj00,x
+	lda xtraj01,x
+	adc vx02,x
+	sta xtraj01,x
+	lda xtraj02,x
+	adc vx03,x
+	sta xtraj02,x
+	jmp mrskip07 ;skip substracting for Flight to the left
+
+mrFlightLeft
+	sec	;xtraj=xtraj-vx (skipping the least significant byte of vx)
+	lda xtraj00,x	;here of course Flight to the left
+	sbc vx01,x
+	sta xtraj00,x
+	lda xtraj01,x
+	sbc vx02,x
+	sta xtraj01,x
+	lda xtraj02,x
+	sbc vx03,x
+	sta xtraj02,x
+
+
+mrskip07
+	;vx=vx-Wind (also without least significan byte of vx)
+
+	lda goleft
+	bne mrFlightsLeft ;blow on bullet flighting left
+	lda WindOrientation
+	bne mrWindToLeft
+	beq mrLWindToLeft
+mrFlightsLeft
+	lda WindOrientation
+	beq mrLWindToRight
+mrLWindToLeft
+	; here Wind to right, bullet goes right as well, so vx=vx+Wind
+	; here Wind to left, bullet goes left as well, so vx=vx+Wind
+	clc
+	lda vx00,x
+	adc Wind
+	sta vx00,x
+	lda vx01,x
+	adc Wind+1
+	sta vx01,x
+	lda vx02,x
+	adc #0
+	sta vx02,x
+	lda vx03,x
+	adc #0
+	sta vx03,x
+	Jmp mrskip08
+mrWindToLeft
+mrLWindToRight
+	;Wind to left, bullet right, so vx=vx-Wind
+	;Wind to right, bullet left, so vx=vx-Wind
+	sec
+	lda vx00,x
+	sbc Wind
+	sta vx00,x
+	lda vx01,x
+	sbc Wind+1
+	sta vx01,x
+	lda vx02,x
+	sbc #0
+	sta vx02,x
+	lda vx03,x
+	sbc #0
+	sta vx03,x
+mrskip08
+
+	; isn't it over the screen????
+	lda ytraj+2    ;attention! this checks getting out of the screen through bottom
+	bmi MIRVcheckX   ;but not that accurately....
+	lda ytraj+1
+	cmp #screenheight
+	lbcs mrEndOfFlight ; if smaller than screenheight then continue (and it will always fall down...)
+MIRVcheckX
+	lda xtraj02,x
+	cmp #>screenwidth
+	beq MIRVcheckLowerX
+	bcc MIRVcheckCollision
+	; it's over the screen horizontally (to the left or right)
+	moveq.w 0,xdraw
+	moveq.b screenheight-1,ydraw
+	jsr unPlotAfterX
+	jmp mrLoopi
+MIRVcheckLowerX
+	lda xtraj01,x
+	cmp #<screenwidth
+	bcc MIRVcheckCollision
+	; it's over the screen horizontally (to the left or right)
+	moveq.w 0,xdraw
+	moveq.b screenheight-1,ydraw
+	jsr unPlotAfterX
+	jmp mrLoopi
+
+MIRVcheckCollision
+	; checking the collision!
+	lda ytraj+2
+	bne mrSkipCollisionCheck
+
+	; checking works only with xtraj so copy there all we need
+	lda xtraj01,x
+	sta xtraj+1
+	lda xtraj02,x
+	sta xtraj+2
+	moveq.b 0,HitFlag
+	jsr CheckCollisionWithTank
+	ldx MirvMissileCounter
+	lda HitFlag
+	bne mrHit
+
+	;move.w xtraj01,temp
+	clc
+	lda xtraj01,x
+	adc #<mountaintable
+	sta temp
+	lda xtraj02,x
+	adc #>mountaintable
+	sta temp+1
+	; add.q temp,mountaintable --- it does not work!!!!!!!! and should! (OMC bug?)
+	ldy #0
+	lda ytraj+1
+	cmp (temp),y
+	bcs mrHit
+
+
+
+mrSkipCollisionCheck
+
+	;move.w xtraj01,xdraw
+	lda xtraj01,x
+	sta xdraw
+	lda xtraj02,x
+	sta xdraw+1
+	move.w ytraj+1,ydraw
+
+	jsr unPlotAfterX
+	ldx MirvMissileCounter
+	lbne mrLoopi
+	jsr PlotPointer	; pointer only for bullet nr 0
+
+	jmp mrLoopi
+
+mrHit
+	; we have to make unPlot over the screen (to initialise it)
+	; before actual explosion
+	moveq.w 0,xdraw
+	moveq.b screenheight-1,ydraw
+	jsr unPlotAfterX
+	ldx MirvMissileCounter
+	ldy #0
+	; concurrent moving xtraj+1 -> xdraw and calculating temp
+	clc
+	lda xtraj01,x
+	sta xdraw
+	adc #<mountaintable
+	sta temp
+	lda xtraj02,x
+	sta xdraw+1
+	adc #>mountaintable
+	sta temp+1
+	lda (temp),y
+	sta ydraw
+	sty ydraw+1  ;we know that y=0
+	jsr missile	; explode ....
+mrEndOfFlight
+	ldx MirvMissileCounter
+	moveq.w 0,xdraw
+	moveq.b screenheight-1,ydraw
+	jsr unPlotAfterX
+	ldx MirvMissileCounter
+	lda #1
+	sta MirvDown,x
+MIRVnextBullet
+	; checking if all bullets already fallen down
+	ldx #4
+MIRVcheckIfEnd
+	lda MirvDown,x
+	beq MIRVstillNotAll
+	dex
+	bpl MIRVcheckIfEnd
+	bmi MIRValreadyAll
+MIRVstillNotAll
+	jmp mrLoopi
+MIRValreadyAll
+       	moveq.w LineOdd+40,PositionPointer
+	move.w xdraw,xcircle  ; we must store them (for a while)
+	move.b ydraw,ycircle  ; xdraw and ydraw
+	moveq.w 0,xdraw
+	moveq.b screenheight-1,ydraw
+	ldx MirvMissileCounter
+	jsr unPlotAfterX
+	move.w xcircle,xdraw
+	move.b ycircle,ydraw
+
+	; we must do it manually because of the VOID pointer
+
+	; temporary removing tanks from the screen (otherwise they will fall down with soil)
+	move.b TankNr,tempor2
+	moveq.b 1,Erase
+	jsr drawtanks
+	move.b tempor2,TankNr
+	moveq.b 0,Erase
+	jsr SoilDown2
+	moveq.b 1,HitFlag
+	;jsr drawtanks
+	rts
+
+; -------------------------------------------------
+CheckCollisionWithTank
+; -------------------------------------------------
+	ldx #0
+CheckCollisionWithTankLoop
+
+	lda xtankstableH,x
+	cmp xtraj+2
+	bne Condition01
+	lda xtankstableL,x
+	cmp xtraj+1
+Condition01
+	bcs LeftFromTheTank ;add 8 double byte
+	clc
+	adc #8
+	tay
+	lda xtankstableH,x
+	adc #0
+	cmp xtraj+2
+	bne Condition02
+	cpy xtraj+1
+Condition02
+	bcc RightFromTheTank
+
+	lda ytankstable,x
+	cmp ytraj+1		; check range
+	bcc BelowTheTank	;[ytankstable,ytankstable+3]
+	sbc #4
+	cmp ytraj+1
+	bcs OverTheTank
+	moveq.b 1,HitFlag
+	move.w xtraj+1,XHit
+	move.w ytraj+1,YHit
+	rts	; in X there is an index of the hit tank
+RightFromTheTank
+LeftFromTheTank
+OverTheTank
+BelowTheTank
+	inx
+	cpx NumberOfPlayers
+	bne CheckCollisionWithTankLoop
+	rts
+
+
+;--------------------------------------------------
+clearscreen
+;--------------------------------------------------
+        lda #0
+        tax
+Loopi1
+        sta display,x
+        sta display+$100,x
+        sta display+$200,x
+        sta display+$300,x
+        sta display+$400,x
+        sta display+$500,x
+        sta display+$600,x
+        sta display+$700,x
+        sta display+$800,x
+        sta display+$900,x
+        sta display+$a00,x
+        sta display+$b00,x
+        sta display+$c00,x
+        sta display+$d00,x
+        sta display+$e00,x
+        sta display+$f00,x
+        sta display+$1000,x
+        sta display+$1100,x
+        sta display+$1200,x
+        sta display+$1300,x
+        sta display+$1400,x
+        sta display+$1500,x
+        sta display+$1600,x
+        sta display+$1700,x
+        sta display+$1800,x
+        sta display+$1900,x
+        sta display+$1a00,x
+        sta display+$1b00,x
+        sta display+$1c00,x
+        sta display+$1d00,x
+        sta display+$1e00,x
+        sta display+$1f00,x
+        inx
+        bne Loopi1
+        rts
+
+;-------------------------------*------------------
+placetanks
+;--------------------------------------------------
+		ldx #[6-1]   ;maxNumberOfPlayers-1
+		lda #0
+skip09
+		; clearing the tables with coordinates of the tank
+		; it is necessary, because randomizing checks
+		; if the given tank is already placed
+		; after check if its position is not (0,0)
+
+		; I will be honest with you - I have no idea
+		; what the above comment was intending to mean :)
+
+		sta XtankstableL,x
+		sta XtankstableH,x
+		sta Ytankstable,x
+		dex
+		bpl skip09
+
+
+		moveq.w 0,temptankX
+		moveq.b 0,temptankNr ;player number
+StillRandomize
+		ldx NumberOfPlayers
+		lda random
+		and #$07
+		tay
+		cpy NumberOfPlayers
+		bcs StillRandomize
+		lda xtankstableL,y
+		bne StillRandomize
+		lda xtankstableH,y
+		bne StillRandomize
+		; here we know that we got a random number
+		; of the tank that is not in use
+		; this number is in Y
+
+		clc
+		lda temptankX
+		adc disktance,x
+		sta temptankX
+		sta xtankstableL,y
+                bcc NotHigherByte03
+		inc temptankX+1
+NotHigherByte03
+		lda temptankX+1
+		sta xtankstableH,y
+		INC temptankNr
+		ldx temptankNr
+		Cpx NumberOfPlayers
+		bne StillRandomize
+
+; getting random displacements relative to even positions
+		ldx #$00
+StillRandomize02
+		lda random
+		and #$1f ; maximal displacement is 31 pixels
+
+		clc
+		adc xtankstableL,x
+		sta xtankstableL,x
+                bcc NotHigherByte02
+		inc xtankstableH,x
+NotHigherByte02
+; and we deduct 15 to make the displacement work two ways
+		sec
+		lda xtankstableL,x
+                sbc #$0f
+		sta xtankstableL,x
+                bcs NotHigherByte01
+		dec xtankstableH,x
+NotHigherByte01
+
+; and clear lowest bit to be sure that the X coordinate is even
+; (this is to have P/M background look nice)
+          lda xtankstableL,x
+          and #$fe
+          sta xtankstableL,x
+		inx
+		Cpx NumberOfPlayers
+		bne StillRandomize02
+		rts
+
+; during calculating heights of thw mountains
+; check if the tank is not somewhere around
+; if so, make horizontal line 8 pixels long
+CheckTank
+		ldx NumberOfPlayers
+		dex
+CheckNextTank
+		lda xtankstableL,x
+		cmp xdraw
+		bne UnequalTanks
+		lda xtankstableH,x
+		cmp xdraw+1
+		bne UnequalTanks
+		lda ydraw
+		;sec
+		;sbc #$01	; minus 1, because it was 1 pixel too high
+		sta ytankstable,x     ; what's the heck is that????!!!!
+		moveq.b 7,deltaX
+		moveq.w 0,delta
+UnequalTanks
+		dex
+		bpl CheckNextTank
+		rts
+;-------------------------------------------------
+drawtanks
+;-------------------------------------------------
+
+
+		lda tanknr
+		pha
+		ldx #$00
+		stx tanknr
+
+DrawNextTank
+		jsr drawtanknr
+		inc tanknr
+		ldx tanknr
+		Cpx NumberOfPlayers
+		bne DrawNextTank
+
+		pla
+		sta tankNr
+
+		rts
+;---------
+drawtanknr
+		ldx tanknr
+		; let's check the energy
+		lda eXistenZ,x
+		bne SkipRemovigPM ; if energy=0 then no tank
+
+		; hide P/M
+		lda #0
+		sta hposp0,x
+		jmp DoNotDrawTankNr
+SkipRemovigPM
+
+
+		lda AngleTable,x
+		bmi AngleToLeft01
+		lda #90
+		sec
+		sbc AngleTable,x
+		tay
+		lda BarrelTableR,y
+		jmp CharacterAlreadyKnown
+AngleToLeft01
+		sec
+		sbc #[255-90]
+		tay
+		lda BarrelTableL,y
+CharacterAlreadyKnown
+		sta CharCode
+DrawTankNrX
+	    ldx tanknr
+	    lda xtankstableL,x
+	    sta xdraw
+	    lda xtankstableH,x
+	    sta xdraw+1
+	    lda ytankstable,x
+	    sta ydraw
+
+	    jsr TypeChar
+
+	    ; now P/M graphics on the screen (only for 5 tanks)
+	    ; horizontal position
+	    move.w xdraw,xbyte
+	    ldx tanknr
+	    cpx #$5
+	    bcs NoPlayerMissile
+	    ror.w xbyte	; divide by 2 (carry does not matter)
+	    lda xbyte
+	    clc
+	    adc #$24	; P/M to graphics offser
+	    cpx #$4	; 5th tank are joined missiles and offset is defferent
+	    bne NoMissile
+	    clc
+	    adc #$0C
+NoMissile
+	    sta hposp0,x
+	    ; vertical position
+	    lda pmtableL,x
+	    sta xbyte
+	    lda pmtableH,x
+	    sta xbyte+1
+
+	    ; calculate start position of the tank
+	    lda ydraw
+	    clc
+	    adc #$25	; P/M to graphics offset
+	    sta temp
+	    ; clear sprite and put 3 lines on the tank at the same time
+	    ldy #$00
+	    tya
+ClearPM	    cpy temp
+	    bne ZeroesToGo
+	    lda #$03	; (2 bits set) we set on two pixels in three lines
+	    sta (xbyte),y
+	    dey
+	    sta (xbyte),y
+	    dey
+	    sta (xbyte),y
+	    dey
+	    lda #$00
+ZeroesToGo
+	    sta (xbyte),y
+	    dey
+	    bne ClearPM
+
+NoPlayerMissile
+DoNotDrawTankNr
+	    rts
+;--------------------------------------------------
+drawmountains
+;--------------------------------------------------
+		moveq.w 0,xdraw
+		moveq.w mountaintable,modify
+
+
+drawmountainsloop
+		ldy #0
+		lda (modify),y
+		sta ydraw
+		jsr DrawLine
+		add.q 1,modify
+		add.q 1,xdraw
+		dcmp.q xdraw,screenwidth
+		bne drawmountainsloop
+
+		rts
+;--------------------------------------------------
+drawmountainspixel
+;--------------------------------------------------
+		moveq.w 0,xdraw
+		moveq.w mountaintable,modify
+
+
+drawmountainspixelloop
+		ldy #0
+		lda (modify),y
+		sta ydraw
+		jsr plot
+		add.q 1,modify
+		add.q 1,xdraw
+		dcmp.q xdraw,screenwidth
+		bne drawmountainspixelloop
+
+		rts
+;--------------------------------------------------
+SoilDown2
+;--------------------------------------------------
+
+; how it is supposed to work:
+; first loop is looking for the highest pixels
+; and fills with their Y coordinates both temporary tables
+;
+; second (main) loop works this way:
+; sets end-of-soil-fall-down-flag to 1 ( IsEndOfTheFallFlag=1 )
+;  goes through the horizontal line checking if
+;  Y coordinate from the first table equals to height of the peak
+;    if so, it goes further
+;  if not:
+;    sets end-of-soil-fall-down-flag to 0
+;    increases Y from the first table
+;       if there is no pixel there it plots here and
+;	zeroes pixel from the second table and after that
+;              increases Y of the second table
+;       repeats with next pixels au to the end of the line
+;  if the flag is 0 then repeat the main loop
+; and that's it :)
+;
+; I am sorry but after these 4 years I have no idea
+; how it works. I have just translated Polish comment
+; but I do not understand a word of it :)
+; If you know how it works, please write here :))))
+
+	jsr PMoutofscreen
+
+; First we look for highest pixels and fill with their coordinates
+; both tables
+
+	move.w RangeLeft,xdraw
+	add.q mountaintable2,RangeLeft,tempor2
+	add.q mountaintable3,RangeLeft,tempor3
+
+NextColumn1
+	moveq.b 0,ydraw
+NextPoint1
+	jsr point
+	beq StillNothing
+	ldy #0
+	lda ydraw
+	sta (tempor2),y
+	sta (tempor3),y
+	jmp FoundPeek1
+StillNothing
+	inc ydraw
+	lda ydraw
+	cmp #screenheight
+	bne NextPoint1
+FoundPeek1
+	add.q 1,tempor2
+	add.q 1,tempor3
+	add.q 1,xdraw
+	;vcmp xdraw,screenwidth,NextColumn1
+	dcmp xdraw,RangeRight
+	bcc NextColumn1
+	beq NextColumn1
+; we have both tables filled with starting values
+
+; main loop starts here
+MainFallout2
+	move.w RangeLeft,xdraw
+	add.q mountaintable,RangeLeft,temp
+	add.q mountaintable2,RangeLeft,tempor2
+	add.q mountaintable3,RangeLeft,tempor3
+
+	moveq.w 1,IsEndOfTheFallFlag
+FalloutOfLine
+	ldy #0
+
+	; is Y coordinate from the first table
+	; equal to peak height, if so, go ahead
+	lda (tempor2),y
+	cmp #screenheight-1 ;cmp (temp),y
+	bcs ColumnIsReady
+	; in the other case there are things to be done
+	sty IsEndOfTheFallFlag   ; flag to 0
+	; we are increasing Y in the first table
+	;lda (tempor2),y
+	clc
+	adc #1
+	sta (tempor2),y
+	; and checking if there is a pixel there
+	sta ydraw
+	jsr point
+	bne ThereIsPixelHere
+	; if no pixel we plot it
+	moveq.b 1,color
+	jsr MakePlot
+	; zeroing pixel from the second table
+	; and increase Y in second table
+	ldy #0
+	lda (tempor3),y
+	sta ydraw
+	lda (tempor3),y
+	clc
+	adc #1
+	sta (tempor3),y
+	sty color
+	jsr MakePlot
+
+ThereIsPixelHere
+ColumnIsReady
+	add.q 1,temp
+	add.q 1,tempor2
+	add.q 1,tempor3
+	add.q 1,xdraw
+	;vcmp xdraw,screenwidth,FalloutOfLine
+	dcmp xdraw,RangeRight
+	bcc FalloutOfLine
+	beq FalloutOfLine
+
+	lda IsEndOfTheFallFlag
+; we repeat untill at some point first table reaches
+; level of the mountains
+	lbeq MainFallout2
+; now correct heights are in the second temporary table
+; so we copy
+	move.w RangeLeft,xdraw
+	add.q mountaintable,RangeLeft,temp
+	add.q mountaintable3,RangeLeft,tempor3
+
+	ldy #0
+CopyHeights
+	lda (tempor3),y
+	sta (temp),y
+	add.q 1,temp
+	add.q 1,tempor3
+	add.q 1,xdraw
+	;vcmp xdraw,screenwidth,CopyHeights
+	dcmp xdraw,RangeRight
+	bcc CopyHeights
+	beq CopyHeights
+	moveq.b 1,color
+	rts
+
+
+;--------------------------------------------------
+calculatemountains
+;--------------------------------------------------
+        moveq.w 0,xdraw
+
+; starting point
+getrandomY     ;losowanie y-greka
+        sec
+        lda random
+        cmp #screenheight-[margin*4] ;it means that max line=199
+        bcs getrandomY
+        clc
+	adc #[margin*2]
+        sta ydraw
+        sta yfloat+1
+        moveq.b 0,yfloat ;yfloat equals to e.g. 140.0
+
+; how to make nice looking mountains?
+; randomize points and join them with lines
+; Here we do it simpler way - we randomize X (or deltaX)
+; and "delta" (change of Y coordinate)
+
+NextPart
+        lda random
+        sta delta ; it is after the dot (xxx.delta)
+        lda random
+        and #$03 ;(max delta)
+        sta delta+1 ; before the dot (delta+1.delta)
+
+        lda random
+        and #$01 ;random sign (+/- or up/down)
+        sta UpNdown
+
+	; theoretically we have here ready
+	; fixed-point delta value
+	; (-1*(UpNdown))*(delta+1.delta)
+
+       ;loop drawing one line
+
+ChangingDirection
+        lda random ;length of the line
+        and #$0f   ;max line length
+	tax
+	inx
+	inx
+	inx
+        stx deltaX
+
+OnePart
+        jsr CheckTank
+			; checks if at a given X coordinate
+			; is any tank and if so
+			; changes parameters of drawing
+			; to generate flat 8 pixels
+			; (it will be the place for the tank)
+			; it also stores Y position of the tank
+	add.q mountaintable,xdraw,modify
+
+	lda ydraw
+	ldy #0
+	sta (modify),y
+
+	; Up or Down
+	lda UpNdown
+	beq ToBottom
+
+ToTop  ;it means substracting
+
+	sub.w delta,yfloat
+	lda yfloat+1
+        cmp #margin
+        bcs Skip01
+        ; if smaller than 10
+        ldx #$00
+        stx UpNdown
+	jmp Skip01
+
+ToBottom
+	add.w delta,yfloat
+      	lda yfloat+1
+        cmp #screenheight-margin
+        bcc Skip01
+	; if higher than screen
+        ldx #$01
+        stx UpNdown
+Skip01
+	sta ydraw
+
+        add.q 1,xdraw
+
+    	dcmp.q xdraw,screenwidth
+    	beq EndDrawing
+
+       	dec deltaX
+    	bne OnePart
+
+	jmp NextPart
+EndDrawing
+
+	rts
+
+; -----------------------------------------
+unPlot
+; -----------------------------------------
+	ldx #0	; only one pixel
+unPlotAfterX
+	stx WhichUnPlot
+
+	; first remake the oldie
+	lda oldplotL,x
+	sta oldplot
+	lda oldplotH,x
+	sta oldplot+1
+
+	lda oldply,x
+	tay
+        lda oldora,x
+        sta (oldplot),y
+
+
+	; is it not out of the screen ????
+	dcmp.q ydraw,screenheight
+	lbcs EndOfUnPlot
+CheckX
+	dcmp.q xdraw,screenwidth
+	lbcs EndOfUnPlot
+MakeUnPlot
+	; let's count coordinates taken from xdraw and ydraw
+        move.w xdraw,xbyte
+
+        lda xbyte
+        and #$7
+        sta ybit
+
+        lsr.w xbyte
+        ror.w xbyte
+	ror.w xbyte
+;---
+        ldy xbyte
+
+        ldx WhichUnPlot
+	tya
+	sta oldply,x
+
+
+        ldx ydraw
+        lda linetableL,x
+        sta xbyte
+       	sta oldplot
+        lda linetableH,x
+        sta xbyte+1
+	sta oldplot+1
+        ldx ybit
+
+
+	lda color
+	beq ClearUnPlot
+
+        lda (xbyte),y
+        sta OldOraTemp
+        ora bittable,x
+        sta (xbyte),y
+	jmp ContinueUnPlot
+ClearUnPlot
+        lda (xbyte),y
+        sta OldOraTemp
+        and bittable2,x
+        sta (xbyte),y
+ContinueUnPlot
+        ldx WhichUnPlot
+        lda OldOraTemp
+        sta oldora,x
+	lda oldplot
+	sta oldplotL,x
+	lda oldplot+1
+	sta oldplotH,x
+	; and now we must solve the problem of several plots
+	; in one byte
+	ldx #4
+	ldy WhichUnPlot
+LetsCheckOverlapping
+	cpx WhichUnPlot
+	beq SkipThisPlot
+	lda oldplotL,x
+	cmp oldplotL,y
+	bne NotTheSamePlot
+	lda oldplotH,x
+	cmp oldplotH,y
+	bne NotTheSamePlot
+	lda oldply,x
+	cmp oldply,y
+	bne NotTheSamePlot
+	; the pixel is in the same byte so let's take correct contents
+	lda oldora,x
+	sta oldora,y
+NotTheSamePlot
+SkipThisPlot
+	dex
+	bpl LetsCheckOverlapping
+EndOfUnPlot
+        rts
+
+; -----------------------------------------
+plot ;
+; this is one of the most important routines in the whole
+; game. If you are going to speed up the game, start with
+; plot - it is used by every single effect starting from explosions
+; through line drawing and small text output!!!
+; We tried to keep it clear and therefore it is far from
+; optimal speed.
+
+
+; -----------------------------------------
+	; is it not over the screen ???
+	dcmp.q ydraw,[screenheight-1]
+	bcs EndOfUnPlot
+CheckX02
+	dcmp.q xdraw,screenwidth
+	bcs EndOfPlot
+MakePlot
+	; let's calculate coordinates from xdraw and ydraw
+        move.w xdraw,xbyte
+
+
+         lda xbyte
+         and #$7
+         sta ybit
+
+        lsr.w xbyte
+        ror.w xbyte
+        ror.w xbyte
+
+;---
+        ldy xbyte
+
+        lda #screenheight
+        sec
+        sbc ydraw
+        sta tempbyte01
+
+
+        ldx ydraw
+        lda linetableL,x
+        sta xbyte
+        lda linetableH,x
+        sta xbyte+1
+
+        ldx ybit
+	lda color
+	beq ClearPlot
+
+        lda (xbyte),y
+        ora bittable,x
+        sta (xbyte),y
+EndOfPlot
+        rts
+ClearPlot
+        lda (xbyte),y
+        and bittable2,x
+        sta (xbyte),y
+        rts
+
+; -----------------------------------------
+point
+; -----------------------------------------
+	; checks state of the pixel (coordinates in xdraw and ydraw)
+	; result is in A (zero or appropriate bit is set)
+
+
+	; let's calculate coordinates from xdraw and ydraw
+        move.w xdraw,xbyte
+
+
+         lda xbyte
+         and #$7
+         sta ybit
+
+        lsr.w xbyte
+        ror.w xbyte
+        ror.w xbyte
+
+;---
+        ldy xbyte
+
+        ldx ydraw
+        lda linetableL,x
+        sta xbyte
+        lda linetableH,x
+        sta xbyte+1
+
+        ldx ybit
+
+        lda (xbyte),y
+        and bittable,x
+        rts
+
+
+; -----------------------------------------
+PlotPointer
+; -----------------------------------------
+; draws pointer that shows where is the bullet
+; when it is over the screen
+; (it is on the top of the screen)
+
+	; is it not over the screen ???
+
+	dcmp.q xdraw,screenwidth
+	bcs EndOfPointer
+MakePointer
+       ; let's get horizontal coordinate from xdraw
+        move.w xdraw,xbyte
+
+         lda xbyte
+         and #$07
+         sta ybit
+	 lsr a
+	 sta hscrol
+	 bcc EvenPointer	; hscrol shifts 2 pixels so
+	 			; we must have two versions
+	 			; of the line (odd and even)
+       lsr.w xbyte
+       ror.w xbyte
+       ror.w xbyte
+       sec
+       lda #40
+       sbc xbyte
+       clc
+       adc #<[LineOdd-4]
+       sta PositionPointer
+       lda #$00
+       adc #>[LineOdd-4]
+       sta PositionPointer+1
+       rts
+EvenPointer
+       lsr.w xbyte
+       ror.w xbyte
+       ror.w xbyte
+       sec
+       lda #40
+       sbc xbyte
+       clc
+       adc #<[LineEven-4]
+       sta PositionPointer
+       lda #$00
+       adc #>[LineEven-4]
+       sta PositionPointer+1
+;---
+       rts
+EndOfPointer
+	; if bullet is over the screen then forget it
+	moveq.w [LineEven-4],PositionPointer
+	lda #$00
+	sta hscrol
+        rts
+;--------------------------------------------------
+DrawLine
+;--------------------------------------------------
+	moveq.b 0,ydraw+1
+	jsr plot
+	;rts
+        jmp IntoDraw   	; jumps inside Draw routine
+        		; because one pixel is already plotted
+
+
+loopdraw
+
+        lda (xbyte),y
+        ora bittable,x
+        sta (xbyte),y
+IntoDraw   add.q 40,xbyte
+
+        dec tempbyte01
+        bne loopdraw
+        rts
+
+;
+; ------------------------------------------
+TypeChar
+; puts char on the graphics screen
+; in: CharCode
+; in: left LOWER corner of the char coordinates (xdraw, ydraw)
+;--------------------------------------------------
+	; char to the table
+        lda CharCode
+        sta fontind
+        lda #$00
+        sta fontind+1
+	; char intex times 8
+        asl.w fontind
+        rol.w fontind
+        rol.w fontind
+
+	;add.q TankFont,fontind	 ; IT DOES NOT WORK!!! (OMC or bad macro definition)
+        clc
+        lda fontind
+        adc #<TankFont
+        sta fontind
+        lda fontind+1
+        adc #>TankFont
+        sta fontind+1
+
+
+
+        ; and 8 bytes to the table
+        ldy #7
+CopyChar
+	lda (fontind),y
+	sta char1,y
+	lda #$00
+	sta char2,y
+	dey
+	bpl CopyChar
+	; and 8 subsequent bytes as a mask
+	add.q 8,fontind
+        ldy #7
+CopyMask
+	lda (fontind),y
+	sta mask1,y
+	lda #$ff
+	sta mask2,y
+	dey
+	bpl CopyMask
+
+	; calculating coordinates from xdraw and ydraw
+        move.w xdraw,xbyte
+
+	lda xbyte
+        and #$7
+        sta ybit
+
+        lsr.w xbyte
+        ror.w xbyte
+        ror.w xbyte
+
+;---
+        ldy xbyte
+
+        ldx ydraw
+        .rept 7
+        dex
+        .endr
+
+        lda linetableL,x
+        sta xbyte
+        lda linetableH,x
+        sta xbyte+1
+	; mask preparation and character shifting
+        ldx ybit
+        beq MaskOK00
+MakeMask00
+        sec
+        ror mask1
+        ror mask2
+        sec
+        ror mask1+1
+        ror mask2+1
+        sec
+        ror mask1+2
+        ror mask2+2
+        sec
+        ror mask1+3
+        ror mask2+3
+        sec
+        ror mask1+4
+        ror mask2+4
+        sec
+        ror mask1+5
+        ror mask2+5
+        sec
+        ror mask1+6
+        ror mask2+6
+        sec
+        ror mask1+7
+        ror mask2+7
+        lsr char1
+        ror char2
+        ror char1+1
+        ror char2+1
+        ror char1+2
+        ror char2+2
+        ror char1+3
+        ror char2+3
+        ror char1+4
+        ror char2+4
+        ror char1+5
+        ror char2+5
+        ror char1+6
+        ror char2+6
+        ror char1+7
+        ror char2+7
+        dex
+        bne MakeMask00
+MaskOK00
+	; here x=0
+        lda Erase
+        beq CharLoopi  ; it works, because x=0
+        lda #0
+        ldx #7
+EmptyChar
+        sta char1,x
+        sta char2,x
+        dex
+        bpl EmptyChar
+	ldx #0
+CharLoopi
+        lda (xbyte),y
+        and mask1,x
+        ora char1,x
+        sta (xbyte),y
+	iny
+        lda (xbyte),y
+        and mask2,x
+        ora char2,x
+        sta (xbyte),y
+	dey
+	add.q 40,xbyte
+        inx
+        cpx #8
+        bne CharLoopi
+        rts
+
+; ------------------------------------------
+PutChar4x4 ;
+; puts 4x4 pixels char on the graphics screen
+; in: xdraw, ydraw (upper left corner of the char)
+; in: CharCode4x4 (.sbyte)
+;--------------------------------------------------
+	lda plot4x4color
+	sta color
+
+
+; calculating address of the first byte
+	moveq.b 4,LoopCounter4x4
+	lda CharCode4x4
+	and #1
+	sta nibbler4x4
+	lda CharCode4x4
+	ror A
+	; in carry there is which nibble of the byte is to be taken
+	clc
+	adc #[3*32]
+	sta y4x4
+nextline4x4
+	moveq.b 4,Xcounter4x4
+	ldy y4x4
+	lda font4x4+62,y ;there was a problem with OMC here, but it works now
+
+	ldx nibbler4x4
+	beq uppernibble
+
+	asl A
+	asl A
+	asl A
+	asl A
+uppernibble
+	rol a
+	sta StoreA4x4
+	bcs EmptyPixel ; the font I drawn is in inverse ...
+	;lda plot4x4color 	;these lines are not necessary
+	;sta color		;if a plots are one color only
+	jsr plot
+	;jmp Loop4x4Continued
+EmptyPixel
+	;lda #1			;reverse color (color==1-color)
+	;sec
+	;sbc plot4x4color
+	;sta color
+	;jsr plot
+	;this is turned off for speed
+	;anyway we assume the text is being drawn
+	;over an empty space
+Loop4x4Continued
+	add.q 1,xdraw
+	lda StoreA4x4
+	dec Xcounter4x4
+	ldx Xcounter4x4
+	bne uppernibble
+	; here we have on screen one line of the char
+	add.q 1,ydraw
+	sub.q 4,xdraw
+	sub.q 32,y4x4
+	dcl LoopCounter4x4
+	bne nextline4x4
+
+	rts
+
+; ------------------------------------------
+PutChar4x4FULL ;
+;this routine works just like PutChar4x4,
+;but this time all pixels are being drawn
+;(empty and not empty)
+;--------------------------------------------------
+	lda plot4x4color
+	sta color
+
+; calculating address of the first byte
+	moveq.b 4,LoopCounter4x4
+	lda CharCode4x4
+	and #1
+	sta nibbler4x4
+	lda CharCode4x4
+	ror A
+	; in carry there is which nibble of the byte is to be taken	clc
+	clc
+	adc #[3*32]
+	sta y4x4
+nextline4x4FULL
+	moveq.b 4,Xcounter4x4
+	ldy y4x4
+	lda font4x4+62,y
+
+	ldx nibbler4x4
+	beq uppernibbleFULL
+
+	asl A
+	asl A
+	asl A
+	asl A
+uppernibbleFULL
+	rol a
+	sta StoreA4x4
+	bcs EmptyPixelFULL
+	lda plot4x4color 	;these lines are not necessary
+	sta color		;if a plots are one color only
+	jsr plot
+	jmp Loop4x4ContinuedFULL
+EmptyPixelFULL
+	lda #1			;reverse color (color==1-color)
+	sec
+	sbc plot4x4color
+	sta color
+	jsr plot
+	;this is turned on now
+	;of course it is slower
+
+Loop4x4ContinuedFULL
+	add.q 1,xdraw
+	lda StoreA4x4
+	dec Xcounter4x4
+	ldx Xcounter4x4
+	bne uppernibbleFULL
+	; here we have on screen one line of the char
+	add.q 1,ydraw
+	sub.q 4,xdraw
+	sub.q 32,y4x4
+	dcl LoopCounter4x4
+	bne nextline4x4FULL
+
+	rts
+
+
+
+
+
+ .endif
+

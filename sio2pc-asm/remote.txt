@@ -1,0 +1,33 @@
+remote.com
+	a simple utility to send commands to sio2pc and get the
+	status of its drives.  Works just like the remote utility
+	that game with sio2pc but it gets its commands from the
+	command line for convenice of SpartaDos users. It even has a
+        way to perform a cold start afterwards so you can load a disk
+        as D1: and reboot. (to run it)
+
+USAGE:
+
+ REMOTE <cmd string> | /[s?c]
+
+  Sends a command string to SIO2PC or checks up on its drives.
+
+ <cmd string>  SIO2PC command string to be send.  Start it with a "!"
+      to do a cold start afterwards
+
+ /s   displays status of drives
+ /?   displays this help screen
+ /c   displays a summery of the SIO2PC command set.',155
+
+(c) 1995 by Kevin Atkinson.  You may redistribute as you see fit as long 
+as thing file is distrubuted with it.  If you modify the source code 
+make it absolutly clear that you did and include this message anyway so 
+that I will still get credit.
+
+						kevina@clark.net
+
+						Kevin Atkinson
+						7962 Helmart Dr.
+						Laurel, MD 20723
+
+

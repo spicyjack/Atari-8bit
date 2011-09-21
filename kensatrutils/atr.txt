@@ -1,0 +1,521 @@
+All files Copyright 1997 Ken Siders
+
+Ken's ATR manipulation C library.  This has only been used under Microsoft
+C/C++ version 8.0.  It will probably work on 7.0 and possibly earlier
+versions.  You are on your own for porting to other compilers.
+
+With Microsoft C, you must use the /Zp option to pack structure members
+on byte boundries.  I have no idea how this translates to other compilers.
+
+
+To Do
+1 Clean up warnings + make more portable
+2 Allow opening write-protected ATRs
+3 Allow more than one reference to an ATR file to be opened so more 
+   than one atari file can be opened at once.
+4 More specific error returns
+5 Implement XFD handling
+6 Create documentation
+7 Optimize if necessary
+8 Implement DCM images (maybe)
+
+----------------------------------------------------------------------------
+
+This source is a work in progress and in distributed for those wanting
+to write ATR related programs.  I had planned to tidy them up a lot before
+releasing them, but have been sidetracked by other projects.  Feel free to
+use them in your own freeware and public domain programs if credit is given.
+
+These have all been compiled with Microsoft C version 8.0.  They should
+compile with 7.0 and possibly earlier versions.  They may need 
+some tweaking for use on other compilers.  The /Zp option must be used
+on the Microsoft compiler to pack structures on byte boundries.  I don't
+know how this is done on other compilers.
+
+Files:
+The file that does all of the work is ATR.C.  The other programs do some
+basic processing and call fucntions in ATR.C to do the work.  
+
+The other C files, all build the ATR utilities that are on my Atari
+web page.  They, of course must be linked with the main ATR file.
+
+There are two header files: ATR.H and ATRDOS.H both of which will be
+required by most programs.  ATR.H contains definitions for ATR image related
+functions.  ATRDOS.H contains definitions for referencing Mydos and
+Atari Dos files located on ATR images.  Hopefully the short descriptions
+in the source are enough to allow one to figure out what each function does.
+There is also a third header file with the Boot disk routine.
+
+
+Note:  You cannot open write protected images yet and you can only have
+one ATR open at a time.  If you Open an ATR and then call a function like
+ATRDirectory, an error will result.  You must Close the ATR first, call
+the function and then reopen the ATR.  This also means you can't have two
+files open in a single ATR at the same time.  This will hopefully be
+rectified soon.  Good Luck.
+
+
+
+mailto:  ken_siders@compuserve.com
+http://ourworld.compuserve.com/homepages/ken_siders/atari.htm
+
+
+PS: I still am looking for info on other disk formats such as SpartaDOS.
+Also info on subdirectory format, how to distinquish Dos 2.5 enhanced
+density and MyDos enhanced density, etc.....
+
+-----------------------------------------------------------------------------
+
+***********************************************************************
+Structures
+***********************************************************************
+ATR File pointer structure definition.  Most of this info comes from
+the ATR header:
+
+struct S_AtrFile {
+   FILE *atrIn;                     pointer to the file.
+   unsigned long  imageSize;        image size
+   unsigned short secSize;          sector size: 128/256
+   unsigned long crc;               crc - ATR extension (not used)
+   unsigned long sectorCount;       number of sectors in image
+   byte flags;                      flags byte from ATR image.
+   byte writeProtect;               image write protected?
+   byte authenticated;              ATR extension (not used)
+   unsigned short currentSector;    don't know what I have this here for.
+   unsigned char dosType;           ataridos, mydos?  see atr.h for constants
+};
+typedef struct S_AtrFile AtrFile;
+typedef AtrFile *AtrFilePtr; 
+
+
+Atari File pointer structure definition.  This is info required to read and
+write atari files in an ATR image as well as related functions.
+
+struct S_AtariFile
+   {
+   AtrFilePtr atr;                  atr file is in
+   unsigned short startSector;      start sector of file
+   unsigned short currentSector;    current sector pointer
+   unsigned short sectorSize;       sector size: 128 or 256
+   unsigned short numberOfSectors;  number of sectors in file
+   unsigned long fileSize ;         size of file in bytes
+   byte openFlag;                   flag used in AtariOpenFile
+   byte eofFlag;                    set if at eof
+   short currentOffset;             current offset into sector
+   short bytesData;                 bytes of data in current sector
+   short sectorLinkOffset;          offset to link data.  usually 125 or 253
+   short fileNo;                    file No for Atari Dos
+   unsigned char sectorBuffer[256]; buffer with current sector
+   };
+typedef struct S_AtariFile AtariFile;
+typedef AtariFile * AtariFilePtr;
+
+
+***********************************************************************
+Image Functions - These functions are used for low level access to
+                  ATR disk images.
+***********************************************************************
+
+OpenAtr      AtrFilePtr OpenAtr(char *file )
+
+   Description:     
+       Opens an ATR image so sectors can be read or written or information
+       on the image can be obtained.
+     
+   Parameters:
+       file - the filename of the ATR.  Use the full drive and pathname if
+              the file is not in the current directory.  You must add the
+              .ATR extension.
+
+   Returns:
+       An ATR file pointer that is used with other functions to access the
+       image's data.
+
+
+CloseAtr     int CloseAtr( AtrFilePtr atr )
+
+   Description:     
+       Closes an ATR image opened with OpenATR.
+    
+   Parameters:
+       atr - the ATR file pointer that was returned by the OpenAtr function.
+
+   Returns:
+       0 for success, 1 if an error occured.
+
+         
+ReadSector   int ReadSector(AtrFilePtr atr, unsigned short sector,
+                            char *buffer)
+
+   Description:
+       Reads specified sector from the ATR file specified into buffer which
+       must be big enough for the sector size of the ATR image file (128 or
+       256 bytes).
+
+   Parameters:
+       atr - Atr file pointer returned from an OpenAtr function call.
+       sector - Sector number to read.
+       buffer - A pointer that points to a buffer large enough to hold a
+            sector of data.  Usually you want this to be 256 bytes.
+
+   Returns:
+       Number of bytes read or 0 if error.
+
+
+WriteSector  int WriteSector(AtrFilePtr atr, unsigned short sector,
+                             char *buffer)
+
+   Description:
+       Writes specified sector from the ATR file specified from buffer
+       specified. 
+
+   Parameters:
+       atr - Atr file pointer returned from an OpenAtr function call.
+       sector - Sector number to write.
+       buffer - A pointer that points to a buffer containing the sector
+                data to write.  Usually 128 or 256 bytes.
+
+   Returns:
+       Number of bytes written or 0 if error.
+
+
+CreateAtr   int CreateAtr( char *file, unsigned short sectors, 
+               unsigned short sectorSize )
+
+   Description: 
+       Creates an new ATR file with parameters specified.  
+
+   Parameters:
+       file - Name of the ATR file to create.  If file exists it will
+              be overwritten.
+       sectors - The number of sectors in the image.  Common values are
+                 720 (single/double density) or 1040 (1050 double) but
+                 smaller an huge images may also be created.
+       sectorSize - This should be 128 (single/1050 double density) or
+                    256 (double density).
+
+   Returns:
+       0 for success, 1 on failure.
+
+
+GetAtrInfo   int GetAtrInfo( AtrFilePtr atr, unsigned short *sectorSize,
+                unsigned short *sectorCount, byte  *protected)
+
+   Descriptions:
+       Returns the sector size, and sector count for an image.  It also
+       returns info if the disk is write protected or not.  (Write protect
+       status is not fully implemented yet.)
+
+   Parameters:
+       atr - the ATR file pointer that was returned by the OpenAtr function.
+       sectorSize - A pointer to a variable in which to return the sector
+                    size. 
+       sectorCount - A pointer to a variable in which to return the sector
+                    count. 
+       protected - A pointer to a variable in which to return the write
+                   protect status.  1 = protected, 0 = not.  If the image
+                   write protected or if the APE extension bit for write
+                   protect is set, this will be 1.  Not implemented yet.
+
+    Returns: 0 for success, 1 if error. 
+
+
+AtariFindFirst  int AtariFindFirst( char *atrName, unsigned attrib,
+                                    char *pattern,
+                                    AtariFileInfoPtr fileInfo )
+   Description:
+       Finds first match for pattern and sets struct with file information.
+       For those using Microsoft C compilers, this is similiar to
+       _dosfindfirst.
+
+   Parameters:
+       atrName - Name of ATR image in which to look for the file.
+       attrib - Not used yet.  Use 0.
+       pattern - The atari file to look for.  * and ? are accepted as normal
+                 atari wildcards.  Use only and 8.3 file name, no drive or
+                 directory specifications.
+       fileInfo - A pointer to your file info structure in which to return
+                  the information.  This structure will also be use by
+                  the AtariFindNext function.
+        
+   Returns:
+        0 if a match was found.
+        -1 if a match was not found.
+        a positive number if an error occurred.     
+
+
+AtariFindNext  int AtariFindFirst( AtariFileInfoPtr fileInfo )
+
+   Description:
+       Searches for the next match after a previous AtariFindFirst or 
+       AtariFindNext.  Sets struct with file information.  For those using
+       Microsoft C compilers, this is similiar to _dosfindnext.  The
+       fileInfo structure should not be modified prior to calling this
+       function.
+
+   Parameters:
+       fileInfo - A pointer to your file info structure in which to return
+                  the information.  This structure should still have
+                  unmodified info from the last AtariFindFirst or 
+                  AtariFindNext function call.
+        
+   Returns:
+        0 if a match was found.
+        -1 if a match was not found.
+        a positive number if an error occurred.     
+        
+CreateBootAtr - int CreateBootAtr( char *atrName, char *fileName)
+
+   Description:
+        Will create a minimally sized bootable ATR image from an Atari
+        Executable.  The ATR file will be just long enough to hold
+        three boot sectors and the file's data.  The executable must
+        consist of only one file and not need DOS for any reason.  Note:
+        Not all Atari computer and peripheral emulators may support
+        non-standard sized images.  When booting from the image, the
+        screen will turn red if an error occurs. 
+
+   Parameters:     
+        atrName - The ATR file name.
+        fileName - The name of the MSDOS file to convert.
+         
+   Returns:
+        0 for success.
+
+
+ExtractExeFromBootAtr - long ExtractExeFromBootAtr( char *atrName,
+                        char *fileName)
+
+   Description:
+        Undoes a CreateBootAtr by extracting the original executable from
+        the ATR image.
+
+   Parameters:     
+        atrName - ATR file name of a disk created with CreateBootAtr.
+        fileName - The name of the MSDOS file to write the output to.
+        
+   Returns:
+        Returns 0 for error, or file length in bytes of file extracted.
+        An error will result if the file was not created with CreateBootAtr.
+
+
+***********************************************************************
+Dos Functions - These functions are used to reference atari files 
+                stored on ATR disk images.
+***********************************************************************
+
+OpenAtariFile - AtariFilePtr OpenAtariFile( char *atrName, char *fileName,
+                                            byte mode)
+
+   Description:
+       Opens file in an ATR image in the mode specified: ATARI_OPEN_READ,
+       ATARI_OPEN_WRITE, or ATARI_OPEN_DIR.  ATARI_OPEN_DIR is not supported
+       yet.
+
+   Parameters:
+       atrName - Name of ATR image in which to look for the file.
+       fileName - Filename of the atari file in the ATR image to open.              
+       mode - ATARI_OPEN_READ to open the file for read, ATARI_OPEN_WRITE
+              to open it for write.  "Or" the two together for both.
+              ATARI_OPEN_DIR is not implemented yet.
+
+   Returns:
+        An Atari file pointer that can be used in functions to read or
+        write from the file.  NULL is returned on error.
+
+
+ReadAtariFile  - long ReadAtariFile( AtariFilePtr atFile, char *buffer,
+                                     long bytes )
+
+   Description:
+        Reads bytes bytes from an open atari file (opened with OpenAtariFile).
+
+   Parameters:     
+   atFile - An Atari file pointer that was set from an OpenAtariFile function
+            call
+   buffer - A pointer to a buffer to read the bytes into.  Must be big 
+            enough to hold the number of bytes requested.
+   bytes - Number of bytes to read.
+     
+   Returns:
+        Number of bytes actually read.  May be less than bytes if EOF was
+        reached.  You can use EofAtariFile to see if the EOF was reached
+        or if an error occurred.
+
+
+CloseAtariFile - int CloseAtariFile( AtariFilePtr atFile )
+
+   Description:
+        Closes an atari file opened with OpenAtariFile.
+
+   Parameters:
+        atFile - An atari file pointer used in an OpenAtariFile function
+                 call.
+
+   Returns:
+        0 if successful.
+        
+
+EofAtariuFile - int EofAtariFile( AtariFilePtr atFile )
+
+   Description:
+        Determines if pointer is at the end of an atari file.
+
+   Parameters:
+        atFile - An atari file pointer returned from an OpenAtariFile
+                 function call.
+
+   Returns:
+        Returns 1 if at EOF of atari file, 0 if not 
+
+
+AtariDirectory - int AtariDirectory( char *atrName, char *pattern)
+
+   Description:
+        Displays atari directory of disk image to screen.  The disk image
+        must be Atari Dos, MyDos, or compatable.
+
+   Parameters:
+        atrName - The ATR file name.
+        pattern - filename mask to use.  use "*.*" for all files.
+        
+   Returns:
+        0 for no errors.
+
+
+AtariFileSize long AtariFileSize( char *atrFile, char *fileName )
+
+   Description:
+        Get the actual length in bytes of an atari file in an ATR image.
+
+   Parameters:     
+        atrName - The ATR file name.
+        fileName - The atari filename in 8.3 to look for.  No wildcards.
+
+   Returns:
+        Length of file in bytes or -1 for error.
+
+
+ExtractAtariFile - int ExtractAtariFile( char *atrFile, char *fileName,
+                                       char *dosPath )
+
+   Description:
+        Extracts an Atari file from an ATR image.  Atari Dos and MyDos
+        formats are supported for the image.
+     
+   Parameters:     
+        atrName - The ATR file name.
+        fileName - Atari filename in 8.3 format.  Wildcards * and ? are
+                   allowed.  If verbose is on, files will be displayed
+                   as they are extracted.
+        dosPath - Directory to store the file in.  File is stored with same
+                  name in dosPath directory.  (don't add the trailing '\').
+                  Use NULL for dosPath to extract to current directory.
+
+   Returns:
+        number of file extracted.  If the result is negative, an error 
+        occured but the Absolute value of that number of files were
+        extracted successfully before the error occurred.
+
+
+FixAtariFileNo - int FixAtariFileNo( char *atrName, char *fileName,
+                 int fileNo )
+        
+   Description - For atari dos, will fix the file no in each sector within
+                 the file.  Used internally after a directory is sorted but
+                 their may be other uses.  For larger MyDos disks the 
+                 function has no effect.  I currently don't know how to
+                 distinquish DOS 2.5 1050 double density disks and Mydos
+                 disks so this may not work on Dos 2.5 1050 double density
+                 disks.
+
+   Parameters:     
+        atrName - The ATR file name.
+        fileName - Atari filename in 8.3 format to fix.  No wildcard's 
+                   allowed.
+        fileNo - File number to give the file.  This could probably be
+                 made to be automatic.  
+         
+   Returns:
+        0 for success.
+
+
+SortAtariDir - int SortAtariDir( char *atrName )
+
+   Description:
+        Sorts the files in an ATR image.  BUT: 1. May not work on Dos 2.5
+        1050 double density disks.  2.  Doesn't allow DOS.SYS and DUP.SYS,
+        or other files to be specified not to be sorted.  
+
+   Parameters:     
+        atrName - The ATR file name.
+         
+   Returns:
+        0 for success.
+
+
+
+***********************************************************************
+Other Functions - Other functions.
+***********************************************************************
+
+
+SetVerbose    int SetVerbose( int verb )
+
+   Description:     
+       Used to set verbose flag to 1 (on) or 0 (off).  Currently the only
+       function that uses this is ExtractAtariFile.
+
+   Parameters:
+       verb - 1 for verbose, 0 for not verbose
+
+   Returns:
+       Previous state of verbose flag.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

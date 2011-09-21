@@ -1,0 +1,234 @@
+<html>
+<head>
+<title>Source Format</title>
+</head>
+<body BGCOLOR="#ffffff" LINK=#0000FF  VLINK=#FF0000  ALINK=#FF0000>
+<A HREF="syndx.htm">Back to Index</A><br>
+<center><A NAME="fmt"><h2><b>Source Program Format</b></h2>
+</A></center><br>
+<BLOCKQUOTE><A HREF="#gnl">General Syntax</a><br>
+<A HREF="#lbl">Labels</A><br>
+<A HREF="#loc">Local Labels</a><br>
+<A HREF="#opr">Operand Expressions</a><br>
+<A HREF="#nbr">Decimal and Hexidecimal Numbers</a><br>
+<A HREF="#ast">Asterisk</a><br></BLOCKQUOTE>
+<br><br>
+<a name="gnl"><h3>SOURCE PROGRAM FORMAT</h3></a>
+<A HREF="#fmt">Back to Formats</A>
+<br><br>
+Source programs are entered a line at a time, with a five digit line number
+ identifying each line.  The line numbers may run from 00000 through 63999.
+ Source program line numbers are kept sorted in line-number order; the
+ numbers are used for editing purposes just as in BASIC.  A blank must always
+ follow the line number.  After the blank, there are four fields of
+ information: the label, opcode, operand, and comment fields.  Adjacent
+ fields must be separated by at least one blank.
+<br><br>
+Although the fields are not restricted to begin in any particular columns, it 
+is convenient to enter them in this way for neatness.  Therefore tab stops
+ are built in to the SYNASSEMBLER at columns 9, 13, and 21.
+<br><br><br>
+<b>LABEL FIELD:</b>
+<br><br>
+May be left blank, or may contain a label of from one to 32 characters.  The
+ first character of a label must be a letter; remaining characters may be
+ either letters or numbers.  Labels are used to name places in your program
+ to which you will branch, as well as constants and variables.
+<br><br>
+The standard tab settings leave enough room for only 9 character labels;
+ however, you can go ahead and use 32 characters as long as there is at least
+ one space between the label and the opcode.  If you like, you may type
+ labels on a separate line, with the opcode and the following fields left
+ blank.  The label will be defined as the current value of the location
+ counter.  There are some examples of this in various listings throughout the
+ manuals and in the example source code on the disk.
+<br><br><br>
+<b>OPCODE FIELD:</b><br><br>
+Contains a three-letter machine language mnemonic opcode, or assembler
+ directive.  However, opcodes may begin in any column after at least one
+ blank from a label or two blanks from a line number.
+<br><br><br>
+<b>OPERAND FIELD:</b><br><br>
+Usually contains an operand expression of some sort.  Some of the 6502
+ instructions have no written operand, such as NOP, BRK, DEX, and others.
+ In these cases the comment field may be started right after the opcode.
+ Four of the opcodes (ROL, ROR, ASL, and LSR) may be used both with and
+ without an operand.  If no operand is present, you must type at least TWO
+ blanks before a comment with these four opcodes.
+<br><br><br>
+<b>COMMENT FIELD:</b><br><br>
+Comments are separated from the operand field by at least one blank. 
+Actually, comments may begin earlier or later on the line, just so at least
+ one blank separates them from the operand expression.
+<br><br><br>
+<b>COMMENT LINES:</b><br><br>
+Full lines of comments may be entered by typing an asterisk
+or a semi-colon (;) in the first column of the label field.  This type of
+ comment is useful in separating various routines from each other, and
+ labeling their contents.  It is analogous to the REM statement in BASIC.
+<br><br><br>
+<a name="lbl"><h3>LABELS:</h3></a>
+<A HREF="#fmt">Back to Formats</A>
+<br><br>
+One to nine characters; the first character must be a letter, while the
+ others may be either letters or digits.  Labels must be
+defined somewhere in the program if they are to be used in an expression.
+ In some cases they must be defined prior to use in expressions to prevent
+ an undefined or ambiguous location counter.  For example, if the expression
+ in the operand field of an origin (".OR") directive is not defined prior to
+ use, the assembler will not know how to define any subsequent labels.
+<br><br>
+A problem can occur if you postpone the definition of page-zero variables
+ until after their use in operand expressions.  If these labels are used
+ with instructions which could assume both absolute and zero-page address
+ modes, a discrepancy in the location count will occur between pass 1 and
+ pass 2, of the assembler.  This discrepancy cannot be detected by the
+ present design of the assembler, so make it a habit to always define your
+ page-zero variables at the beginning of your program.
+<br><br>
+There are two types of labels used in SYNASSEMBLER: normal labels and local
+ labels.
+<br><br><br>
+<b>NORMAL LABELS:</b><br><br>
+The first character of a normal label must be a letter;
+subsequent characters may be letters, digits, or the period
+character (".") The period is useful for making long labels readable.  For
+ example, the subroutine used to read the next source line might be named
+ "read.next.source.line".
+<br><br>
+Tab stops are set up within the editor assuming that most of your labels will
+ be 9 characters or less.  However, since the assembler is relatively
+ free-formatt you may type any length label followed by a blank and the
+ opcode, operand, and comment fields.  Or, if you wish, you may type the long
+ label on a line all by itself.  In this form the label is assigned the
+ current value of the location counter, just as if you had appended ".EQ" to
+ the line.
+<br><pre>
+        01000 * SAMPLE PROGRAM WITH LONG LABELS
+        01010 SOURCE.LINE.POINTER .EQ $13 AND $14
+        01020 CHAR.POINTER .EQ $12
+        0l030 *
+        01040 READ.NEXT.CHAR.FROM.LINE
+        01050        LDY CHAR.POINTER
+        01060        LDA (SOURCE.LINE.POINTER),Y
+        01070        INC SOURCE.LINE.POINTER
+        01080        RTS
+</pre><br>
+<a name="loc"><h3>LOCAL LABELS:</h3></a>
+<A HREF="#fmt">Back to Formats</A>
+<br><br>
+SYNASSEMBLER introduces a new kind of label called "local labels". The main
+ purpose for the local labels is to make programs more readable by reducing
+ the number of label names you must invent.  As a side effect, local labels
+ save considerable space in the symbol table during assembly; they only
+ reqire two bytes each.  The use of local labels also encourages structured
+ programming habits.
+<br><br>
+Local labels have a period as the first character followed by one or two
+ digits.  Any label from .0 through .99 may be used.
+<br><br>
+The local label must be within a page of the normal label or an error will
+ result.
+<br><br>
+Since each set of local labels is associated with a particular normal label,
+ you may reuse the same local label
+<br><br>
+Here is an example of three little routines in the same source program using
+ normal and local labels:
+<br><pre>
+        01000 PRINT.MESSAGE
+        01010          PHA       SAVE A-REGISTER
+        01020 .1       JSR PRINT.CHARACTER
+        01030          INY
+        01040          LDA MESSAGES,Y
+        01050          BNE .1    =0 FOR END OF MESSAGE
+        01060          PLA       RESTORES A-REGISTER
+        01070          RTS
+        01080 *
+        01090 GET.NEXT.CHARACTER
+        01100          LDY CHAR.POINTER
+        01110          LDA INPUT.BUFFER,Y
+        01120          CMP #RETURN
+        01130          BEQ .1    END OF LINE
+        01140          INC CHAR.POINTER
+        01150 .1       RTS
+        0ll60 *
+        01170 GET.NEXT.NONBLANK.CHAR
+        0ll80 .1       JSR GET.NEXT.CHARACTER
+        0ll90          BEQ .2    END OF LINE
+        01200          CMP #BLANK
+        01210          BEQ .1
+        01220 .2       RTS
+</pre><br>
+
+<a name="opr"><h3>OPERAND EXPRESSIONS</h3></a>
+<A HREF="#fmt">Back to Formats</A>
+<br><br>
+Operand expressions are written using terms and operators.  The valid
+ operators are + and -. Terms may be decimal numbers, hexidecimal, labels,
+ or an asterisk (*).  The first term in an expression may be preceded by
+ a + or a - sign.
+<br><br><br>
+<a name="nbr"><h3>DECIMAL NUMBERS</h3></a>
+<A HREF="#fmt">Back to Formats</A>
+<br><br>
+Any number in the range from 0 through 65535, written in the normal way.
+<br><br>
+<b>HEXIDECIMAL NUMBERS:</b>
+<br><br>
+Any number in the range from $0 through $FFFF.  Hexidecimal numbers are
+ indicated by a preceding dollar sign ($), and may have from one to four
+ digits.  Beware of leaving out the dollar sign; the assembler may be quite
+ satisfied to think of your hexadecimal number as a decimal one if you omit
+ the ($).  In some cases even a number with letters in it, such as 23AB,
+ may be acceptable; it may be interpreted as decimal 23 and a comment "AB".
+<br><br>
+<b>BINARY NUMBERS:</b>
+<br><br>
+Any number in the range from 00000000 to 11111111.  Binary numbers are
+ indicated by the preceding percent (%) sign.
+<br><pre>
+NUMBERS EXAMPLE:
+
+Ok.
+                   00010 * A DECIMAL NUMBER
+4000:  F1          00020 NUM1        .DA #241
+                   00030 * A HEX NUMBER
+4001:  E3          00040 NUM2        .DA #$E3
+                   00050 * A BINARY NUMBER
+4002:  D6          00060 NUM3        .DA #%11010110
+                   00070             .EN
+     --- Symbol table ---
+4000:  NUM1
+4001:  NUM2
+4003:  NUM3
+</pre><br>
+
+<a name="ast"><h3>ASTERISK [*]:</h3></a>
+<A HREF="#fmt">Back to Formats</A>
+<br><br>
+Stands for, the current value of the location counter.  This is useful for
+ storing the length of a string as a constant in a program.
+<br><pre>
+        080A- 0B        1070 QT   .DA #QTSZ   # BYTES IN MSG
+        080B- 41 4E 59
+        080E- 20 4D 45
+        0811- 53 53 41
+        0814- 47 45     1080      .AS /ANY MESSAGE/
+                        1090 QTSZ .EQ *-QT-1  # BYTES IN MSG
+        0816- 00 00     1100 VARW .DA 0       2-BYTE VARIABLE
+        0818- 00        1110 VARB .DA #0      1-BYTE VARIABLE
+                        1120 HERE .EQ *
+</pre><br>
+It is considered VERY POOR programming practice to include branch
+ instructions in your program with operand expressions in the form "*-5" or
+ "*+7".  If you value your sanity and time, avoid them like the plague!
+ They breed bugs that can be very difficult to find.  Dont't be afraid to
+ use another label or two, no matter how silly the names might sound.
+
+<br><br>
+<A HREF="syndx.htm">Back to Index</A> or 
+<A HREF="#fmt">Back to Formats</A> or 
+<A HREF="syndir.htm">Next Section</A><br>
+</body>
+</html>
